@@ -1,0 +1,132 @@
+/* CSS Customizer Specific */
+.css-changer-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.customizer-section {
+    background: var(--bg-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-md);
+}
+
+.customizer-section h3 {
+    font-size: 1.3rem;
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.color-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.color-control label {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.color-control input[type="color"] {
+    width: 80px;
+    height: 45px;
+    border: 3px solid #e5e7eb;
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+}
+
+.range-control {
+    margin-bottom: var(--space-md);
+}
+
+.range-control label {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+}
+
+.range-control input[type="range"] {
+    width: 100%;
+    height: 8px;
+    border-radius: 5px;
+    background: linear-gradient(to right, #dbeafe, #2563eb);
+    outline: none;
+}
+
+.toggle-control {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.toggle-control label {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+/* Preset Grid */
+.preset-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+}
+
+.preset-btn {
+    padding: var(--space-md);
+    border: 3px solid #e5e7eb;
+    border-radius: var(--card-radius);
+    background: var(--bg-card);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--anim-speed);
+    box-shadow: var(--shadow-sm);
+}
+
+.preset-btn:active {
+    transform: scale(0.95);
+}
+
+.preset-btn:hover {
+    border-color: var(--primary-color);
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: white;
+}
+
+.filter-section {
+    margin-bottom: var(--space-md);
+}
+
+.filter-section label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--space-sm);
+}
+
+.filter-select {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 2px solid #e5e7eb;
+    border-radius: var(--btn-radius);
+    font-size: 1rem;
+    background: var(--bg-input);
+}

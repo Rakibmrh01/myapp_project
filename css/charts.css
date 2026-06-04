@@ -1,0 +1,222 @@
+/* Daily Account - Charts Styles (3D Colorful) */
+
+/* Analysis Summary Grid */
+.analysis-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.analysis-card {
+    padding: var(--space-lg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-3d);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.analysis-card h4 {
+    font-size: 1.8rem;
+    margin-bottom: var(--space-sm);
+    font-weight: 600;
+}
+
+.analysis-card .card-value {
+    font-size: 2.3rem;
+    font-weight: 800;
+}
+
+.analysis-card.income-card {
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: blue;
+}
+
+.analysis-card.expense-card {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    color: red;
+}
+
+.analysis-card.balance-card {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #3CB371;
+}
+
+.analysis-card.savings-card {
+    background: linear-gradient(135deg, #9333ea, #7e22ce);
+    color: brown;
+}
+
+/* Chart Container - 3D Effect */
+.chart-container {
+    background: var(--bg-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-3d);
+    margin-bottom: var(--space-lg);
+    position: relative;
+}
+
+.chart-container::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, #60a5fa, #a78bfa, #f472b6);
+    border-radius: var(--card-radius);
+    z-index: -1;
+    opacity: 0.3;
+    filter: blur(10px);
+}
+
+.chart-container h3 {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    color: var(--text-primary);
+}
+
+.chart-wrapper {
+    position: relative;
+    min-height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-wrapper canvas {
+    max-width: 100%;
+    height: auto;
+    border-radius: var(--card-radius);
+}
+
+/* AI Advice Section - Colorful */
+.ai-advice-section {
+    background: linear-gradient(135deg, #7c3aed, #6366f1, #8b5cf6);
+    padding: var(--space-lg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-3d);
+    margin-bottom: var(--space-lg);
+}
+
+.ai-advice-section h3 {
+    color: #00008B;
+    font-size: 1.5rem;
+    margin-bottom: var(--space-md);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+#aiAdviceList {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.advice-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: var(--space-md);
+    border-radius: var(--card-radius);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-md);
+    border-left: 4px solid white;
+    transition: all var(--anim-speed);
+}
+
+.advice-card:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(5px);
+}
+
+.advice-card.high {
+    border-left-color: #fbbf24;
+    background: rgba(251, 191, 36, 0.2);
+}
+
+.advice-card.medium {
+    border-left-color: #60a5fa;
+    background: rgba(96, 165, 250, 0.2);
+}
+
+.advice-card.low {
+    border-left-color: #a78bfa;
+    background: rgba(167, 139, 250, 0.2);
+}
+
+.advice-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.advice-text {
+    color: white;
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.4;
+    margin: 0;
+}
+
+/* Detailed Statistics */
+.detailed-stats {
+    background: var(--bg-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-md);
+}
+
+.detailed-stats h3 {
+    font-size: 1.4rem;
+    margin-bottom: var(--space-md);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+}
+
+.stat-item {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    padding: var(--space-md);
+    border-radius: var(--card-radius);
+    text-align: center;
+    box-shadow: var(--shadow-sm);
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* Chart Placeholder (until Chart.js is added) */
+.chart-wrapper canvas {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    border: 2px dashed #93c5fd;
+}
+
+/* Responsive Charts */
+@media (max-width: 480px) {
+    .analysis-summary-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
