@@ -1,0 +1,327 @@
+/* Daily Account - List & Table Styles */
+
+/* Summary Box */
+.summary-box-colorful {
+    background: var(--bg-card);
+    padding: var(--space-lg);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-md);
+    margin-bottom: var(--space-md);
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-md);
+}
+
+.summary-item {
+    text-align: left;
+}
+
+.summary-label {
+    display: block;
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-xs);
+}
+
+.summary-value {
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.income-summary { background: linear-gradient(135deg, #f0fdf4, #bbf7d0); }
+.expense-summary { background: linear-gradient(135deg, #fef2f2, #fecaca); }
+.ledger-summary { background: linear-gradient(135deg, #fff7ed, #fed7aa); }
+.savings-summary { background: linear-gradient(135deg, #faf5ff, #e9d5ff); }
+
+/* Toolbar */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-md);
+    margin-bottom: var(--space-md);
+}
+
+.view-toggle {
+    display: flex;
+    gap: var(--space-sm);
+}
+
+.toggle-btn {
+    padding: var(--space-sm) var(--space-md);
+    background: var(--bg-card);
+    border: 2px solid #e5e7eb;
+    border-radius: var(--btn-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--anim-speed);
+}
+
+.toggle-btn.active {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+    border-color: #2563eb;
+}
+
+.toggle-icon {
+    font-size: 1.1rem;
+}
+
+.search-box {
+    flex: 1;
+}
+
+.search-input {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 2px solid #e5e7eb;
+    border-radius: var(--btn-radius);
+    font-size: 1rem;
+}
+
+/* List Cards */
+.list-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.list-card {
+    background: var(--bg-card);
+    padding: var(--space-md);
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid;
+    transition: all var(--anim-speed);
+}
+
+.list-card:active {
+    transform: scale(0.98);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-sm);
+}
+
+.card-meta {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-sm);
+    line-height: 1.4;
+}
+
+.card-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    padding: var(--space-xs) var(--space-md);
+    border: none;
+    border-radius: var(--btn-radius);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--anim-speed);
+}
+
+.edit-btn {
+    background: linear-gradient(135deg, #eff6ff, #dbeafe);
+    color: #1e40af;
+}
+
+.delete-btn {
+    background: linear-gradient(135deg, #fef2f2, #fee2e2);
+    color: #b91c1c;
+}
+
+.paid-btn {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    color: #15803d;
+}
+
+.paid-card {
+    opacity: 0.6;
+}
+
+/* Colorful Table */
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.colorful-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 var(--space-sm);
+}
+
+.colorful-table thead th {
+    background: linear-gradient(135deg, #1e40af, #1e3a8a);
+    color: white;
+    padding: var(--space-md);
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    border-radius: var(--btn-radius);
+}
+
+.colorful-table thead th:first-child {
+    border-radius: var(--btn-radius) 0 0 var(--btn-radius);
+}
+
+.colorful-table thead th:last-child {
+    border-radius: 0 var(--btn-radius) var(--btn-radius) 0;
+}
+
+.colorful-table tbody tr {
+    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.colorful-table tbody td {
+    padding: var(--space-md);
+    font-size: 1rem;
+}
+
+.amount-cell {
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.action-cell {
+    display: flex;
+    gap: var(--space-xs);
+}
+
+.table-action-btn {
+    padding: var(--space-xs) var(--space-sm);
+    border: none;
+    border-radius: var(--btn-radius);
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+/* Edit Modal - CENTER (Not Bottom!) */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    padding: var(--space-md);
+}
+
+.modal-container {
+    background: var(--bg-card);
+    border-radius: var(--card-radius);
+    max-width: 500px;
+    width: 100%;
+    box-shadow: var(--shadow-3d);
+    animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.modal-body {
+    padding: var(--space-lg);
+}
+
+/* Filter Tabs */
+.filter-tabs {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    overflow-x: auto;
+}
+
+.tab-btn {
+    padding: var(--space-sm) var(--space-lg);
+    background: var(--bg-card);
+    border: 2px solid #e5e7eb;
+    border-radius: var(--card-radius);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all var(--anim-speed);
+}
+
+.tab-btn.active {
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: white;
+    border-color: #2563eb;
+}
+
+/* ===== ANIMATIONS ===== */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.fade-in { animation: fadeIn 0.3s ease-out; }
+.slide-up { animation: slideUp 0.4s ease-out; }
+.scale-in { animation: scaleIn 0.3s ease-out; }
+
+/* Page Load Animation */
+body {
+    animation: fadeIn 0.5s ease-out;
+}
