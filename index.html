@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MRH Daily Account </title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/animation.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#E2136E">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Daily Account">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <meta name="author" content="জাকির আল জিহাদ">
+</head>
+<body data-page="index">
+    <!-- Compact Header -->
+        <!-- Smart Badge -->
+        <div class="smart-badge" id="smartBadge">
+            <div class="badge-icon">🏆</div>
+            <div class="badge-text">
+                <h5 id="badgeTitle">Loading...</h5>
+                <p id="badgeDesc">Calculating...</p>
+            </div>
+        </div>
+    </header>
+
+    <!-- Balance Section (Clickable Cards) -->
+    <section class="balance-section">
+        <div class="balance-main" onclick="location.href='pages/analysis.html'">
+            <div class="balance-header">
+                <span class="balance-icon">💰</span>
+                <h2>বর্তমান ব্যালেন্স</h2>
+            </div>
+            <div class="balance-amount" id="mainBalance">৳ 0</div>
+            <div class="balance-footer">
+                <span>📊 বিস্তারিত দেখুন</span>
+            </div>
+        </div>
+
+        <div class="balance-grid">
+            <div class="balance-card income-card" onclick="location.href='pages/income-list.html'">
+                <div class="card-icon">💰</div>
+                <h3>মোট আয়</h3>
+                <div class="card-amount" id="totalIncome">৳ 0</div>
+            </div>
+
+            <div class="balance-card expense-card" onclick="location.href='pages/expense-list.html'">
+                <div class="card-icon">💸</div>
+                <h3>মোট ব্যয়</h3>
+                <div class="card-amount" id="totalExpense">৳ 0</div>
+            </div>
+
+            <div class="balance-card dena-card" onclick="location.href='pages/ledger-list.html?type=dena'">
+                <div class="card-icon">📕</div>
+                <h3>দেনা</h3>
+                <div class="card-amount" id="totalDena">৳ 0</div>
+            </div>
+
+            <div class="balance-card pabona-card" onclick="location.href='pages/ledger-list.html?type=pabona'">
+                <div class="card-icon">📗</div>
+                <h3>পাওনা</h3>
+                <div class="card-amount" id="totalPabona">৳ 0</div>
+            </div>
+
+            <div class="balance-card savings-card" onclick="location.href='pages/savings-list.html'">
+                <div class="card-icon">💚</div>
+                <h3>সঞ্চয়</h3>
+                <div class="card-amount" id="totalSavings">৳ 0</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Smart Advice Section (Eye-catching) -->
+    <section class="smart-advice-banner" id="smartAdvice">
+        <div class="advice-icon">💡</div>
+        <div class="advice-content">
+            <h3>স্মার্ট পরামর্শ</h3>
+            <p id="adviceText">ডাটা লোড হচ্ছে...</p>
+        </div>
+    </section>
+
+    <!-- Action Menu (Colorful) -->
+    <section class="action-menu-colorful">
+        <h2>⚡দ্রুত কাজ</h2>
+        <div class="menu-grid-colorful">
+            <!-- প্রথম ৪টি সবসময় দেখা যাবে -->
+            <a href="pages/savings.html" class="menu-item-colorful savings-menu">
+                <div class="menu-icon">💚</div>
+                <h3>সঞ্চয় যোগ</h3>
+            </a>
+            <a href="pages/analysis.html" class="menu-item-colorful analysis-menu">
+                <div class="menu-icon">📊</div>
+                <h3>এনালাইসিস</h3>
+            </a>
+            <a href="pages/calculator.html" class="menu-item-colorful calculator-menu">
+                <div class="menu-icon">🧮</div>
+                <h3>ক্যালকুলেটর</h3>
+            </a>
+            <a href="pages/notes.html" class="menu-item-colorful notes-menu">
+                <div class="menu-icon">📝</div>
+                <h3>নোটস</h3>
+            </a>
+
+            <!-- এক্সট্রা মেনু আইটেম — সেটিংস থেকে চালু হলে দেখাবে -->
+            <a href="pages/extra-backup.html" class="menu-item-colorful backup-menu extra-menu-item" style="display:none">
+                <div class="menu-icon">📦</div>
+                <h3>Extra Backup</h3>
+            </a>
+            <a href="pages/css-changer.html" class="menu-item-colorful css-menu extra-menu-item" style="display:none">
+                <div class="menu-icon">🎨</div>
+                <h3>CSS Changer</h3>
+            </a>
+            <a href="pages/full-page-setup.html" class="menu-item-colorful setup-menu extra-menu-item" style="display:none">
+                <div class="menu-icon">🖌️</div>
+                <h3>Page Setup</h3>
+            </a>
+            <a href="pages/accounting.html" class="menu-item-colorful accounting-menu extra-menu-item" style="display:none">
+                <div class="menu-icon">📚</div>
+                <h3>Accounting</h3>
+            </a>
+
+            <!-- More বাটন — সবসময় শেষে থাকবে যদি extra hidden থাকে -->
+            <a href="#" class="menu-item-colorful more-menu" id="moreMenuBtn" onclick="openMorePage(event)">
+                <div class="menu-icon">➕</div>
+                <h3>More</h3>
+            </a>
+        </div>
+    </section>
+
+    <!-- More Page Drawer -->
+    <div id="morePageOverlay" style="display:none;position:fixed;inset:0;z-index:99994;background:rgba(0,0,0,.55);backdrop-filter:blur(6px)" onclick="closeMorePage()"></div>
+    <div id="morePageDrawer" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99995;background:linear-gradient(175deg,#0f172a,#1a1040);border-radius:24px 24px 0 0;border-top:2px solid rgba(226,19,110,.3);padding:0 0 36px;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1)">
+      <div style="width:44px;height:5px;background:rgba(255,255,255,.2);border-radius:4px;margin:13px auto 0"></div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.07)">
+        <div style="width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#E2136E,#b5105a);display:flex;align-items:center;justify-content:center;font-size:1.3rem">➕</div>
+        <div style="flex:1"><div style="color:white;font-size:.95rem;font-weight:900">More মেনু</div><div style="color:#E2136E;font-size:.65rem;font-weight:700">Daily Account</div></div>
+        <button onclick="closeMorePage()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:6px 12px;color:#94a3b8;font-size:.78rem;cursor:pointer;font-family:inherit">✕ বন্ধ</button>
+      </div>
+      <div style="padding:14px 14px 4px">
+        <div style="color:#94a3b8;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">⚡ সব টুলস</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+          <a href="pages/extra-backup.html" style="background:linear-gradient(145deg,#1d4ed8,#1e40af);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(29,78,216,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📦</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">Extra Backup</span>
+          </a>
+          <a href="pages/css-changer.html" style="background:linear-gradient(145deg,#ec4899,#db2777);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(236,72,153,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🎨</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">CSS Changer</span>
+          </a>
+          <a href="pages/full-page-setup.html" style="background:linear-gradient(145deg,#8b5cf6,#7c3aed);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(139,92,246,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🖌️</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">Page Setup</span>
+          </a>
+          <a href="pages/accounting.html" style="background:linear-gradient(145deg,#0f766e,#0d9488);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(15,118,110,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📚</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">Accounting</span>
+          </a>
+          <a href="pages/emergency-backup.html" style="background:linear-gradient(145deg,#dc2626,#b91c1c);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(220,38,38,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🆘</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">Emergency Backup</span>
+          </a>
+          <a href="pages/trash-manager.html" style="background:linear-gradient(145deg,#475569,#334155);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(71,85,105,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🗑️</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">Trash Manager</span>
+          </a>
+          <a href="pages/how-to-use.html" style="background:linear-gradient(145deg,#0369a1,#0284c7);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(3,105,161,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">📖</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">How to Use</span>
+          </a>
+          <a href="pages/font.html" style="background:linear-gradient(145deg,#92400e,#78350f);border-radius:16px;padding:16px 10px 12px;text-align:center;text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:6px;box-shadow:0 4px 14px rgba(146,64,14,.3)">
+            <span style="font-size:2.2rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.2))">🔤</span>
+            <span style="color:white;font-size:.82rem;font-weight:900">Fonts</span>
+          </a>
+        </div>
+        <div style="margin-top:14px;padding:12px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.07)">
+          <div style="color:#94a3b8;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">⚙️ সেটিংস থেকে হোমে যোগ করুন</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="morePageExtraToggles"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+    // More menu open/close
+    window.openMorePage = function(e) {
+      e.preventDefault();
+      var ov = document.getElementById('morePageOverlay');
+      var dr = document.getElementById('morePageDrawer');
+      ov.style.display = 'block'; dr.style.display = 'block';
+      requestAnimationFrame(function(){ requestAnimationFrame(function(){ dr.style.transform='translateY(0)'; }); });
+      _renderMoreToggles();
+    };
+    window.closeMorePage = function() {
+      var dr = document.getElementById('morePageDrawer');
+      dr.style.transform = 'translateY(100%)';
+      setTimeout(function(){
+        document.getElementById('morePageOverlay').style.display='none';
+        dr.style.display='none';
+      }, 300);
+    };
+
+    // Extra menu items config
+    var _extraMenuItems = [
+      {key:'showBackup',   label:'📦 Extra Backup', href:'pages/extra-backup.html',   cls:'backup-menu'},
+      {key:'showCss',      label:'🎨 CSS Changer',  href:'pages/css-changer.html',    cls:'css-menu'},
+      {key:'showSetup',    label:'🖌️ Page Setup',   href:'pages/full-page-setup.html',cls:'setup-menu'},
+      {key:'showAccounting',label:'📚 Accounting',   href:'pages/accounting.html',     cls:'accounting-menu'},
+    ];
+
+    function _getExtraSettings() {
+      try { return JSON.parse(localStorage.getItem('extraMenuSettings')||'{}'); } catch(e){return {};}
+    }
+    function _setExtraSettings(obj) {
+      try { localStorage.setItem('extraMenuSettings', JSON.stringify(obj)); } catch(e){}
+    }
+
+    // Apply extra menu visibility on load
+    function applyExtraMenu() {
+      var s = _getExtraSettings();
+      var items = document.querySelectorAll('.extra-menu-item');
+      var anyVisible = false;
+      _extraMenuItems.forEach(function(cfg, i) {
+        var el = items[i];
+        if (!el) return;
+        var show = !!s[cfg.key];
+        el.style.display = show ? '' : 'none';
+        if (show) anyVisible = true;
+      });
+      // More button: হাইড হয় যদি সব extra visible
+      var moreBtn = document.getElementById('moreMenuBtn');
+      if (moreBtn) moreBtn.style.display = (anyVisible && items.length === 4 && !anyVisible) ? 'none' : '';
+    }
+
+    function _renderMoreToggles() {
+      var s = _getExtraSettings();
+      var cont = document.getElementById('morePageExtraToggles');
+      if (!cont) return;
+      var html = '';
+      _extraMenuItems.forEach(function(cfg) {
+        var checked = s[cfg.key] ? 'checked' : '';
+        html += '<label style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;cursor:pointer;gap:8px">'
+          + '<span style="color:#cbd5e1;font-size:.75rem;font-weight:700">' + cfg.label + '</span>'
+          + '<input type="checkbox" ' + checked + ' data-key="' + cfg.key + '" onchange="_toggleExtraMenu(this)" style="width:18px;height:18px;accent-color:#E2136E;cursor:pointer">'
+          + '</label>';
+      });
+      cont.innerHTML = html;
+    }
+
+    window._toggleExtraMenu = function(cb) {
+      var s = _getExtraSettings();
+      s[cb.dataset.key] = cb.checked;
+      _setExtraSettings(s);
+      applyExtraMenu();
+      if (typeof showToast === 'function') showToast(cb.checked ? '✅ হোমে যোগ হয়েছে' : '🔕 হোম থেকে সরানো হয়েছে');
+    };
+
+    document.addEventListener('DOMContentLoaded', applyExtraMenu);
+    </script>
+
+    <!-- Fixed Bottom Navigation -->
+    <footer class="footer-fixed-bottom">
+        <nav class="footer-nav-grid">
+            <a href="pages/income.html" class="footer-nav-btn footer-btn-income">
+                <div class="footer-btn-icon">💰</div>
+                <div class="footer-btn-text">আয় যোগ</div>
+            </a>
+
+            <a href="pages/expense.html" class="footer-nav-btn footer-btn-expense">
+                <div class="footer-btn-icon">💸</div>
+                <div class="footer-btn-text">ব্যয় যোগ</div>
+            </a>
+
+            <a href="pages/ledger.html" class="footer-nav-btn footer-btn-ledger">
+                <div class="footer-btn-icon">📒</div>
+                <div class="footer-btn-text">দেনা/পাওনা</div>
+            </a>
+
+            <a href="pages/settings.html" class="footer-nav-btn footer-btn-settings">
+                <div class="footer-btn-icon">⚙️</div>
+                <div class="footer-btn-text">সেটিংস</div>
+            </a>
+        </nav>
+    </footer>
+
+    <!-- First Run Tutorial Modal -->
+    <div id="tutorialModal" class="tutorial-modal" style="display:none;">
+      <div class="tut-box">
+
+        <!-- Progress bar -->
+        <div class="tut-progress-wrap">
+          <div class="tut-progress-bar" id="tutProgressBar"></div>
+        </div>
+
+        <!-- Dots -->
+        <div class="tut-dots" id="tutDots"></div>
+
+        <!-- Slides -->
+        <div class="tut-slides" id="tutSlides">
+
+          <!-- Slide 1: Welcome -->
+          <div class="tut-slide active">
+            <div class="tut-anim-wrap">
+              <div class="tut-pulse-ring"></div>
+              <div class="tut-hero-icon">🎉</div>
+            </div>
+            <h2 class="tut-title">স্বাগতম!</h2>
+            <p class="tut-sub">Daily Account — MRH Daily AccountPro @jakir_al_jihad</p>
+            <div class="tut-desc">আপনার সমস্ত আয়-ব্যয়, দেনা-পাওনা ও সঞ্চয় একটি অ্যাপে। সম্পূর্ণ  <strong>Offline</strong> — আপনার ডাটা শুধু আপনার ফোনে।</div>
+            <div class="tut-badges">
+              <span class="tut-badge tut-b-green">📵 অফলাইন</span>
+              <span class="tut-badge tut-b-blue">🔒 নিরাপদ</span>
+              <span class="tut-badge tut-b-purple">⚡ দ্রুত</span>
+              <span class="tut-badge tut-b-orange">🇧🇩 বাংলা</span>
+            </div>
+          </div>
+
+          <!-- Slide 2: Income/Expense/Ledger -->
+          <div class="tut-slide">
+            <div class="tut-anim-wrap">
+              <div class="tut-bounce-icon">💰</div>
+            </div>
+            <h2 class="tut-title">আয়, ব্যয় ও দেনা-পাওনা</h2>
+            <p class="tut-sub">প্রতিদিনের হিসাব সহজে রাখুন</p>
+            <div class="tut-feature-list">
+              <div class="tut-feat" style="--fc:#dcfce7;">
+                <span class="tut-feat-icon">💰</span>
+                <div><strong>আয় রেকর্ড</strong><br><small>বেতন, ব্যবসা, ফ্রিল্যান্স — সব উৎস</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#fee2e2;">
+                <span class="tut-feat-icon">💸</span>
+                <div><strong>ব্যয় ট্র্যাক</strong><br><small>ক্যাটাগরি অনুযায়ী খরচের হিসাব</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#fef3c7;">
+                <span class="tut-feat-icon">📕</span>
+                <div><strong>দেনা-পাওনা লেজার</strong><br><small>কার কাছে কত — পূর্ণ রেকর্ড</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#f3e8ff;">
+                <span class="tut-feat-icon">💜</span>
+                <div><strong>সঞ্চয় লক্ষ্য</strong><br><small>লক্ষ্য নির্ধারণ করে অগ্রগতি দেখুন</small></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3: Analysis & Tools -->
+          <div class="tut-slide">
+            <div class="tut-anim-wrap">
+              <div class="tut-spin-icon">📊</div>
+            </div>
+            <h2 class="tut-title">স্মার্ট বিশ্লেষণ</h2>
+            <p class="tut-sub">AI পরামর্শ · চার্ট · টুলস</p>
+            <div class="tut-feature-list">
+              <div class="tut-feat" style="--fc:#dbeafe;">
+                <span class="tut-feat-icon">📊</span>
+                <div><strong>AI বিশ্লেষণ</strong><br><small>৫ ধরনের চার্ট + স্মার্ট AI পরামর্শ</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#fef9c3;">
+                <span class="tut-feat-icon">🧮</span>
+                <div><strong>ক্যালকুলেটর</strong><br><small>অ্যাপ থেকে না বেরিয়েই হিসাব করুন</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#dcfce7;">
+                <span class="tut-feat-icon">📝</span>
+                <div><strong>নোটস</strong><br><small>গুরুত্বপূর্ণ তথ্য সেভ করে রাখুন</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#e0f2fe;">
+                <span class="tut-feat-icon">📚</span>
+                <div><strong>হিসাব বিজ্ঞান</strong><br><small>পেশাদার ডবল-এন্ট্রি সিস্টেম</small></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4: Backup & Customize -->
+          <div class="tut-slide">
+            <div class="tut-anim-wrap">
+              <div class="tut-float-icon">🎨</div>
+            </div>
+            <h2 class="tut-title">ব্যাকআপ ও কাস্টমাইজ</h2>
+            <p class="tut-sub">আপনার মনমতো সাজান</p>
+            <div class="tut-feature-list">
+              <div class="tut-feat" style="--fc:#dbeafe;">
+                <span class="tut-feat-icon">📦</span>
+                <div><strong>Extra Backup</strong><br><small>Telegram · Google Drive · JSONBin</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#fce7f3;">
+                <span class="tut-feat-icon">🎨</span>
+                <div><strong>CSS Changer</strong><br><small>রং, ফন্ট, থিম — সব কাস্টমাইজ</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#ede9fe;">
+                <span class="tut-feat-icon">🖌️</span>
+                <div><strong>Full Page Setup</strong><br><small>প্রতিটি পেজ আলাদাভাবে সাজান</small></div>
+              </div>
+              <div class="tut-feat" style="--fc:#fef3c7;">
+                <span class="tut-feat-icon">🔵</span>
+                <div><strong>Float Ball</strong><br><small>ভাসমান বাটনে দ্রুত নেভিগেশন</small></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 5: Ready + How to use link -->
+          <div class="tut-slide">
+            <div class="tut-anim-wrap">
+              <div class="tut-rocket-anim">🚀</div>
+            </div>
+            <h2 class="tut-title">শুরু করার সময়!</h2>
+            <p class="tut-sub">সব প্রস্তুত — চলুন শুরু করি</p>
+            <div class="tut-tips-box">
+              <div class="tut-tip-row">💡 প্রথমেই একটি <strong>ব্যাকআপ</strong> নিন</div>
+              <div class="tut-tip-row">🔒 সেটিংস থেকে <strong>PIN Lock</strong> চালু করুন</div>
+              <div class="tut-tip-row">🌙 রাতে <strong>ডার্ক মোড</strong> ব্যবহার করুন</div>
+            <div class="tut-tip-row">Developer:;<strong>jakir_al_jihad</strong></div>
+              <div class="tut-tip-row">📞 সমস্যায়: <strong>01737930168</strong></div>
+            </div>
+            <a href="pages/how-to-use.html" class="tut-howto-btn">
+              📖 সম্পূর্ণ ব্যবহার গাইড দেখুন →
+            </a>
+          </div>
+
+        </div><!-- /tut-slides -->
+
+        <!-- Navigation -->
+        <div class="tut-nav">
+          <button class="tut-prev-btn" id="tutPrev" onclick="tutNav(-1)">← আগে</button>
+          <button class="tut-next-btn" id="tutNext" onclick="tutNav(1)">পরে →</button>
+          <button class="tut-done-btn" id="tutDone" onclick="closeTutorial()" style="display:none;">🚀 শুরু করুন</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/settings.js"></script>
+<script>
+// ── Tutorial Multi-step ──
+(function(){
+  var total = 5, cur = 0;
+  var slides, dots, prev, next, done;
+
+  function init(){
+    slides = document.querySelectorAll('.tut-slide');
+    prev   = document.getElementById('tutPrev');
+    next   = document.getElementById('tutNext');
+    done   = document.getElementById('tutDone');
+    var dc  = document.getElementById('tutDots');
+    if(!dc) return;
+    for(var i=0;i<total;i++){
+      var d=document.createElement('button');
+      d.className='tut-dot'+(i===0?' active':'');
+      d.setAttribute('data-i',i);
+      d.onclick=(function(idx){ return function(){ go(idx); }; })(i);
+      dc.appendChild(d);
+    }
+    dots = dc.querySelectorAll('.tut-dot');
+    update();
+  }
+
+  function go(idx){
+    cur=Math.max(0,Math.min(total-1,idx));
+    update();
+  }
+
+  function update(){
+    slides.forEach(function(s,i){ s.classList.toggle('active', i===cur); });
+    dots.forEach(function(d,i){ d.classList.toggle('active', i===cur); });
+    if(prev) prev.style.display = cur===0 ? 'none' : '';
+    if(next) next.style.display = cur===total-1 ? 'none' : '';
+    if(done) done.style.display = cur===total-1 ? '' : 'none';
+    // progress bar
+    var pb = document.getElementById('tutProgressBar');
+    if(pb) pb.style.width = ((cur+1)/total*100) + '%';
+  }
+
+  window.tutNav = function(dir){ go(cur+dir); };
+
+  // Touch swipe
+  var tx=0;
+  var box = document.getElementById && document.getElementById('tutSlides');
+  document.addEventListener('DOMContentLoaded', function(){
+    var b = document.getElementById('tutSlides');
+    if(!b) return;
+    b.addEventListener('touchstart',function(e){ tx=e.touches[0].clientX; },{passive:true});
+    b.addEventListener('touchend',function(e){
+      var dx=e.changedTouches[0].clientX-tx;
+      if(Math.abs(dx)>40) go(cur + (dx<0?1:-1));
+    },{passive:true});
+  });
+
+  document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+
+<!-- ══ FLOAT BALL ══ -->
+<div id="__floatBall" style="position:fixed;z-index:99998;bottom:90px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 4px 20px #3b82f666;display:flex;align-items:center;justify-content:center;font-size:1.4rem;cursor:grab;user-select:none;touch-action:none;transition:box-shadow .2s" title="Float Menu">🏠</div>
+
+<!-- ══ FLOAT BALL DRAWER ══ -->
+<div id="__fbOverlay" style="display:none;position:fixed;inset:0;z-index:99996;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)"></div>
+<div id="__fbDrawer" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;background:linear-gradient(180deg,#0f172a,#1a1040);border-radius:24px 24px 0 0;padding:18px 16px 40px;max-height:88vh;overflow-y:auto;transform:translateY(100%);transition:transform .28s cubic-bezier(.34,1.1,.64,1);border-top:2px solid #3b82f644">
+  <div style="width:40px;height:4px;background:rgba(255,255,255,.18);border-radius:4px;margin:0 auto 14px"></div>
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+    <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;font-size:1.3rem">🏠</div>
+    <div style="color:white;font-size:.95rem;font-weight:900">Quick Menu</div>
+    <button onclick="__fbClose()" style="margin-left:auto;background:rgba(255,255,255,.1);border:none;border-radius:8px;padding:6px 12px;color:#94a3b8;font-size:.8rem;cursor:pointer">✕</button>
+  </div>
+
+  <!-- Quick links -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    
+    <a href="pages/full-page-setup.html" class="__fb-menu-btn" style="background:linear-gradient(135deg,#667eea,#764ba2);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">🖌️ Page Setup</a>
+    <a href="pages/css-changer.html" class="__fb-menu-btn" style="background:linear-gradient(135deg,#6d28d9,#4c1d95);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">🎨 CSS Changer</a>
+    <a href="pages/extra-backup.html" class="__fb-menu-btn" style="background:linear-gradient(135deg,#1e3a5f,#0f2744);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">📦 Extra Backup</a>
+    <a href="pages/accounting.html" class="__fb-menu-btn" style="background:linear-gradient(135deg,#0f2744,#1e3a5f);text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px">📚 Accounting</a>
+  </div>
+
+  <!-- Page Customization -->
+  <div style="background:rgba(255,255,255,.05);border-radius:16px;padding:14px;border:1px solid rgba(255,255,255,.08)">
+    <div style="color:#3b82f6;font-size:.78rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">⚡ এই পেজ কাস্টমাইজ</div>
+    
+              <div class="__fb-fps-row">
+                <span class="__fb-fps-lbl">হেডার রং ১</span>
+                <input type="color" class="__fb-fps-color" data-fps-key="hBg1" value="#3b82f6" oninput="__fbFpsApply(this)">
+              </div>
+              <div class="__fb-fps-row">
+                <span class="__fb-fps-lbl">হেডার রং ২</span>
+                <input type="color" class="__fb-fps-color" data-fps-key="hBg2" value="#2563eb" oninput="__fbFpsApply(this)">
+              </div>
+              <div class="__fb-fps-row">
+                <span class="__fb-fps-lbl">টেক্সট রং</span>
+                <input type="color" class="__fb-fps-color" data-fps-key="textC" value="#1f2937" oninput="__fbFpsApply(this)">
+              </div>
+              <div class="__fb-fps-row">
+                <span class="__fb-fps-lbl">ব্যাকগ্রাউন্ড</span>
+                <input type="color" class="__fb-fps-color" data-fps-key="bgMain" value="#f0f4f8" oninput="__fbFpsApply(this)">
+              </div>
+              <div class="__fb-fps-row">
+                <span class="__fb-fps-lbl">ফন্ট সাইজ</span>
+                <input type="range" class="__fb-fps-range" min="11" max="22" value="15" data-fps-key="fs" oninput="__fbFpsApply(this)">
+              </div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button onclick="__fbFpsSave()" style="flex:1;padding:10px;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none;border-radius:10px;font-size:.82rem;font-weight:800;cursor:pointer">💾 সেভ করুন</button>
+      <button onclick="__fbFpsReset()" style="padding:10px 14px;background:rgba(255,255,255,.07);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:.82rem;cursor:pointer">↺</button>
+    </div>
+  </div>
+</div>
+
+<style>
+.__fb-menu-btn{padding:11px 8px;border:none;border-radius:12px;color:white;font-size:.8rem;font-weight:800;cursor:pointer;font-family:inherit;text-align:center}
+.__fb-fps-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.__fb-fps-row:last-child{border:none}
+.__fb-fps-lbl{color:#cbd5e1;font-size:.78rem;font-weight:700}
+.__fb-fps-color{width:36px;height:28px;border:none;border-radius:8px;cursor:pointer;padding:2px}
+.__fb-fps-range{width:100px;accent-color:#3b82f6}
+</style>
+
+<script>
+(function(){
+  var ball = document.getElementById('__floatBall');
+  var overlay = document.getElementById('__fbOverlay');
+  var drawer = document.getElementById('__fbDrawer');
+  if(!ball) return;
+
+  // Hide if setting says off
+  try{
+    var s = JSON.parse(localStorage.getItem('settings')||'{}');
+    if(s.floatBallOff){ ball.style.display='none'; return; }
+  }catch(e){}
+
+  // ── Drag ──
+  var isDragging=false, startX=0, startY=0, ballX=0, ballY=0, moved=false;
+
+  function getPos(){
+    var r=ball.getBoundingClientRect();
+    return {x:r.left,y:r.top};
+  }
+
+  ball.addEventListener('mousedown',function(e){
+    isDragging=true; moved=false;
+    var p=getPos(); ballX=p.x; ballY=p.y;
+    startX=e.clientX; startY=e.clientY;
+    ball.style.transition='none'; ball.style.cursor='grabbing';
+    e.preventDefault();
+  });
+  ball.addEventListener('touchstart',function(e){
+    isDragging=true; moved=false;
+    var p=getPos(); ballX=p.x; ballY=p.y;
+    startX=e.touches[0].clientX; startY=e.touches[0].clientY;
+    ball.style.transition='none';
+  },{passive:true});
+
+  document.addEventListener('mousemove',function(e){
+    if(!isDragging) return;
+    var dx=e.clientX-startX, dy=e.clientY-startY;
+    if(Math.abs(dx)>4||Math.abs(dy)>4) moved=true;
+    var nx=ballX+dx, ny=ballY+dy;
+    var maxX=window.innerWidth-54, maxY=window.innerHeight-54;
+    nx=Math.max(4,Math.min(maxX,nx)); ny=Math.max(4,Math.min(maxY,ny));
+    ball.style.left=nx+'px'; ball.style.top=ny+'px';
+    ball.style.right='auto'; ball.style.bottom='auto';
+  });
+  document.addEventListener('touchmove',function(e){
+    if(!isDragging) return;
+    var dx=e.touches[0].clientX-startX, dy=e.touches[0].clientY-startY;
+    if(Math.abs(dx)>4||Math.abs(dy)>4) moved=true;
+    var nx=ballX+dx, ny=ballY+dy;
+    var maxX=window.innerWidth-54, maxY=window.innerHeight-54;
+    nx=Math.max(4,Math.min(maxX,nx)); ny=Math.max(4,Math.min(maxY,ny));
+    ball.style.left=nx+'px'; ball.style.top=ny+'px';
+    ball.style.right='auto'; ball.style.bottom='auto';
+  },{passive:true});
+
+  document.addEventListener('mouseup',function(){ if(isDragging){ isDragging=false; ball.style.cursor='grab'; ball.style.transition='box-shadow .2s'; } });
+  document.addEventListener('touchend',function(){ isDragging=false; clearTimeout(_lpTimer); });
+
+  // ── Long Press → Color/Delete Panel ──
+  var _lpTimer=null;
+  var _lpPanel=null;
+  function _showLpPanel(){
+    if(_lpPanel) return;
+    var saved=null; try{ var all=JSON.parse(localStorage.getItem('__fbCustom')||'{}'); saved=all; }catch(e){}
+    var curBg = ball.style.background||'linear-gradient(135deg,#3b82f6,#2563eb)';
+    _lpPanel=document.createElement('div');
+    _lpPanel.id='__fbLpPanel';
+    _lpPanel.style.cssText='position:fixed;bottom:150px;right:14px;z-index:99999;background:linear-gradient(175deg,#0f172a,#1a1040);border-radius:20px;padding:16px;width:220px;border:1.5px solid rgba(139,92,246,.35);box-shadow:0 8px 32px rgba(0,0,0,.5);animation:fbPanelIn .25s cubic-bezier(.34,1.3,.64,1)';
+    _lpPanel.innerHTML='<style>@keyframes fbPanelIn{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}</style>'
+      +'<div style="color:white;font-size:.82rem;font-weight:900;margin-bottom:12px;display:flex;align-items:center;gap:8px">⚙️ Float Ball<button onclick="document.getElementById(\'__fbLpPanel\').remove();_lpPanel=null" style="margin-left:auto;background:rgba(255,255,255,.1);border:none;border-radius:6px;padding:3px 8px;color:#94a3b8;font-size:.7rem;cursor:pointer">✕</button></div>'
+      +'<div style="font-size:.72rem;color:#94a3b8;font-weight:700;margin-bottom:6px">🎨 Ball রং</div>'
+      +'<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px">'
+      +['#3b82f6,#2563eb','#10b981,#059669','#8b5cf6,#7c3aed','#f59e0b,#d97706','#ef4444,#dc2626','#ec4899,#db2777','#0ea5e9,#0284c7','#1e293b,#0f172a'].map(function(g){
+          var c1=g.split(',')[0];
+          return '<div onclick="__fbSetColor(\''+g+'\')" style="width:100%;aspect-ratio:1;border-radius:10px;background:linear-gradient(135deg,'+g+');cursor:pointer;border:2px solid rgba(255,255,255,.15);transition:transform .15s" onmouseenter="this.style.transform=\'scale(1.15)\'" onmouseleave="this.style.transform=\'\'"></div>';
+      }).join('')
+      +'</div>'
+      +'<div style="font-size:.72rem;color:#94a3b8;font-weight:700;margin-bottom:6px">💡 উজ্জ্বলতা</div>'
+      +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">'
+      +'<span style="font-size:.7rem;color:#64748b">গাঢ়</span>'
+      +'<input type="range" id="__fbBrightSlider" min="60" max="140" value="100" style="flex:1;accent-color:#8b5cf6" oninput="__fbSetBright(this.value)">'
+      +'<span style="font-size:.7rem;color:#64748b">হালকা</span>'
+      +'</div>'
+      +'<button onclick="__fbDeleteBall()" style="width:100%;padding:10px;background:linear-gradient(135deg,#ef4444,#dc2626);border:none;border-radius:12px;color:white;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit">🗑️ Float Ball মুছুন</button>';
+    document.body.appendChild(_lpPanel);
+    // Restore brightness if saved
+    try{ var fb=JSON.parse(localStorage.getItem('__fbState')||'{}'); if(fb.bright) document.getElementById('__fbBrightSlider').value=fb.bright; }catch(e){}
+  }
+  window.__fbSetColor=function(grad){
+    ball.style.background='linear-gradient(135deg,'+grad+')';
+    var c1=grad.split(',')[0];
+    ball.style.boxShadow='0 4px 20px '+c1+'66';
+    try{ var s=JSON.parse(localStorage.getItem('__fbState')||'{}'); s.grad=grad; localStorage.setItem('__fbState',JSON.stringify(s)); }catch(e){}
+  };
+  window.__fbSetBright=function(val){
+    ball.style.filter='brightness('+val+'%)';
+    try{ var s=JSON.parse(localStorage.getItem('__fbState')||'{}'); s.bright=val; localStorage.setItem('__fbState',JSON.stringify(s)); }catch(e){}
+  };
+  window.__fbDeleteBall=function(){
+    if(_lpPanel){ _lpPanel.remove(); _lpPanel=null; }
+    ball.style.transition='all .3s';
+    ball.style.transform='scale(0)'; ball.style.opacity='0';
+    setTimeout(function(){ ball.style.display='none'; },300);
+    var s=JSON.parse(localStorage.getItem('settings')||'{}'); s.floatBallOff=true; localStorage.setItem('settings',JSON.stringify(s));
+    if(typeof showToast==='function') showToast('🗑️ Float Ball মুছে দেওয়া হয়েছে');
+  };
+  // Restore saved state
+  try{
+    var _fbSt=JSON.parse(localStorage.getItem('__fbState')||'{}');
+    if(_fbSt.grad) ball.style.background='linear-gradient(135deg,'+_fbSt.grad+')';
+    if(_fbSt.bright) ball.style.filter='brightness('+_fbSt.bright+'%)';
+  }catch(e){}
+  // Long press detection
+  ball.addEventListener('touchstart',function(e){
+    _lpTimer=setTimeout(function(){ if(!moved){ _showLpPanel(); } },600);
+  },{passive:true});
+  ball.addEventListener('mousedown',function(e){
+    _lpTimer=setTimeout(function(){ if(!moved){ _showLpPanel(); } },600);
+  });
+  ball.addEventListener('mouseup',function(){ clearTimeout(_lpTimer); });
+  document.addEventListener('click',function(e){
+    if(_lpPanel && !_lpPanel.contains(e.target) && e.target!==ball){ _lpPanel.remove(); _lpPanel=null; }
+  });
+
+  // ── Open/Close ──
+  var _fbOpen = false;
+  ball.addEventListener('click',function(){ if(!moved){ if(_fbOpen) window.__fbClose(); else window.__fbOpen(); } });
+  window.__fbOpen=function(){
+    _fbOpen=true;
+    overlay.style.display='block';
+    drawer.style.display='block';
+    requestAnimationFrame(function(){ requestAnimationFrame(function(){ drawer.style.transform='translateY(0)'; }); });
+    __fbLoadSaved();
+  };
+  window.__fbClose=function(){
+    _fbOpen=false;
+    drawer.style.transform='translateY(100%)';
+    setTimeout(function(){ overlay.style.display='none'; drawer.style.display='none'; },280);
+  };
+  overlay.addEventListener('click', window.__fbClose);
+
+  // ── Page config ──
+  var _pg = document.body.dataset ? document.body.dataset.page : '';
+  function _getPageCfg(){
+    try{ var all=JSON.parse(localStorage.getItem('pageConfig')||'{}'); return all[_pg]||{}; }catch(e){return{};}
+  }
+  function _savePageCfg(obj){
+    try{
+      var all=JSON.parse(localStorage.getItem('pageConfig')||'{}');
+      all[_pg]=Object.assign({},all[_pg]||{},obj);
+      localStorage.setItem('pageConfig',JSON.stringify(all));
+    }catch(e){}
+  }
+
+  window.__fbFpsApply=function(inp){
+    var key=inp.dataset.fpsKey, val=inp.value;
+    var cfg={};cfg[key]=isNaN(val)?val:Number(val);
+    _savePageCfg(cfg);
+    if(typeof applyPageConfig==='function'){ try{applyPageConfig();}catch(e){} }
+  };
+  window.__fbFpsSave=function(){
+    var inputs=drawer.querySelectorAll('[data-fps-key]');
+    var cfg={};
+    inputs.forEach(function(inp){
+      var val=inp.value;
+      cfg[inp.dataset.fpsKey]=isNaN(val)?val:Number(val);
+    });
+    _savePageCfg(cfg);
+    if(typeof applyPageConfig==='function'){ try{applyPageConfig();}catch(e){} }
+    if(typeof showToast==='function') showToast('✅ কাস্টমাইজেশন সেভ হয়েছে');
+    else alert('✅ সেভ হয়েছে');
+  };
+  window.__fbFpsReset=function(){
+    _savePageCfg({});
+    if(typeof applyPageConfig==='function'){ try{applyPageConfig();}catch(e){} }
+    if(typeof showToast==='function') showToast('↺ রিসেট হয়েছে');
+  };
+  window.__fbLoadSaved=function(){
+    var cfg=_getPageCfg();
+    drawer.querySelectorAll('[data-fps-key]').forEach(function(inp){
+      var k=inp.dataset.fpsKey;
+      if(cfg[k]!==undefined) inp.value=cfg[k];
+    });
+  };
+})();
+</script>
+<!-- ══ END FLOAT BALL ══ -->
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("/sw.js")
+      .then(r => console.log("SW registered:", r.scope))
+      .catch(e => console.log("SW error:", e));
+  });
+}
+</script>
+</body>
+</html>
