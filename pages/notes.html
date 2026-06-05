@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+  <title>নোটস — Daily Account</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/notes.css">
+</head>
+<body data-page="notes">
+<div class="notes-page">
+
+  <!-- Header -->
+  <div class="notes-header">
+    <div class="notes-header-top">
+      <h1 class="notes-title">📝 নোটস</h1>
+    </div>
+    <!-- Search -->
+    <div class="notes-search-wrap">
+      <input type="text" id="noteSearch" placeholder="🔍 নোট খুঁজুন..." class="notes-search-input">
+    </div>
+    <!-- Tag filters -->
+    <div class="notes-tag-filters">
+      <button class="tag-filter-btn active" data-tag="all">সব</button>
+      <button class="tag-filter-btn" data-tag="income">💰 আয়</button>
+      <button class="tag-filter-btn" data-tag="expense">💸 ব্যয়</button>
+      <button class="tag-filter-btn" data-tag="dena">📕 দেনা</button>
+      <button class="tag-filter-btn" data-tag="pabona">📗 পাওনা</button>
+      <button class="tag-filter-btn" data-tag="general">🗒️ সাধারণ</button>
+    </div>
+  </div>
+
+  <!-- Notes Grid -->
+  <div id="notesList" class="notes-grid"></div>
+
+  <!-- FAB -->
+  <button class="notes-fab" onclick="openNewNote()">✏️</button>
+
+</div>
+
+<script src="../js/db.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/notes.js"></script>
+
+
+
+<!-- ══ FLOAT BALL v4 ══ -->
+<div id="__fb" style="position:fixed;z-index:99998;bottom:86px;right:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);box-shadow:0 6px 22px #8b5cf688,0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:1.45rem;cursor:grab;user-select:none;touch-action:none;border:2px solid rgba(255,255,255,.3)">📝</div>
+<div id="__fbo" style="display:none;position:fixed;inset:0;z-index:99996;background:rgba(0,0,0,.52);backdrop-filter:blur(6px)"></div>
+<div id="__fbd" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;height:54vh;background:linear-gradient(175deg,#0f172a 0%,#1a1040 100%);border-radius:26px 26px 0 0;border-top:2.5px solid #8b5cf666;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1);overflow:hidden;font-family:inherit">
+  <div style="width:44px;height:5px;background:rgba(255,255,255,.18);border-radius:4px;margin:11px auto 0"></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 14px 8px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0">
+    <div style="width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0">📝</div>
+    <div style="flex:1;min-width:0"><div style="color:white;font-size:.88rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">নোট</div><div style="color:#8b5cf6;font-size:.62rem;font-weight:700">জাকির আল জিহাদ</div></div>
+    <button onclick="__fbClose()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:5px 10px;color:#94a3b8;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">✕ বন্ধ</button>
+  </div>
+  <div style="overflow-y:auto;height:calc(54vh - 72px);padding:10px 12px 24px;-webkit-overflow-scrolling:touch">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+      <a href="../index.html" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📝<span>তালিকা</span></a>
+      <a href="full-page-setup.html?pg=notes" style="background:linear-gradient(135deg,#667eea,#764ba2);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🖌️<span>Page Setup</span></a>
+      <a href="css-changer.html" style="background:linear-gradient(135deg,#ec4899,#db2777);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🎨<span>CSS</span></a>
+      <a href="extra-backup.html" style="background:linear-gradient(135deg,#0369a1,#0284c7);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📦<span>Backup</span></a>
+      <a href="accounting.html" style="background:linear-gradient(135deg,#1e3a5f,#0f2744);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📚<span>Accounting</span></a>
+      <a href="calculator.html" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🧮<span>Calculator</span></a>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:11px;border:1px solid rgba(255,255,255,.07)">
+      <div style="color:#8b5cf6;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">⚡ কাস্টমাইজ — notes</div>
+    <div class="__fbr"><span class="__fbl">হেডার রং ১</span><input type="color" class="__fbc" data-k="hBg1" value="#8b5cf6" oninput="__fbA(this)"></div>
+    <div class="__fbr"><span class="__fbl">হেডার রং ২</span><input type="color" class="__fbc" data-k="hBg2" value="#8b5cf6" oninput="__fbA(this)"></div>
+    <div class="__fbr"><span class="__fbl">ফন্ট সাইজ</span><div style="display:flex;align-items:center;gap:5px"><input type="range" class="__fbr2" min="11" max="22" value="17" data-k="fs" oninput="__fbA(this)"><span class="__fbv" id="__fbv_fs">17px</span></div></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button onclick="__fbSave()" style="flex:1;padding:9px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;border:none;border-radius:10px;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit">💾 সেভ</button>
+        <a href="full-page-setup.html?pg=notes" style="flex:1;padding:9px;background:rgba(255,255,255,.06);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:.78rem;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center">🖌️ Full Setup</a>
+        <button onclick="__fbReset()" style="padding:9px 12px;background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.18);border-radius:10px;font-size:.78rem;cursor:pointer;font-family:inherit">↺</button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.__fbr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.__fbr:last-child{border:none}.__fbl{color:#cbd5e1;font-size:.74rem;font-weight:700}
+.__fbc{width:32px;height:24px;border:none;border-radius:6px;cursor:pointer;padding:2px}
+.__fbr2{width:85px;accent-color:#8b5cf6;cursor:pointer}.__fbv{color:#8b5cf6;font-size:.68rem;font-weight:700;min-width:26px;text-align:right}
+</style>
+<script>
+(function(){
+  var ball=document.getElementById('__fb'),ov=document.getElementById('__fbo'),dr=document.getElementById('__fbd');
+  if(!ball)return;
+  try{var s=JSON.parse(localStorage.getItem('settings')||'{}');if(s.floatBallOff){ball.style.display='none';return;}}catch(e){}
+  var drag=false,sx=0,sy=0,bx=0,by=0,mv=false;
+  function gp(){var r=ball.getBoundingClientRect();return{x:r.left,y:r.top};}
+  function onS(ex,ey){drag=true;mv=false;var p=gp();bx=p.x;by=p.y;sx=ex;sy=ey;ball.style.transition='none';ball.style.cursor='grabbing';}
+  function onM(ex,ey){if(!drag)return;var dx=ex-sx,dy=ey-sy;if(Math.abs(dx)>4||Math.abs(dy)>4)mv=true;var nx=Math.max(4,Math.min(window.innerWidth-56,bx+dx)),ny=Math.max(4,Math.min(window.innerHeight-56,by+dy));ball.style.left=nx+'px';ball.style.top=ny+'px';ball.style.right='auto';ball.style.bottom='auto';}
+  function onE(){drag=false;ball.style.cursor='grab';ball.style.transition='box-shadow .2s';}
+  ball.addEventListener('mousedown',function(e){onS(e.clientX,e.clientY);e.preventDefault();});
+  ball.addEventListener('touchstart',function(e){onS(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mousemove',function(e){onM(e.clientX,e.clientY);});
+  document.addEventListener('touchmove',function(e){onM(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mouseup',onE);document.addEventListener('touchend',onE);
+  ball.addEventListener('click',function(){if(!mv)window.__fbOpen();});
+  window.__fbOpen=function(){
+    ov.style.display='block';dr.style.display='block';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){dr.style.transform='translateY(0)';});});
+    __fbLoad();
+  };
+  window.__fbClose=function(){
+    dr.style.transform='translateY(100%)';
+    setTimeout(function(){ov.style.display='none';dr.style.display='none';},300);
+  };
+  ov.addEventListener('click',window.__fbClose);
+  var _pg='notes';
+  function _gc(){try{return JSON.parse(localStorage.getItem('pageConfig')||'{}')[_pg]||{};}catch(e){return{};}}
+  function _sc(o){try{var all=JSON.parse(localStorage.getItem('pageConfig')||'{}');all[_pg]=Object.assign({},all[_pg]||{},o);localStorage.setItem('pageConfig',JSON.stringify(all));}catch(e){}}
+  window.__fbA=function(inp){
+    var k=inp.dataset.k,v=inp.value;
+    var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=isNaN(v)?v:v+'px';
+    var o={};o[k]=isNaN(v)?v:Number(v);_sc(o);
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+  };
+  window.__fbSave=function(){
+    var cfg={};dr.querySelectorAll('[data-k]').forEach(function(i){var v=i.value;cfg[i.dataset.k]=isNaN(v)?v:Number(v);});
+    _sc(cfg);
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+    if(typeof showToast==='function')showToast('✅ কাস্টমাইজেশন সেভ হয়েছে');
+  };
+  window.__fbReset=function(){
+    _sc({});
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+    if(typeof showToast==='function')showToast('↺ রিসেট হয়েছে');
+  };
+  window.__fbLoad=function(){
+    var cfg=_gc();dr.querySelectorAll('[data-k]').forEach(function(i){
+      var k=i.dataset.k;if(cfg[k]!==undefined){i.value=cfg[k];var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=i.value+(i.type==='range'?'px':'');}
+    });
+  };
+})();
+</script>
+<!-- ══ END FLOAT BALL ══ -->
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

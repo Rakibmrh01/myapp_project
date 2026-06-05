@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>Extra Backup & বিশ্লেষণ — Daily Account</title>
+<link rel="stylesheet" href="../css/base.css">
+<link rel="stylesheet" href="../css/extra-backup-analysis.css">
+</head>
+<body>
+
+<div class="hdr">
+  <h1>💾 Extra Backup & বিশ্লেষণ</h1>
+  <span class="hdr-badge">@jakir_al_jihad</span>
+</div>
+
+<div class="wrap">
+
+<!-- ① অনলাইন ব্যাকআপ -->
+<div class="card">
+  <div class="card-hdr" style="background:linear-gradient(135deg,#1e3a5f,#0f2744)">
+    🌐 অনলাইন ব্যাকআপ
+    <span class="hdr-badge">সকল পদ্ধতি</span>
+  </div>
+  <div class="card-body">
+    <div class="info-box" style="margin-bottom:14px">
+      💡 Hopweb Mobile App এ file download কাজ করে না! নিচের অনলাইন পদ্ধতি ব্যবহার করুন।
+    </div>
+    <button class="ob-btn btn-tg" onclick="openModal('tg')">
+      <div class="ob-icon">✈️</div>
+      <div class="ob-txt">
+        <div class="ob-title">Telegram Bot ব্যাকআপ</div>
+        <div class="ob-sub">JSON · CSV · Excel(.xlsx) · Word(.docx) · AI · ZIP — সব কাজ করে</div>
+      </div>
+      <div class="ob-arr">→</div>
+    </button>
+    <button class="ob-btn btn-gd" onclick="openModal('gd')">
+      <div class="ob-icon">🟢</div>
+      <div class="ob-txt">
+        <div class="ob-title">Google Drive ব্যাকআপ</div>
+        <div class="ob-sub">Apps Script দিয়ে নিজের Drive এ save। একবার setup — সারাজীবন।</div>
+      </div>
+      <div class="ob-arr">→</div>
+    </button>
+    <button class="ob-btn btn-jb" onclick="openModal('jb')">
+      <div class="ob-icon">🗄️</div>
+      <div class="ob-txt">
+        <div class="ob-title">JSONBin.io Cloud</div>
+        <div class="ob-sub">Free cloud storage এ save ও restore। API Key লাগবে।</div>
+      </div>
+      <div class="ob-arr">→</div>
+    </button>
+    <button class="ob-btn btn-share" onclick="shareText()">
+      <div class="ob-icon">📤</div>
+      <div class="ob-txt">
+        <div class="ob-title">Share / Copy করুন</div>
+        <div class="ob-sub">WhatsApp, Notes, Email — যেকোনো জায়গায় text হিসেবে share।</div>
+      </div>
+      <div class="ob-arr">→</div>
+    </button>
+  </div>
+</div>
+
+<!-- ② লোকাল ব্যাকআপ -->
+<div class="card">
+  <div class="card-hdr" style="background:linear-gradient(135deg,#374151,#1f2937)">
+    💾 লোকাল ব্যাকআপ (কপি/শেয়ার)
+  </div>
+  <div class="card-body">
+    <div class="info-box" style="margin-bottom:14px;border-color:#f59e0b;color:#fcd34d;background:rgba(245,158,11,.1)">
+      ⚠️ Hopweb এ ডাউনলোড কাজ করে না। Share বা Copy বাটন ব্যবহার করুন।
+    </div>
+    <div class="bk-grid">
+      <div class="bk-box bn">
+        <span class="bi">📄</span>
+        <div class="bt">মিডিয়া ছাড়া</div>
+        <div class="bs">শুধু লেনদেন তথ্য। ছোট ফাইল।</div>
+        <div class="bb-row">
+          <button class="bb dn" onclick="doBackup(false,'sh')">📤 শেয়ার</button>
+          <button class="bb cn" onclick="doBackup(false,'cp')">📋 কপি</button>
+        </div>
+      </div>
+      <div class="bk-box bm">
+        <span class="bi">📸</span>
+        <div class="bt">মিডিয়া সহ</div>
+        <div class="bs">ছবি, হাতের লেখা, ভয়েস সহ।</div>
+        <div class="bb-row">
+          <button class="bb dm" onclick="doBackup(true,'sh')">📤 শেয়ার</button>
+          <button class="bb cm" onclick="doBackup(true,'cp')">📋 কপি</button>
+        </div>
+      </div>
+    </div>
+    <textarea class="ta" id="jsonTA" readonly placeholder="📋 কপি বাটনে চাপলে এখানে JSON আসবে..."></textarea>
+    <div class="st" id="bkSt"></div>
+  </div>
+</div>
+
+<!-- ③ CSV / Excel / Word -->
+<div class="card">
+  <div class="card-hdr" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+    📊 CSV · Excel · Word Export
+  </div>
+  <div class="card-body">
+    <div class="info-box" style="margin-bottom:12px;border-color:#10b981;color:#34d399;background:rgba(16,185,129,.08)">
+      ✅ Excel/Word সেভ করতে <strong>Telegram বাটন</strong> ব্যবহার করুন (Hopweb এ সবচেয়ে ভালো কাজ করে)
+    </div>
+    <div class="csv-row">
+      <button class="cv cv-dl" onclick="doCSVAllSheets()">📊 CSV কপি/শেয়ার</button>
+      <button class="cv" style="background:linear-gradient(135deg,#10b981,#059669);color:white;border:none" onclick="tgSendExcelDirect()">📗 Excel → Telegram</button>
+    </div>
+    <div class="csv-row">
+      <button class="cv" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;border:none" onclick="tgSendWordDirect()">📝 Word → Telegram</button>
+      <button class="cv cv-rst" onclick="resetFromCSV()" style="margin-bottom:0">🔄 CSV আমদানি</button>
+    </div>
+    <textarea class="ta" id="csvTA" readonly placeholder="CSV কপিতে এখানে আসবে..."></textarea>
+    <div class="st" id="csvSt"></div>
+  </div>
+</div>
+
+<!-- ④ রিস্টোর -->
+<div class="card">
+  <div class="card-hdr" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">
+    ♻️ রিস্টোর (ডাটা ফিরিয়ে আনুন)
+  </div>
+  <div class="card-body">
+    <button class="rst-btn" onclick="document.getElementById('rFile').click()">
+      📂 JSON ফাইল থেকে রিস্টোর
+    </button>
+    <input type="file" id="rFile" accept=".json" onchange="restoreJSON(event)">
+    <div class="divider">অথবা paste করুন</div>
+    <textarea class="paste-area" id="pasteTA" placeholder="📋 JSON text এখানে paste করুন..."></textarea>
+    <button class="paste-go" onclick="restoreFromPaste()">📥 Paste থেকে রিস্টোর</button>
+    <div class="st" id="rstSt"></div>
+  </div>
+</div>
+
+<!-- ⑤ AI বিশ্লেষণ -->
+<div class="card">
+  <div class="card-hdr" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+    🤖 AI আর্থিক বিশ্লেষণ
+    <span class="hdr-badge">দেনাপাওনা সহ</span>
+  </div>
+  <div class="card-body">
+    <button class="ai-btn" onclick="generateAI()">✨ বিস্তারিত বিশ্লেষণ তৈরি করুন</button>
+    <div class="ai-out" id="aiOut"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+      <button style="padding:11px 8px;border:none;border-radius:12px;font-size:.78rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#059669,#047857);color:white;font-family:inherit" onclick="doAITxt()">📤 .txt শেয়ার/কপি</button>
+      <button style="padding:11px 8px;border:none;border-radius:12px;font-size:.78rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;font-family:inherit" onclick="doPDFReport()">📄 HTML রিপোর্ট</button>
+    </div>
+    <div style="margin-top:8px">
+      <button style="width:100%;padding:11px;border:none;border-radius:12px;font-size:.78rem;font-weight:800;cursor:pointer;background:linear-gradient(135deg,#3b82f6,#2563eb);color:white;font-family:inherit" onclick="tgSendWordDirect()">📝 Word Report → Telegram</button>
+    </div>
+    <div class="st" id="aiSt"></div>
+  </div>
+</div>
+
+<!-- ════════ TELEGRAM MODAL ════════ -->
+<div class="modal" id="modalTg">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <h3>✈️ Telegram Bot ব্যাকআপ</h3>
+      <button class="sheet-close" onclick="closeModal('modalTg')">বন্ধ ✕</button>
+    </div>
+    <div class="sheet-body">
+
+      <div class="info-box">
+        📋 <strong>একবার setup করুন, সারাজীবন ব্যবহার করুন।</strong>
+      </div>
+
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-txt">Telegram এ <strong>@BotFather</strong> → <code>/newbot</code> → Token পাবেন</div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-txt">Bot কে একটি message পাঠান → Browser এ <code>api.telegram.org/bot<b>TOKEN</b>/getUpdates</code> → Chat ID পাবেন</div>
+      </div>
+
+      <input class="s-input" id="tg_token" type="password" placeholder="🔑 Bot Token (1234567890:ABCdef...)">
+      <input class="s-input" id="tg_chatid" placeholder="💬 Chat ID (987654321)">
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button class="s-btn s-save" onclick="tgSaveCredentials()">💾 সংরক্ষণ</button>
+        <button class="s-btn s-load" onclick="tgTest()">🧪 Test</button>
+      </div>
+
+      <!-- JSON -->
+      <div class="divider">📁 JSON ব্যাকআপ</div>
+      <button class="s-btn s-save" onclick="tgSend(false)">📄 JSON — মিডিয়া ছাড়া</button>
+      <button class="s-btn" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white" onclick="tgSend(true)">📸 JSON + মিডিয়া (আলাদা ফাইল)</button>
+      <button class="s-btn" style="background:linear-gradient(135deg,#dc2626,#b91c1c);color:white" onclick="tgSendAllInOne()">📦 সব এক JSON ফাইলে (media সহ)</button>
+
+      <!-- CSV -->
+      <div class="divider">📊 CSV</div>
+      <button class="s-btn" style="background:linear-gradient(135deg,#16a34a,#15803d);color:white" onclick="tgSendCSV()">📊 CSV — আয়+ব্যয়+দেনাপাওনা+সঞ্চয় (৪টি ফাইল)</button>
+
+      <!-- Excel & Word -->
+      <div class="divider">📗 Excel & 📝 Word</div>
+      <button class="s-btn" style="background:linear-gradient(135deg,#059669,#047857);color:white;font-weight:900" onclick="tgSendExcel()">📗 Excel (.xlsx) — সব শিট, সঠিক ফরম্যাট</button>
+      <button class="s-btn" style="background:linear-gradient(135deg,#1d4ed8,#1e40af);color:white;font-weight:900" onclick="tgSendWord()">📝 Word (.docx) — সুন্দর ডকুমেন্ট + AI বিশ্লেষণ</button>
+
+      <!-- AI / HTML -->
+      <div class="divider">🤖 AI & রিপোর্ট</div>
+      <button class="s-btn" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white" onclick="tgSendAI()">🤖 AI বিশ্লেষণ (.txt) — পরামর্শ সহ</button>
+      <button class="s-btn" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white" onclick="tgSendPDF()">📄 HTML রিপোর্ট (ব্রাউজারে → PDF)</button>
+
+      <!-- MEGA ZIP -->
+      <div class="divider">🗜️ সব একসাথে</div>
+      <button class="s-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:white;font-weight:900;font-size:.88rem;box-shadow:0 4px 16px rgba(245,158,11,.3)" onclick="tgSendMegaZip()">🗜️ MEGA ZIP — JSON+CSV+Excel+Word+AI+HTML+Media সব!</button>
+
+      <button class="s-btn s-cancel" onclick="closeModal('modalTg')">✕ বাতিল</button>
+      <div class="s-result" id="tg_result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ GOOGLE DRIVE MODAL ════════ -->
+<div class="modal" id="modalGd">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <h3>🟢 Google Drive ব্যাকআপ</h3>
+      <button class="sheet-close" onclick="closeModal('modalGd')">বন্ধ ✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-txt"><a href="https://script.google.com" target="_blank">script.google.com</a> → New Project → নিচের code paste করুন</div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-txt">Deploy → New Deployment → Web App → Anyone → URL কপি করুন</div>
+      </div>
+      <div class="script-block">
+        <button class="copy-script" onclick="copyGASCode()">📋 Copy</button>
+        <pre id="gasCode">function doPost(e){
+  var data=e.postData.contents;
+  var file=DriveApp.createFile(
+    'DA-Backup-'+new Date().toISOString().slice(0,10)+'.json',
+    data,'application/json'
+  );
+  return ContentService.createTextOutput(
+    JSON.stringify({ok:true,file:file.getName()})
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+function doGet(e){
+  var files=DriveApp.getFilesByType('application/json');
+  var list=[];
+  while(files.hasNext()){
+    var f=files.next();
+    if(f.getName().indexOf('DA-Backup')===0)
+      list.push({id:f.getId(),name:f.getName()});
+  }
+  list.sort(function(a,b){return b.name.localeCompare(a.name);});
+  return ContentService.createTextOutput(
+    JSON.stringify({files:list.slice(0,10)})
+  ).setMimeType(ContentService.MimeType.JSON);
+}
+function doOptions(e){
+  return ContentService.createTextOutput('')
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre>
+      </div>
+      <input class="s-input" id="gd_url" placeholder="Apps Script Web App URL...">
+      <button class="s-btn s-save" onclick="gdSaveUrl()">💾 URL সংরক্ষণ</button>
+      <div class="divider">ব্যাকআপ</div>
+      <button class="s-btn s-save" onclick="gdSend(false)">📤 Drive এ Upload (মিডিয়া ছাড়া)</button>
+      <button class="s-btn" style="background:linear-gradient(135deg,#7c3aed,#6d28d9);color:white" onclick="gdSend(true)">📸 Drive এ Upload (মিডিয়া সহ)</button>
+      <button class="s-btn s-load" onclick="gdList()">📋 আগের ব্যাকআপ দেখুন</button>
+      <div id="gd_file_list"></div>
+      <button class="s-btn s-cancel" onclick="closeModal('modalGd')">✕ বাতিল</button>
+      <div class="s-result" id="gd_result"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ JSONBIN MODAL ════════ -->
+<div class="modal" id="modalJb">
+  <div class="sheet">
+    <div class="sheet-hdr">
+      <h3>🗄️ JSONBin.io Cloud</h3>
+      <button class="sheet-close" onclick="closeModal('modalJb')">বন্ধ ✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="step">
+        <div class="step-num">১</div>
+        <div class="step-txt"><a href="https://jsonbin.io" target="_blank">jsonbin.io</a> → Free account → API Key নিন</div>
+      </div>
+      <div class="step">
+        <div class="step-num">২</div>
+        <div class="step-txt">প্রথমবার Save করলে Bin ID তৈরি হবে — সেটি সংরক্ষণ করুন।</div>
+      </div>
+      <input class="s-input" id="jb_key" type="password" placeholder="🔑 X-Master-Key (API Key)">
+      <input class="s-input" id="jb_binId" placeholder="📦 Bin ID (প্রথমবার খালি রাখুন)">
+      <button class="s-btn s-save" onclick="jbSave()">☁️ Cloud এ Save করুন</button>
+      <button class="s-btn s-load" onclick="jbLoad()">📥 Cloud থেকে Restore করুন</button>
+      <button class="s-btn s-cancel" onclick="closeModal('modalJb')">✕ বাতিল</button>
+      <div class="s-result" id="jb_result"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════ SCRIPTS ════ -->
+<script src="../js/db.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/AnalysisForexbackup.js"></script>
+
+<script>
+/* ════ PAGE INIT ════ */
+document.addEventListener('DOMContentLoaded', function () {
+  var tgT=localStorage.getItem('da_tg_token'),tgC=localStorage.getItem('da_tg_chatid');
+  var gdU=localStorage.getItem('da_gd_url');
+  var jbK=localStorage.getItem('da_jb_key'),jbB=localStorage.getItem('da_jb_binId');
+  if(tgT&&document.getElementById('tg_token')) document.getElementById('tg_token').value=tgT;
+  if(tgC&&document.getElementById('tg_chatid')) document.getElementById('tg_chatid').value=tgC;
+  if(gdU&&document.getElementById('gd_url'))    document.getElementById('gd_url').value=gdU;
+  if(jbK&&document.getElementById('jb_key'))    document.getElementById('jb_key').value=jbK;
+  if(jbB&&document.getElementById('jb_binId'))  document.getElementById('jb_binId').value=jbB;
+
+  document.querySelectorAll('.modal').forEach(function(m){
+    m.addEventListener('click',function(e){if(e.target===m)m.classList.remove('open');});
+  });
+  try{
+    var s=JSON.parse(localStorage.getItem('uploadedFonts')||'{}');
+    var ids={bangla:'btnBn',english:'btnEn',number:'btnNum'};
+    Object.keys(s).forEach(function(t){
+      var b=document.getElementById(ids[t]);
+      if(b&&s[t]&&s[t].name){b.textContent='✅ '+s[t].name.slice(0,13);b.className='fu loaded';}
+    });
+  }catch(e){}
+});
+
+/* ════ MODAL ════ */
+function openModal(name){
+  var m=document.getElementById('modal'+name.charAt(0).toUpperCase()+name.slice(1));
+  if(m) m.classList.add('open');
+}
+function closeModal(id){
+  var m=document.getElementById(id);if(m)m.classList.remove('open');
+}
+
+/* ════ STATUS ════ */
+function _daPopup(msg,type){
+  var icon=type==='ok'?'✅':type==='info'?'⏳':'❌';
+  var bg=type==='ok'
+    ?'linear-gradient(135deg,#059669,#047857)'
+    :type==='info'
+    ?'linear-gradient(135deg,#0ea5e9,#0284c7)'
+    :'linear-gradient(135deg,#dc2626,#991b1b)';
+  var ex=document.getElementById('__daToast');
+  if(ex)ex.remove();
+  var t=document.createElement('div');
+  t.id='__daToast';
+  t.style.cssText='position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-100px);z-index:9999999;max-width:88vw;min-width:240px;background:'+bg+';color:#fff;padding:14px 20px;border-radius:18px;box-shadow:0 8px 40px rgba(0,0,0,0.5);display:flex;align-items:flex-start;gap:12px;font-size:.93rem;font-weight:800;font-family:inherit;transition:transform .38s cubic-bezier(.34,1.56,.64,1),opacity .35s ease;opacity:0;pointer-events:none;white-space:pre-wrap;word-break:break-word;line-height:1.5;border:1px solid rgba(255,255,255,0.15)';
+  var ic=document.createElement('span');ic.style.cssText='font-size:1.5rem;flex-shrink:0;margin-top:1px';ic.textContent=icon;
+  var tx=document.createElement('span');tx.textContent=msg;
+  t.appendChild(ic);t.appendChild(tx);document.body.appendChild(t);
+  requestAnimationFrame(function(){requestAnimationFrame(function(){t.style.transform='translateX(-50%) translateY(0)';t.style.opacity='1';});});
+  var dur=type==='info'?5000:3800;
+  setTimeout(function(){t.style.transform='translateX(-50%) translateY(-100px)';t.style.opacity='0';setTimeout(function(){if(t.parentNode)t.remove();},400);},dur);
+}
+function showSt(id,msg,type){
+  var el=document.getElementById(id);if(el){el.textContent='';el.className='st';}
+  _daPopup(msg,type);
+}
+function showR(id,msg,type){
+  var el=document.getElementById(id);if(el){el.textContent='';el.className='s-result';}
+  _daPopup(msg,type);
+}
+
+/* ════ TG CREDENTIALS ════ */
+function tgSaveCredentials(){
+  var t=document.getElementById('tg_token').value.trim();
+  var c=document.getElementById('tg_chatid').value.trim();
+  if(!t||!c){showR('tg_result','❌ Token ও Chat ID দুটোই লাগবে','err');return;}
+  localStorage.setItem('da_tg_token',t);localStorage.setItem('da_tg_chatid',c);
+  showR('tg_result','✅ সংরক্ষিত হয়েছে! এখন যেকোনো backup বাটনে চাপুন।','ok');
+}
+function tgTest(){
+  var token=_tgToken(),chatId=_tgChatId();
+  if(!token||!chatId){showR('tg_result','❌ Token ও Chat ID দিন','err');return;}
+  showR('tg_result','⏳ Test message পাঠানো হচ্ছে...','info');
+  fetch('https://api.telegram.org/bot'+token+'/sendMessage',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({chat_id:chatId,text:'✅ Daily Account Backup Test — Connection OK! 🎉\nApp: Daily Account v6.0 | Developer: জাকির আল জিহাদ'})
+  }).then(function(r){return r.json();})
+  .then(function(d){
+    if(d.ok)showR('tg_result','✅ Test সফল! Telegram এ message পেয়েছেন? 🎉','ok');
+    else showR('tg_result','❌ Error: '+d.description,'err');
+  }).catch(function(e){showR('tg_result','❌ Network error: '+e.message,'err');});
+}
+
+/* ════ DIRECT shortcuts (without opening modal) ════ */
+function tgSendExcelDirect(){
+  var token=_tgToken(),chatId=_tgChatId();
+  if(!token||!chatId){
+    openModal('tg');
+    setTimeout(function(){showR('tg_result','👆 Token ও Chat ID দিয়ে সংরক্ষণ করুন, তারপর Excel বাটনে চাপুন।','info');},300);
+    return;
+  }
+  tgSendExcel();
+}
+function tgSendWordDirect(){
+  var token=_tgToken(),chatId=_tgChatId();
+  if(!token||!chatId){
+    openModal('tg');
+    setTimeout(function(){showR('tg_result','👆 Token ও Chat ID দিয়ে সংরক্ষণ করুন, তারপর Word বাটনে চাপুন।','info');},300);
+    return;
+  }
+  tgSendWord();
+}
+
+/* ════ GOOGLE DRIVE ════ */
+function gdSaveUrl(){
+  var url=document.getElementById('gd_url').value.trim();
+  if(!url||url.indexOf('script.google.com')===-1){showR('gd_result','❌ সঠিক Apps Script URL দিন','err');return;}
+  localStorage.setItem('da_gd_url',url);
+  showR('gd_result','✅ URL সংরক্ষিত হয়েছে!','ok');
+}
+function gdSend(withMedia){
+  var url=document.getElementById('gd_url').value.trim()||localStorage.getItem('da_gd_url')||'';
+  if(!url){showR('gd_result','❌ আগে Apps Script URL সংরক্ষণ করুন','err');return;}
+  var json=buildJSON(withMedia);
+  showR('gd_result','⏳ Google Drive এ upload হচ্ছে...','info');
+  fetch(url,{method:'POST',body:json,headers:{'Content-Type':'text/plain'}})
+  .then(function(r){return r.text();})
+  .then(function(t){
+    try{
+      var d=JSON.parse(t);
+      if(d.ok||d.file)showR('gd_result','✅ Drive এ save সফল! 📁 '+(d.file||''),'ok');
+      else showR('gd_result','⚠️ Response: '+t,'info');
+    }catch(e2){showR('gd_result','⚠️ সম্ভবত সফল। Response: '+t.slice(0,80),'info');}
+  }).catch(function(e){showR('gd_result','❌ '+e.message+'\n💡 Script এ doOptions() আছে কি?','err');});
+}
+function gdList(){
+  var url=localStorage.getItem('da_gd_url')||document.getElementById('gd_url').value.trim()||'';
+  if(!url){showR('gd_result','❌ URL নেই','err');return;}
+  showR('gd_result','⏳ তালিকা আনা হচ্ছে...','info');
+  fetch(url).then(function(r){return r.json();})
+  .then(function(d){
+    var files=d.files||[];
+    if(!files.length){showR('gd_result','❌ কোনো backup নেই','err');return;}
+    var html='';
+    files.slice(0,8).forEach(function(f){
+      html+='<div style="display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.07)">'
+        +'<div style="flex:1;font-size:.8rem;color:#cbd5e1;font-weight:600">📄 '+f.name+'</div>'
+        +'<button onclick="gdRestore(\''+f.id+'\')" style="padding:6px 12px;background:#10b981;color:white;border:none;border-radius:8px;font-size:.74rem;font-weight:800;cursor:pointer;font-family:inherit">Restore</button>'
+        +'</div>';
+    });
+    document.getElementById('gd_file_list').innerHTML=html;
+    showR('gd_result','✅ '+files.length+' টি backup পাওয়া গেছে','ok');
+  }).catch(function(e){showR('gd_result','❌ '+e.message,'err');});
+}
+function gdRestore(fileId){
+  var url=localStorage.getItem('da_gd_url')||'';
+  if(!url){showR('gd_result','❌ URL নেই','err');return;}
+  showR('gd_result','⏳ restore হচ্ছে...','info');
+  fetch(url+'?fileId='+fileId).then(function(r){return r.json();})
+  .then(function(d){
+    if(d.income||d.expense)doRestore(d);
+    else showR('gd_result','⚠️ ফাইলটি Download করে Paste করুন','info');
+  }).catch(function(e){showR('gd_result','❌ '+e.message,'err');});
+}
+
+/* ════ JSONBIN ════ */
+function jbSave(){
+  var key=document.getElementById('jb_key').value.trim();
+  if(!key){showR('jb_result','❌ API Key দিন','err');return;}
+  var json=buildJSON(false);
+  var binId=localStorage.getItem('da_jb_binId')||'';
+  var url=binId?'https://api.jsonbin.io/v3/b/'+binId:'https://api.jsonbin.io/v3/b';
+  var method=binId?'PUT':'POST';
+  showR('jb_result','⏳ আপলোড হচ্ছে...','info');
+  fetch(url,{method:method,headers:{'Content-Type':'application/json','X-Master-Key':key,'X-Bin-Name':'DA-'+_d()},body:json})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    var id=d.metadata?d.metadata.id:'';
+    if(id){
+      localStorage.setItem('da_jb_binId',id);localStorage.setItem('da_jb_key',key);
+      document.getElementById('jb_binId').value=id;
+      showR('jb_result','✅ Save সফল!\nBin ID: '+id+'\n(সংরক্ষণ করুন!)','ok');
+    }else{showR('jb_result','❌ '+(d.message||JSON.stringify(d)),'err');}
+  }).catch(function(e){showR('jb_result','❌ '+e.message,'err');});
+}
+function jbLoad(){
+  var key=document.getElementById('jb_key').value.trim()||localStorage.getItem('da_jb_key')||'';
+  var binId=document.getElementById('jb_binId').value.trim()||localStorage.getItem('da_jb_binId')||'';
+  if(!key||!binId){showR('jb_result','❌ API Key ও Bin ID দিন','err');return;}
+  showR('jb_result','⏳ লোড হচ্ছে...','info');
+  fetch('https://api.jsonbin.io/v3/b/'+binId+'/latest',{headers:{'X-Master-Key':key}})
+  .then(function(r){return r.json();})
+  .then(function(d){
+    if(d.record){doRestore(d.record);showR('jb_result','✅ Restore সফল! 🎉','ok');}
+    else showR('jb_result','❌ ডাটা পাওয়া যায়নি','err');
+  }).catch(function(e){showR('jb_result','❌ '+e.message,'err');});
+}
+
+/* ════ LOCAL CSV COPY ════ */
+function doCSV(act){
+  var csv='\uFEFFধরন,উৎস/ক্যাটাগরি,পরিমাণ,তারিখ,সময়,নোট\n';
+  var d=_getData();
+  d.income.forEach(function(i){csv+='আয়,"'+(i.source||'')+'",'+Math.round(i.amount||0)+',"'+(i.date||'')+'","'+(i.time||'')+'","'+(i.note||'')+'"\n';});
+  d.expense.forEach(function(i){csv+='ব্যয়,"'+(i.category||i.source||'')+'",'+Math.round(i.amount||0)+',"'+(i.date||'')+'","'+(i.time||'')+'","'+(i.note||'')+'"\n';});
+  if(act==='cp'){
+    var ta=document.getElementById('csvTA');
+    if(ta){ta.value=csv;ta.className='ta show';ta.select();}
+    try{navigator.clipboard.writeText(csv).then(function(){showSt('csvSt','✅ CSV কপি হয়েছে!','ok');});}
+    catch(e){try{document.execCommand('copy');showSt('csvSt','✅ কপি হয়েছে','ok');}catch(e2){}}
+  }
+}
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

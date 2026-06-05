@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>সেটিংস — MRH Account</title>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/settings.css">
+  <style>
+    .btn-emergency { background:linear-gradient(135deg,#ff6b6b,#ee5a6f);color:lime;border:2px solid #ff6b6b; }
+    .data-divider  { border-top:1px dashed #ddd;margin:16px 0;padding-top:10px; }
+    .data-divider-text { text-align:center;color:#999;font-size:.88rem;margin:8px 0;font-weight:600; }
+
+    /* Premium section */
+    .prem-cta-card  { background:linear-gradient(135deg,rgba(168,85,247,.12),rgba(124,58,237,.08));border:2px solid rgba(168,85,247,.35);border-radius:18px;padding:18px;margin-top:12px; }
+    .prem-badge-row { display:flex;align-items:center;gap:12px;margin-bottom:14px; }
+    .prem-crown     { font-size:2rem; }
+    .prem-title     { font-size:1rem;font-weight:900;color:#c084fc;margin:0 0 2px; }
+    .prem-subtitle  { font-size:.78rem;color:#9ca3af;margin:0; }
+    .prem-features-list { display:flex;flex-direction:column;gap:6px;margin-bottom:14px; }
+    .prem-feat-item { display:flex;align-items:center;gap:10px;padding:11px 13px;background:rgba(255,255,255,.05);border-radius:12px;cursor:pointer;border:1px solid rgba(255,255,255,.08);transition:all .15s; }
+    .prem-feat-item:active { background:rgba(168,85,247,.2); }
+    .pfi-icon  { font-size:1.1rem;flex-shrink:0; }
+    .pfi-text  { flex:1;font-size:.88rem;font-weight:700; }
+    .pfi-badge { font-size:.9rem;flex-shrink:0; }
+    .pfi-badge.unlocked { color:#34d399; }
+    .prem-cta-btn { width:100%;padding:13px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:white;border:none;border-radius:13px;font-size:.9rem;font-weight:900;cursor:pointer;margin-bottom:8px; }
+    .prem-key-form { display:none;padding-top:10px; }
+    .prem-key-form.visible { display:block; }
+    .prem-key-row  { display:flex;gap:8px;margin-bottom:8px; }
+    .prem-key-input { flex:1;padding:11px 13px;border:1.5px solid rgba(168,85,247,.4);border-radius:12px;background:rgba(255,255,255,.07);color:white;font-size:.9rem;font-weight:700;outline:none; }
+    .prem-key-submit { padding:11px 16px;background:linear-gradient(135deg,#a855f7,#7c3aed);color:white;border:none;border-radius:12px;font-size:.88rem;font-weight:900;cursor:pointer; }
+    .prem-contact-row { display:flex;gap:8px; }
+    .prem-contact-btn { flex:1;padding:10px;border-radius:11px;font-size:.82rem;font-weight:800;text-decoration:none;text-align:center;display:flex;align-items:center;justify-content:center;gap:5px; }
+    .prem-call { background:rgba(16,185,129,.2);color:#34d399;border:1px solid rgba(16,185,129,.3); }
+    .prem-wa   { background:rgba(37,211,102,.2);color:#25d366;border:1px solid rgba(37,211,102,.3); }
+    .prem-active-card { display:flex;align-items:center;gap:12px;background:rgba(168,85,247,.12);border-radius:14px;padding:14px;border:1.5px solid rgba(168,85,247,.35);margin-top:10px; }
+
+    /* Font & Lock sections */
+    .font-control-row { display:flex;align-items:center;gap:8px;margin-bottom:7px; }
+    .font-control-row label { min-width:90px;font-size:.82rem;font-weight:700;color:#6b7280; }
+    .font-input { flex:1;padding:10px 13px;border:1.5px solid #e5e7eb;border-radius:11px;font-size:.88rem;font-weight:600;outline:none; }
+    .font-input:focus { border-color:#a855f7; }
+  
+/* ══ Settings Visibility Fix ══ */
+.settings-section, .setting-item, .setting-label, .setting-value { color: #1f2937 !important; }
+body.dark-mode .settings-section, body.dark-mode .setting-item, body.dark-mode .setting-label { color: #f1f5f9 !important; }
+.setting-input, .setting-select, .setting-textarea {
+    color: #1f2937 !important;
+    background: rgba(255,255,255,.95) !important;
+    border: 1.5px solid rgba(102,126,234,.35) !important;
+    border-radius: 10px;
+}
+body.dark-mode .setting-input, body.dark-mode .setting-select {
+    color: white !important;
+    background: rgba(255,255,255,.08) !important;
+    border-color: rgba(168,85,247,.3) !important;
+}
+/* Font & Lock input visibility */
+input[type="text"], input[type="number"], input[type="password"], select, textarea {
+    color: #1f2937;
+}
+body.dark-mode input[type="text"], body.dark-mode input[type="number"], 
+body.dark-mode input[type="password"], body.dark-mode select {
+    color: white !important;
+    background: black !important;
+}
+/* Section cards */
+.settings-card, .setting-group {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+}
+body.dark-mode .settings-card, body.dark-mode .setting-group {
+    background: rgba(255,255,255,.05) !important;
+}
+/* Toggle labels */
+.toggle-label, .setting-desc { color: #6b7280 !important; }
+body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !important; }
+/* Prem key input */
+.prem-key-input { color: white !important; background: rgba(255,255,255,.08) !important; }
+</style>
+    <meta name="author" content="জাকির আল জিহাদ">
+</head>
+<body data-page="settings">
+
+<header class="page-header-colorful settings-header">
+  <h1>⚙️ সেটিংস</h1>
+</header>
+
+<!-- App Settings -->
+<div class="settings-section">
+  <h3>⚙️ অ্যাপ সেটিংস</h3>
+
+  <div class="setting-item">
+    <div class="setting-info"><h4>🌙 ডার্ক মোড</h4><p>রাতের জন্য আরামদায়ক</p></div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="darkModeToggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="setting-item">
+    <div class="setting-info"><h4>🔵 Float Ball</h4><p>প্রতি পেজে ভাসমান মেনু বাটন</p></div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="floatBallToggle" onchange="__toggleFloatBall(this.checked)">
+      <span class="slider"></span>
+    </label>
+  </div>
+  <script>
+  (function(){
+    var s=JSON.parse(localStorage.getItem('settings')||'{}');
+    var cb=document.getElementById('floatBallToggle');
+    if(cb) cb.checked = !s.floatBallOff;
+  })();
+  window.__toggleFloatBall=function(on){
+    var s=JSON.parse(localStorage.getItem('settings')||'{}');
+    s.floatBallOff=!on;
+    localStorage.setItem('settings',JSON.stringify(s));
+    var ball=document.getElementById('__floatBall');
+    if(ball) ball.style.display=on?'flex':'none';
+    if(typeof showToast==='function') showToast(on?'🔵 Float Ball চালু':'⭕ Float Ball বন্ধ');
+  };
+  </script>
+
+  <!-- Extra Menu — একটাই Float Ball স্টাইল Toggle -->
+  <div class="setting-item" id="extraMenuToggleWrap" style="background:linear-gradient(135deg,rgba(16,185,129,.07),rgba(5,150,105,.04));border:1px solid rgba(16,185,129,.2);border-radius:14px;padding:12px 14px;cursor:pointer" onclick="__toggleAllExtraMenu()">
+    <div class="setting-info">
+      <h4>⚡ এক্সট্রা মেনু <span id="extraMenuBadge" style="font-size:.65rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px;background:rgba(16,185,129,.15);color:#059669"></span></h4>
+      <p>Extra Backup, CSS, Page Setup, Accounting</p>
+    </div>
+    <div id="extraMenuFloatToggle" style="width:56px;height:30px;border-radius:30px;background:#e5e7eb;position:relative;transition:background .25s;flex-shrink:0">
+      <div id="extraMenuFloatDot" style="position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:white;box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .25s"></div>
+    </div>
+  </div>
+  <script>
+  (function(){
+    var KEYS=['showBackup','showCss','showSetup','showAccounting'];
+    function getS(){ try{return JSON.parse(localStorage.getItem('extraMenuSettings')||'{}');}catch(e){return{};} }
+    function setS(obj){ try{localStorage.setItem('extraMenuSettings',JSON.stringify(obj));}catch(e){} }
+    function isAllOn(){ var s=getS(); return KEYS.every(function(k){return !!s[k];}); }
+    function updateUI(){
+      var on=isAllOn();
+      var tog=document.getElementById('extraMenuFloatToggle');
+      var dot=document.getElementById('extraMenuFloatDot');
+      var badge=document.getElementById('extraMenuBadge');
+      if(tog) tog.style.background=on?'linear-gradient(135deg,#10b981,#059669)':'#e5e7eb';
+      if(dot) dot.style.transform=on?'translateX(26px)':'translateX(0)';
+      if(badge){ badge.textContent=on?'চালু':'বন্ধ'; badge.style.background=on?'rgba(16,185,129,.15)':'rgba(239,68,68,.1)'; badge.style.color=on?'#059669':'#dc2626'; }
+    }
+    window.__toggleAllExtraMenu=function(){
+      var on=!isAllOn(); var s=getS();
+      KEYS.forEach(function(k){s[k]=on;});
+      setS(s); updateUI();
+      if(typeof showToast==='function') showToast(on?'⚡ সব এক্সট্রা মেনু চালু':'🔕 সব এক্সট্রা মেনু বন্ধ');
+    };
+    updateUI();
+  })();
+  </script>
+
+  <div class="setting-item">
+    <div class="setting-info"><h4>🌐 ভাষা</h4><p>বাংলা / English</p></div>
+    <select id="languageSelect" class="setting-select">
+      <option value="bn">বাংলা</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+
+  <div class="setting-item">
+    <div class="setting-info"><h4>⚠️ বাজেট সতর্কতা</h4><p>ব্যয় বেশি হলে সতর্কতা</p></div>
+    <label class="toggle-switch">
+      <input type="checkbox" id="budgetWarning" checked>
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+<!-- Customization -->
+<div class="settings-section">
+  <h3>🎨 কাস্টমাইজেশন</h3>
+  <a href="css-changer.html" class="setting-link">
+    <div class="setting-icon">🎨</div>
+    <div class="setting-info"><h4>CSS কাস্টমাইজার</h4><p></p></div>
+    <span class="arrow">→</span>
+  </a>
+  <a href="full-page-setup.html" class="setting-link">
+    <div class="setting-icon">🖌️</div>
+    <div class="setting-info"><h4>Full Page Setup</h4><p>প্রতিটি পেজ আলাদাভাবে সাজান</p></div>
+    <span class="arrow">→</span>
+  </a>
+</div>
+
+<!-- Data Management -->
+<div class="settings-section">
+  <h3>💾 ডাটা ব্যবস্থাপনা</h3>
+
+  <button class="setting-btn btn-primary" onclick="exportBackup()">📥 ব্যাকআপ ডাউনলোড</button>
+  <button class="setting-btn btn-primary" onclick="document.getElementById('importFile').click()">📤 ব্যাকআপ রিস্টোর</button>
+  <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
+  <button class="setting-btn btn-secondary" onclick="exportCSV()">📊 CSV এক্সপোর্ট</button>
+  <button class="setting-btn btn-danger"    onclick="resetAllData()">🗑️ সব ডাটা মুছুন</button>
+
+  <div class="data-divider"><p class="data-divider-text">অপশনাল ব্যাকআপ পদ্ধতি</p></div>
+  <button class="setting-btn btn-emergency" onclick="location.href='emergency-backup.html'">🆘 Emergency Backup</button>
+  <button class="setting-btn btn-emergency" onclick="location.href='extra-backup.html'">📦 Extra Backup</button>
+  <button class="setting-btn" style="background:linear-gradient(135deg,#1e3a5f,#0f2744);color:white;border:none" onclick="location.href='accounting.html'">📚 হিসাব বিজ্ঞান রিপোর্ট</button>
+  <p class="data-divider-text">ডিলিট পুনরুদ্ধান </p></div>
+  <button class="setting-btn btn-secondary" onclick="location.href='trash-manager.html'">🗑️ Trash Manager</button>
+</div>
+
+<!-- Premium Section (non-active) -->
+<div class="settings-section" id="premCTABlock">
+  <h3>👑 Premium</h3>
+  <div class="prem-cta-card">
+    <div class="prem-badge-row">
+      <span class="prem-crown">👑</span>
+      <div><p class="prem-title">MRH ACCOUNT Premium</p><p class="prem-subtitle">সব এক্সক্লুসিভ ফিচার আনলক করুন</p></div>
+    </div>
+    <div class="prem-features-list">
+      <div class="prem-feat-item"><span class="pfi-icon">🎨</span><span class="pfi-text">Full Page Setup</span><span class="pfi-badge" id="b_fps">🔒</span></div>
+      <div class="prem-feat-item"><span class="pfi-icon">🔤</span><span class="pfi-text">কাস্টম ফন্ট</span><span class="pfi-badge" id="b_font">🔒</span></div>
+      <div class="prem-feat-item"><span class="pfi-icon">🔐</span><span class="pfi-text">App Lock (PIN)</span><span class="pfi-badge" id="b_lock">🔒</span></div>
+      <div class="prem-feat-item"><span class="pfi-icon">🗑️</span><span class="pfi-text">Trash Manager</span><span class="pfi-badge" id="b_trash">🔒</span></div>
+      <div class="prem-feat-item"><span class="pfi-icon">📦</span><span class="pfi-text">Fonts Upload & Extra Backup</span><span class="pfi-badge" id="b_backup">🔒</span></div>
+      <div class="prem-feat-item" onclick="location.href='accounting.html'"><span class="pfi-icon">📚</span><span class="pfi-text">হিসাব বিজ্ঞান রিপোর্ট</span><span class="pfi-badge" id="b_acc">🔒</span></div>
+    </div>
+    <button class="prem-cta-btn" onclick="toggleKeyForm()">🔑 Premium Key দিন ▼</button>
+    <div class="prem-key-form" id="premKeyForm">
+      <div class="prem-key-row">
+        <input type="text" id="__keyInput" placeholder="Key দিন…" class="prem-key-input">
+        <button onclick="activateKey()" class="prem-key-submit">চালু</button>
+      </div>
+      <div class="prem-contact-row">
+        <a href="tel:+8801737930168" class="prem-contact-btn prem-call">📞 কল</a>
+        <a href="https://wa.me/8801737930168" target="_blank" class="prem-contact-btn prem-wa">💬 WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Premium Active -->
+<div class="settings-section" id="premActiveBlock" style="display:none">
+  <h3>👑 Premium সক্রিয়</h3>
+  <div class="prem-active-card">
+    <span style="font-size:2rem">✅</span>
+    <div><h4 style="color:#c084fc;font-weight:900;margin:0 0 3px">Premium চালু আছে</h4><p style="color:#9ca3af;font-size:.78rem;margin:0" id="premSinceDate"></p></div>
+  </div>
+</div>
+
+<!-- Custom Fonts (Premium) -->
+<div class="settings-section" id="fontSection">
+  <h3>🔤 কাস্টম ফন্ট</h3>
+  <p style="color:#9ca3af;font-size:.82rem;margin-bottom:14px">Google Fonts নাম লিখুন (যেমন: Hind Siliguri)</p>
+  <div class="font-control-row">
+    <label>বাংলা</label>
+    <input type="text" id="fontBangla" class="font-input" placeholder="Hind Siliguri">
+  </div>
+  <div class="font-control-row">
+    <label>ইংরেজি</label>
+    <input type="text" id="fontEnglish" class="font-input" placeholder="Poppins">
+  </div>
+  <div class="font-control-row">
+    <label>সংখ্যা</label>
+    <input type="text" id="fontNumber" class="font-input" placeholder="Roboto Mono">
+  </div>
+  <button class="setting-btn btn-primary" onclick="saveFonts()">💾 ফন্ট সংরক্ষণ</button>
+  <button class="setting-btn btn-secondary" onclick="location.href='font.html'">📁 ফাইল থেকে আপলোড</button>
+</div>
+
+<!-- App Lock (Premium) -->
+<div class="settings-section" id="lockSection">
+  <h3>🔐 App Lock (PIN)</h3>
+  <p id="lockStatus" style="color:#9ca3af;font-size:.84rem;margin-bottom:14px">🔓 App Lock বন্ধ</p>
+  <div class="font-control-row">
+    <label>নতুন PIN</label>
+    <input type="number" id="pinInput" class="font-input" placeholder="৪ সংখ্যা" maxlength="4">
+  </div>
+  <button class="setting-btn btn-primary"    onclick="savePin()">🔒 PIN সেট করুন</button>
+  <button class="setting-btn btn-secondary"  onclick="removePin()">🔓 Lock সরিয়ে নিন</button>
+</div>
+
+<!-- Social Links -->
+<div class="settings-section">
+  <h3>🔗 সোশ্যাল লিংক</h3>
+  <div class="social-links">
+    <a href="javascript:void(0)" class="social-btn facebook"  onclick="openSocial('facebook')">👥 Facebook</a>
+    <a href="javascript:void(0)" class="social-btn telegram"  onclick="openSocial('telegram')">✈️ Telegram</a>
+  </div>
+</div>
+<!-- Page link buttons -->
+  <div style="background:white; padding:14px 16px;display:flex;flex-direction:column;gap:8px;">
+
+    <a href="about.html" class="about-page-btn">
+      <div class="apb-icon" style="background:black;">👤</div>
+      <div class="apb-text">
+        <div class="apb-title">আমাদের সম্পর্কে</div>
+        <div class="apb-sub">Developer info &amp; যোগাযোগ</div>
+      </div>
+      <span class="apb-arrow">›</span>
+    </a>
+
+    <a href="how-to-use.html" class="about-page-btn">
+      <div class="apb-icon" style="background:black;">📖</div>
+      <div class="apb-text">
+        <div class="apb-title">কীভাবে ব্যবহার করবেন</div>
+        <div class="apb-sub">ফিচার গাইড ও টিউটোরিয়াল</div>
+      </div>
+      <span class="apb-arrow">›</span>
+    </a>
+
+    <a href="privacy-policy.html" class="about-page-btn">
+      <div class="apb-icon" style="background:black;">🔒</div>
+      <div class="apb-text">
+        <div class="apb-title">গোপনীয়তা নীতি</div>
+        <div class="apb-sub">Privacy Policy</div>
+      </div>
+      <span class="apb-arrow">›</span>
+    </a>
+
+    <a href="terms.html" class="about-page-btn">
+      <div class="apb-icon" style="background:black;">📋</div>
+      <div class="apb-text">
+        <div class="apb-title">শর্তাবলী</div>
+        <div class="apb-sub">Terms &amp; Conditions</div>
+      </div>
+      <span class="apb-arrow">›</span>
+    </a>
+
+  </div>
+</div>
+    </div>
+<!-- About Section -->
+  <!-- App info header -->
+  <div style="padding:;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);">
+        <div class="settings-section about-section">
+            <h3>ℹ️অ্যাপ সম্পর্কে</h3>
+           <div class="about-content">
+                <h2>Md Rakib Hossain</h2>
+                <p class="subtitle">MRH ACCOUNT Max Edition</p>
+                <p><strong>Version:</strong> 5.1</p>
+                <p><strong>Developer:</strong> @rakib8630</p>
+                <p><strong>Type:</strong>Offline PWA</p>
+            </div>
+        </div>
+    </div>
+<script src="../js/db.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/settings.js"></script>
+
+
+
+<!-- ══ FLOAT BALL v4 ══ -->
+<div id="__fb" style="position:fixed;z-index:99998;bottom:86px;right:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#475569,#334155);box-shadow:0 6px 22px #47556988,0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:1.45rem;cursor:grab;user-select:none;touch-action:none;border:2px solid rgba(255,255,255,.3)">⚙️</div>
+<div id="__fbo" style="display:none;position:fixed;inset:0;z-index:99996;background:rgba(0,0,0,.52);backdrop-filter:blur(6px)"></div>
+<div id="__fbd" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;height:54vh;background:linear-gradient(175deg,#0f172a 0%,#1a1040 100%);border-radius:26px 26px 0 0;border-top:2.5px solid #47556966;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1);overflow:hidden;font-family:inherit">
+  <div style="width:44px;height:5px;background:rgba(255,255,255,.18);border-radius:4px;margin:11px auto 0"></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 14px 8px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0">
+    <div style="width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#475569,#334155);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0">⚙️</div>
+    <div style="flex:1;min-width:0"><div style="color:white;font-size:.88rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">সেটিং</div><div style="color:#475569;font-size:.62rem;font-weight:700">জাকির আল জিহাদ</div></div>
+    <button onclick="__fbClose()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:5px 10px;color:#94a3b8;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">✕ বন্ধ</button>
+  </div>
+  <div style="overflow-y:auto;height:calc(54vh - 72px);padding:10px 12px 24px;-webkit-overflow-scrolling:touch">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+      <a href="../index.html" style="background:linear-gradient(135deg,#475569,#334155);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">⚙️<span>তালিকা</span></a>
+      <a href="full-page-setup.html?pg=settings" style="background:linear-gradient(135deg,#667eea,#764ba2);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🖌️<span>Page Setup</span></a>
+      <a href="css-changer.html" style="background:linear-gradient(135deg,#ec4899,#db2777);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🎨<span>CSS</span></a>
+      <a href="extra-backup.html" style="background:linear-gradient(135deg,#0369a1,#0284c7);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📦<span>Backup</span></a>
+      <a href="accounting.html" style="background:linear-gradient(135deg,#1e3a5f,#0f2744);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📚<span>Accounting</span></a>
+      <a href="calculator.html" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🧮<span>Calculator</span></a>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:11px;border:1px solid rgba(255,255,255,.07)">
+      <div style="color:#475569;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">⚡ কাস্টমাইজ — settings</div>
+    <div class="__fbr"><span class="__fbl">হেডার রং ১</span><input type="color" class="__fbc" data-k="hBg1" value="#475569" oninput="__fbA(this)"></div>
+    <div class="__fbr"><span class="__fbl">হেডার রং ২</span><input type="color" class="__fbc" data-k="hBg2" value="#475569" oninput="__fbA(this)"></div>
+    <div class="__fbr"><span class="__fbl">ফন্ট সাইজ</span><div style="display:flex;align-items:center;gap:5px"><input type="range" class="__fbr2" min="11" max="22" value="17" data-k="fs" oninput="__fbA(this)"><span class="__fbv" id="__fbv_fs">17px</span></div></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button onclick="__fbSave()" style="flex:1;padding:9px;background:linear-gradient(135deg,#475569,#334155);color:white;border:none;border-radius:10px;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit">💾 সেভ</button>
+        <a href="full-page-setup.html?pg=settings" style="flex:1;padding:9px;background:rgba(255,255,255,.06);color:#94a3b8;border:1px solid black;border-radius:10px;font-size:.78rem;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center">🖌️ Full Setup</a>
+        <button onclick="__fbReset()" style="padding:9px 12px;background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.18);border-radius:10px;font-size:.78rem;cursor:pointer;font-family:inherit">↺</button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.__fbr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.__fbr:last-child{border:none}.__fbl{color:#cbd5e1;font-size:.74rem;font-weight:700}
+.__fbc{width:32px;height:24px;border:none;border-radius:6px;cursor:pointer;padding:2px}
+.__fbr2{width:85px;accent-color:#475569;cursor:pointer}.__fbv{color:#475569;font-size:.68rem;font-weight:700;min-width:26px;text-align:right}
+</style>
+<script>
+(function(){
+  var ball=document.getElementById('__fb'),ov=document.getElementById('__fbo'),dr=document.getElementById('__fbd');
+  if(!ball)return;
+  try{var s=JSON.parse(localStorage.getItem('settings')||'{}');if(s.floatBallOff){ball.style.display='none';return;}}catch(e){}
+  var drag=false,sx=0,sy=0,bx=0,by=0,mv=false;
+  function gp(){var r=ball.getBoundingClientRect();return{x:r.left,y:r.top};}
+  function onS(ex,ey){drag=true;mv=false;var p=gp();bx=p.x;by=p.y;sx=ex;sy=ey;ball.style.transition='none';ball.style.cursor='grabbing';}
+  function onM(ex,ey){if(!drag)return;var dx=ex-sx,dy=ey-sy;if(Math.abs(dx)>4||Math.abs(dy)>4)mv=true;var nx=Math.max(4,Math.min(window.innerWidth-56,bx+dx)),ny=Math.max(4,Math.min(window.innerHeight-56,by+dy));ball.style.left=nx+'px';ball.style.top=ny+'px';ball.style.right='auto';ball.style.bottom='auto';}
+  function onE(){drag=false;ball.style.cursor='grab';ball.style.transition='box-shadow .2s';}
+  ball.addEventListener('mousedown',function(e){onS(e.clientX,e.clientY);e.preventDefault();});
+  ball.addEventListener('touchstart',function(e){onS(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mousemove',function(e){onM(e.clientX,e.clientY);});
+  document.addEventListener('touchmove',function(e){onM(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mouseup',onE);document.addEventListener('touchend',onE);
+  ball.addEventListener('click',function(){if(!mv)window.__fbOpen();});
+  window.__fbOpen=function(){
+    ov.style.display='block';dr.style.display='block';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){dr.style.transform='translateY(0)';});});
+    __fbLoad();
+  };
+  window.__fbClose=function(){
+    dr.style.transform='translateY(100%)';
+    setTimeout(function(){ov.style.display='none';dr.style.display='none';},300);
+  };
+  ov.addEventListener('click',window.__fbClose);
+  var _pg='settings';
+  function _gc(){try{return JSON.parse(localStorage.getItem('pageConfig')||'{}')[_pg]||{};}catch(e){return{};}}
+  function _sc(o){try{var all=JSON.parse(localStorage.getItem('pageConfig')||'{}');all[_pg]=Object.assign({},all[_pg]||{},o);localStorage.setItem('pageConfig',JSON.stringify(all));}catch(e){}}
+  window.__fbA=function(inp){
+    var k=inp.dataset.k,v=inp.value;
+    var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=isNaN(v)?v:v+'px';
+    var o={};o[k]=isNaN(v)?v:Number(v);_sc(o);
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+  };
+  window.__fbSave=function(){
+    var cfg={};dr.querySelectorAll('[data-k]').forEach(function(i){var v=i.value;cfg[i.dataset.k]=isNaN(v)?v:Number(v);});
+    _sc(cfg);
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+    if(typeof showToast==='function')showToast('✅ কাস্টমাইজেশন সেভ হয়েছে');
+  };
+  window.__fbReset=function(){
+    _sc({});
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+    if(typeof showToast==='function')showToast('↺ রিসেট হয়েছে');
+  };
+  window.__fbLoad=function(){
+    var cfg=_gc();dr.querySelectorAll('[data-k]').forEach(function(i){
+      var k=i.dataset.k;if(cfg[k]!==undefined){i.value=cfg[k];var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=i.value+(i.type==='range'?'px':'');}
+    });
+  };
+})();
+</script>
+<!-- ══ END FLOAT BALL ══ -->
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

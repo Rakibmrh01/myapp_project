@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>এনালাইসিস - Daily Account</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/charts.css">
+    <style>
+:root{--anl-c1:#10b981;--anl-c2:#ef4444;--anl-c3:#a855f7;--anl-c4:#f59e0b;--anl-card-bg:#ffffff;--anl-card-r:20px;--anl-advice-bg:rgba(14,165,233,.08);--anl-advice-border:#0ea5e9;--anl-advice-txt:#0369a1;--anl-advice-fs:14px;--anl-health-color:#10b981;--anl-stat-bg:#f0f9ff;--anl-stat-txt:#0ea5e9;--anl-chart-bg:transparent;--anl-shadow:0 6px 24px rgba(0,0,0,.09)}
+*{box-sizing:border-box}
+body{background:var(--bg-main,#f0f4f8);-family:var(---bangla,'Hind Siliguri',sans-serif);min-height:100vh;padding-bottom:120px}
+.anl-header{background:linear-gradient(135deg,var(--hBg1,#0ea5e9),var(--hBg2,#0284c7));padding:12px 8px 22px;text-align:center;position:relative;overflow:hidden}
+.anl-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(255,255,255,.15) 0%,transparent 60%)}
+.anl-header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:28px;background:var(--bg-main,#f0f4f8);clip-path:ellipse(55% 100% at 50% 100%)}
+.anl-header h1{color:#fff;-size:3.85rem;-weight:900;position:relative;text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.anl-header p{color:rgba(255,255,255,.82);-size:8rem;-weight:700;position:relative;margin-top:4px}
+.anl-header-pills{display:flex;gap:8px;justify-content:center;margin-top:14px;position:relative;flex-wrap:wrap}
+.anl-hp{background:rgba(255,255,255,.18);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:5px 12px;color:#fff;-size:.79rem;-weight:800}
+.anl-wrap{padding:10px;max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:8px}
+.anl-card{background:var(--anl-card-bg,#fff);border-radius:var(--anl-card-r,20px);box-shadow:var(--anl-shadow);overflow:hidden;animation:anlFadeUp .5s ease both;border:0.8px solid rgba(0,0,0,.07)}
+.anl-card:nth-child(1){animation-delay:.04s}.anl-card:nth-child(2){animation-delay:.08s}.anl-card:nth-child(3){animation-delay:.12s}.anl-card:nth-child(4){animation-delay:.16s}.anl-card:nth-child(5){animation-delay:.2s}.anl-card:nth-child(6){animation-delay:.24s}.anl-card:nth-child(7){animation-delay:.28s}.anl-card:nth-child(8){animation-delay:.32s}.anl-card:nth-child(9){animation-delay:.36s}.anl-card:nth-child(10){animation-delay:.4s}.anl-card:nth-child(11){animation-delay:.44s}.anl-card:nth-child(12){animation-delay:.48s}
+@keyframes anlFadeUp{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+.anl-card-hdr{display:flex;align-items:center;gap:10px;padding:13px 16px 9px;border-bottom:0px solid rgba(0,0,0,.06)}
+.anl-card-hdr .ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;-size:2.5rem;flex-shrink:0}
+.anl-card-hdr h3{-size:2.6rem;-weight:900;color:var(--text-primary,#1f2937);flex:1}
+.anl-card-body{padding:14px 16px}
+/* period tabs */
+.anl-period-tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.anl-period-tabs::-webkit-scrollbar{display:none}
+.anl-pt-btn{flex-shrink:0;padding:7px 13px;border-radius:20px;background:rgba(0,0,0,.05);border:none;-size:1rem;-weight:800;cursor:pointer;-family:inherit;color:var(--text-secondary,#6b7280);transition:all .2s}
+.anl-pt-btn.on{background:linear-gradient(135deg,var(--hBg1,#0ea5e9),var(--hBg2,#0284c7));color:#fff;box-shadow:0 3px 10px rgba(14,165,233,.3)}
+/* summary 4-cards */
+.anl-sum-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.anl-sc{border-radius:16px;padding:14px 12px;text-align:center;position:relative;overflow:hidden;transition:transform .2s}
+.anl-sc:active{transform:scale(.97)}
+.anl-sc::before{content:'';position:absolute;top:-18px;right:-18px;width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15)}
+.anl-sc .si{-size:2.45rem;display:block;margin-bottom:3px}
+.anl-sc .sl{-size:.99rem;-weight:800;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.5px}
+.anl-sc .sv{-size:2.2rem;-weight:900;color:#fff;margin-top:3px;line-height:1.1}
+.anl-sc.inc{background:linear-gradient(135deg,var(--anl-c1,#10b981),#059669);box-shadow:0 5px 18px rgba(16,185,129,.28)}
+.anl-sc.exp{background:linear-gradient(135deg,var(--anl-c2,#ef4444),#dc2626);box-shadow:0 5px 18px rgba(239,68,68,.28)}
+.anl-sc.bal{background:linear-gradient(135deg,#3b82f6,#2563eb);box-shadow:0 5px 18px rgba(59,130,246,.28)}
+.anl-sc.sav{background:linear-gradient(135deg,var(--anl-c3,#a855f7),#9333ea);box-shadow:0 5px 18px rgba(168,85,247,.28)}
+.anl-sc.bal.neg{background:linear-gradient(135deg,#ef4444,#dc2626);box-shadow:0 5px 18px rgba(239,68,68,.28)}
+/* health score */
+.anl-health-wrap{display:flex;align-items:center;gap:16px}
+.anl-gauge-bg{fill:none;stroke:#e5e7eb;stroke-width:10;stroke-linecap:round}
+.anl-gauge-fg{fill:none;stroke:var(--anl-health-color,#10b981);stroke-width:10;stroke-linecap:round;stroke-dasharray:251;stroke-dashoffset:251;transition:stroke-dashoffset 1.4s cubic-bezier(.4,0,.2,1);transform:rotate(-90deg);transform-origin:50% 50%}
+.anl-gauge-num{-size:3.45rem;-weight:900;fill:var(--text-primary,#1f2937);text-anchor:middle;dominant-baseline:central}
+.anl-health-badge{display:inline-block;padding:3px 10px;border-radius:20px;-size:1rem;-weight:900;margin-top:4px}
+.anl-health-msg{-size:.99rem;-weight:700;color:var(--text-secondary,#6b7280);margin-top:6px;line-height:1.5}
+.anl-hb-rows{display:flex;flex-direction:column;gap:7px;margin-top:14px}
+.anl-hb-row{display:flex;align-items:center;gap:8px}
+.anl-hb-lbl{-size:.10rem;-weight:800;color:var(--text-secondary,#6b7280);width:82px;flex-shrink:0}
+.anl-hb-bar{flex:1;height:7px;background:#e5e7eb;border-radius:6px;overflow:hidden}
+.anl-hb-fill{height:100%;border-radius:6px;transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0}
+.anl-hb-pct{-size:.99rem;-weight:900;width:32px;text-align:right;flex-shrink:0}
+/* kpi */
+.anl-kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.anl-kpi{background:var(--anl-stat-bg,#f0f9ff);border-radius:13px;padding:11px 7px;text-align:center;border:1.5px solid rgba(0,0,0,.05)}
+.anl-kpi .ki{-size:2.1rem;display:block}
+.anl-kpi .kv{-size:.70rem;-weight:900;color:var(--anl-stat-txt,#0ea5e9);margin-top:2px;display:block}
+.anl-kpi .kl{-size:.50rem;-weight:800;color:var(--text-secondary,#6b7280);margin-top:2px;display:block}
+/* chart */
+.anl-chart-wrap{position:relative;width:100%}
+.anl-chart-wrap canvas{display:block;width:100%!important}
+.anl-ct-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.anl-ct-btn{padding:5px 11px;border-radius:20px;background:rgba(0,0,0,.05);border:none;-size:.10rem;-weight:800;cursor:pointer;-family:inherit;color:var(--text-secondary,#6b7280);transition:all .2s}
+.anl-ct-btn.on{background:linear-gradient(135deg,var(--hBg1,#0ea5e9),var(--hBg2,#0284c7));color:#fff;box-shadow:0 2px 8px rgba(14,165,233,.3)}
+/* category bars */
+.anl-cat-list{display:flex;flex-direction:column;gap:9px}
+.anl-cat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.anl-cat-name{-size:.99rem;-weight:800;color:var(--text-primary,#1f2937)}
+.anl-cat-amt{-size:.99rem;-weight:900;color:var(--text-secondary,#6b7280)}
+.anl-cat-bar{height:8px;background:#e5e7eb;border-radius:6px;overflow:hidden}
+.anl-cat-fill{height:100%;border-radius:6px;transition:width 1.3s cubic-bezier(.4,0,.2,1);width:0}
+.anl-cat-pct{-size:.70rem;-weight:800;color:var(--text-light,#9ca3af);margin-top:2px;text-align:right}
+/* income sources */
+.anl-src-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.anl-src-card{border-radius:12px;padding:10px;border:1.5px solid rgba(0,0,0,.05);background:rgba(0,0,0,.02)}
+.anl-src-name{-size:.99rem;-weight:800;color:var(--text-primary,#1f2937)}
+.anl-src-amt{-size:1.3rem;-weight:900}
+.anl-src-pct{-size:.90rem;-weight:700;color:var(--text-secondary,#6b7280)}
+/* ledger */
+.anl-led-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.anl-led-card{border-radius:14px;padding:12px;text-align:center}
+.anl-led-card.dena{background:linear-gradient(135deg,#fef3c7,#fde68a);border:2px solid #f59e0b}
+.anl-led-card.pabona{background:linear-gradient(135deg,#dcfce7,#bbf7d0);border:2px solid #10b981}
+.anl-led-card .ll-ico{-size:2.5rem;display:block}
+.anl-led-card .ll-lbl{-size:.99rem;-weight:800;color:var(--text-secondary,#6b7280);text-transform:uppercase;letter-spacing:.4px}
+.anl-led-card .ll-val{-size:2.1rem;-weight:900;margin-top:2px}
+.anl-led-card .ll-cnt{-size:.99rem;-weight:700;color:var(--text-secondary,#6b7280);margin-top:2px}
+.anl-led-card.dena .ll-val{color:#d97706}.anl-led-card.pabona .ll-val{color:#059669}
+/* AI advice SLIDER */
+.anl-ai-outer{background:var(--anl-advice-bg,rgba(14,165,233,.08));border:0.8px solid var(--anl-advice-border,#0ea5e9);border-radius:var(--anl-card-r,20px);padding:14px 14px 12px;animation:anlFadeUp .5s ease both;animation-delay:.52s;overflow:hidden}
+.anl-ai-hdr{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.anl-ai-badge{background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;padding:3px 10px;border-radius:20px;-size:.68rem;-weight:900}
+.anl-ai-hdr h3{-size:2.0rem;-weight:900;color:var(--anl-advice-txt,#0369a1);flex:1}
+/* slider container */
+.anl-slider-wrap{position:relative;overflow:hidden;border-radius:14px}
+.anl-slider-track{display:flex;transition:transform .38s cubic-bezier(.4,0,.2,1);will-change:transform}
+.anl-slide{min-width:100%;box-sizing:border-box}
+.anl-adv{display:flex;gap:10px;background:rgba(255,255,255,.82);border-radius:12px;padding:13px 14px;border-left:4px solid #e5e7eb;backdrop-filter:blur(4px)}
+.anl-adv.high{border-left-color:#ef4444;background:rgba(255,236,236,.9)}
+.anl-adv.medium{border-left-color:#f59e0b;background:rgba(255,251,230,.9)}
+.anl-adv.low{border-left-color:#10b981;background:rgba(230,255,245,.9)}
+.anl-adv .ai-ico{-size:2.5rem;flex-shrink:0;line-height:1.3}
+.anl-adv .ai-txt{-size:var(--anl-advice-fs,14.5px);-weight:700;color:var(--anl-advice-txt,#0369a1);line-height:1.55;margin:0;flex:1}
+/* slider controls */
+.anl-slider-ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:9px;gap:8px}
+.anl-slider-dots{display:flex;gap:3px;align-items:center;flex:1;justify-content:center;flex-wrap:wrap}
+.anl-dot{width:7px;height:7px;border-radius:50%;background:rgba(14,165,233,.2);border:none;cursor:pointer;transition:all .22s;padding:0;flex-shrink:0}
+.anl-dot.on{background:#0ea5e9;width:18px;border-radius:4px}
+.anl-slider-nav{display:flex;gap:5px}
+.anl-nav-btn{width:32px;height:32px;border-radius:50%;background:rgba(14,165,233,.12);border:0.8px solid rgba(14,165,233,.25);color:#0ea5e9;-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;-family:inherit}
+.anl-nav-btn:active{background:#0ea5e9;color:#fff;transform:scale(.92)}
+.anl-slide-counter{-size:.90rem;-weight:900;color:#0ea5e9;min-width:32px;text-align:center}
+/* progress bar */
+.anl-slide-progress{height:3.5px;background:rgba(14,165,233,.15);border-radius:2px;margin-bottom:9px;overflow:hidden}
+.anl-slide-prog-fill{height:100%;background:linear-gradient(90deg,#0ea5e9,#0284c7);border-radius:2px;transition:width .1s linear;width:0%}
+/* dark mode advice slider */
+body.dark-mode .anl-adv{background:rgba(255,255,255,.07)!important}
+body.dark-mode .anl-dot{background:rgba(14,165,233,.15)}
+body.dark-mode .anl-nav-btn{background:rgba(14,165,233,.08);border-color:rgba(14,165,233,.15)}
+/* compare */
+.anl-cmp-row{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center}
+.anl-cmp-side{text-align:center;padding:11px 8px;border-radius:13px}
+.anl-cmp-side.l{background:linear-gradient(135deg,rgba(16,185,129,.1),rgba(16,185,129,.04));border:1.5px solid rgba(16,185,129,.2)}
+.anl-cmp-side.r{background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(239,68,68,.04));border:1.5px solid rgba(239,68,68,.2)}
+.anl-cmp-side .cv-l{-size:.99rem;-weight:800;color:var(--text-secondary,#6b7280)}
+.anl-cmp-side .cv-v{-size:2.05rem;-weight:900;margin-top:2px}
+.anl-cmp-side.l .cv-v{color:#10b981}.anl-cmp-side.r .cv-v{color:#ef4444}
+.anl-cmp-mid{-size:1.1rem;-weight:900;color:var(--text-secondary,#6b7280)}
+/* savings goal */
+.anl-goal-bar{height:12px;background:#e5e7eb;border-radius:10px;overflow:hidden;margin:3px 0}
+.anl-goal-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--anl-c3,#a855f7),#c084fc);transition:width 1.5s cubic-bezier(.4,0,.2,1);width:0;position:relative;overflow:hidden}
+.anl-goal-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent);animation:gShimmer 2s infinite}
+@keyframes gShimmer{from{transform:translateX(-100%)}to{transform:translateX(100%)}}
+/* heatmap */
+.anl-heatmap{display:flex;flex-wrap:wrap;gap:3px}
+.anl-hm{width:calc((100% - 5px)/7);aspect-ratio:1;border-radius:3px}
+.hm0{background:#f3f4f6}.hm1{background:#bfdbfe}.hm2{background:#60a5fa}.hm3{background:#2563eb}.hm4{background:#1e40af}
+/* daily grid */
+.anl-daily-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.anl-dc{background:var(--anl-stat-bg,#f0f9ff);border-radius:13px;padding:11px;text-align:center}
+.anl-dc .d-l{-size:.68rem;-weight:800;color:var(--text-secondary,#6b7280);display:block;margin-bottom:4px}
+.anl-dc .d-v{-size:1rem;-weight:900;color:var(--anl-stat-txt,#0ea5e9)}
+/* monthly list */
+.anl-ml{display:flex;flex-direction:column;gap:7px;margin-top:10px}
+.anl-mr{display:flex;align-items:center;gap:8px;padding:9px 11px;background:rgba(0,0,0,.03);border-radius:11px}
+.anl-mn{-size:.77rem;-weight:800;color:var(--text-primary,#1f2937);width:60px;flex-shrink:0}
+.anl-mb-wrap{flex:1;display:flex;flex-direction:column;gap:3px}
+.anl-mb-row{display:flex;align-items:center;gap:5px}
+.anl-mb-bar{height:5px;border-radius:3px;min-width:3px;transition:width 1s ease}
+.anl-mb-amt{-size:.62rem;-weight:800;white-space:nowrap}
+.anl-mbal{-size:.77rem;-weight:900;text-align:right;width:50px;flex-shrink:0}
+/* dark mode */
+body.dark-mode .anl-card{background:rgba(255,255,255,.04)!important;border:0.8px solid rgba(255,255,255,.08)!important}
+body.dark-mode .anl-ai-outer{background:rgba(14,165,233,.06)!important;border-color:rgba(14,165,233,.25)!important}
+body.dark-mode .anl-kpi,.body.dark-mode .anl-dc{background:rgba(255,255,255,.06)!important}
+body.dark-mode .anl-adv{background:rgba(255,255,255,.06)!important}
+body.dark-mode .anl-mr{background:rgba(255,255,255,.04)!important}
+body.dark-mode .anl-header::after{background:var(--bg-main,#111827)}
+body.dark-mode .anl-hb-bar,.body.dark-mode .anl-cat-bar,.body.dark-mode .anl-goal-bar{background:rgba(255,255,255,.1)}
+body.dark-mode .anl-gauge-bg{stroke:rgba(255,255,255,.1)}
+body.dark-mode .anl-gauge-num{fill:rgba(255,255,255,.9)}
+body.dark-mode .anl-led-card.dena{background:rgba(245,158,11,.1)!important;border-color:rgba(245,158,11,.3)!important}
+body.dark-mode .anl-led-card.pabona{background:rgba(16,185,129,.1)!important;border-color:rgba(16,185,129,.3)!important}
+body.dark-mode .anl-src-card{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.08)!important}
+body.dark-mode .anl-cmp-side.l{background:rgba(16,185,129,.08)!important}
+body.dark-mode .anl-cmp-side.r{background:rgba(239,68,68,.08)!important}
+    </style>
+</head>
+<body data-page="analysis">
+
+<div class="anl-header" id="anlHeader">
+  <h1>📊 এনালাইসিস</h1>
+  <p>আপনার সম্পূর্ণ আর্থিক চিত্র</p>
+  <div class="anl-header-pills">
+    <div class="anl-hp" id="hPill1">লোড হচ্ছে...</div>
+    <div class="anl-hp" id="hPill2"></div>
+    <div class="anl-hp" id="hPill3"></div>
+  </div>
+</div>
+
+<div class="anl-wrap">
+
+  <!-- PERIOD FILTER -->
+  <div class="anl-card">
+    <div class="anl-card-body" style="padding:11px 14px">
+      <div class="anl-period-tabs" id="periodTabs">
+        <button class="anl-pt-btn on" data-p="all" onclick="setPeriod(this,'all')">সব সময়</button>
+        <button class="anl-pt-btn" data-p="thismonth" onclick="setPeriod(this,'thismonth')">এই মাস</button>
+        <button class="anl-pt-btn" data-p="lastmonth" onclick="setPeriod(this,'lastmonth')">গত মাস</button>
+        <button class="anl-pt-btn" data-p="7days" onclick="setPeriod(this,'7days')">৭ দিন</button>
+        <button class="anl-pt-btn" data-p="30days" onclick="setPeriod(this,'30days')">৩০ দিন</button>
+        <button class="anl-pt-btn" data-p="thisyear" onclick="setPeriod(this,'thisyear')">এই বছর</button>
+      </div>
+      <!-- Month filter row -->
+      <div style="margin-top:8px;border-top:0.8px solid rgba(0,0,0,.06);padding-top:8px">
+        <div style="-size:.65rem;-weight:800;color:var(--text-secondary,#9ca3af);letter-spacing:.5px;text-transform:uppercase;margin-bottom:6px">📅 মাস অনুযায়ী</div>
+        <div class="anl-period-tabs" id="monthTabs" style="gap:5px"></div>
+      </div>
+    </div>
+  </div>
+ <!-- AI ADVICE SLIDER -->
+  <div class="anl-ai-outer" id="aiSection">
+    <div class="anl-ai-hdr">
+      <div class="anl-ai-badge">🤖 AI</div>
+      <h3>স্মার্ট পরামর্শ</h3>
+      <div class="anl-slide-counter" id="slideCounter">1/1</div>
+    </div>
+    <div class="anl-slide-progress"><div class="anl-slide-prog-fill" id="slideProgFill"></div></div>
+    <div class="anl-slider-wrap" id="sliderWrap">
+      <div class="anl-slider-track" id="sliderTrack">
+        <!-- slides injected by JS -->
+      </div>
+    </div>
+    <div class="anl-slider-ctrl">
+      <div class="anl-slider-nav">
+        <button class="anl-nav-btn" id="slidePrev" onclick="anlSlide(-1)" title="আগে">◀</button>
+      </div>
+      <div class="anl-slider-dots" id="sliderDots"></div>
+      <div class="anl-slider-nav">
+        <button class="anl-nav-btn" id="slideNext" onclick="anlSlide(1)" title="পরে">▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#0ea5e9,#0284c7)">💰</div>
+      <h3>সামগ্রিক সারসংক্ষেপ</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-sum-grid">
+        <div class="anl-sc inc"><span class="si">💚</span><span class="sl">মোট আয়</span><div class="sv" id="totalIncome">৳ 0</div></div>
+        <div class="anl-sc exp"><span class="si">💸</span><span class="sl">মোট ব্যয়</span><div class="sv" id="totalExpense">৳ 0</div></div>
+        <div class="anl-sc bal" id="balCard"><span class="si">🏦</span><span class="sl">ব্যালেন্স</span><div class="sv" id="currentBalance">৳ 0</div></div>
+        <div class="anl-sc sav"><span class="si">💜</span><span class="sl">সঞ্চয়</span><div class="sv" id="totalSavings">৳ 0</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEALTH SCORE -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#10b981,#059669)">❤️</div>
+      <h3>আর্থিক স্বাস্থ্য স্কোর</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-health-wrap">
+        <svg width="96" height="96" viewBox="0 0 100 100" style="flex-shrink:0">
+          <circle class="anl-gauge-bg" cx="50" cy="50" r="40"/>
+          <circle class="anl-gauge-fg" id="gaugeCircle" cx="50" cy="50" r="40"/>
+          <text class="anl-gauge-num" id="gaugeNum" x="50" y="50">0</text>
+        </svg>
+        <div style="flex:1">
+          <div style="-size:.88rem;-weight:900;color:var(--text-primary)">ফাইন্যান্সিয়াল হেলথ</div>
+          <div class="anl-health-badge" id="healthBadge" style="background:#f0fdf4;color:#10b981">বিশ্লেষণ...</div>
+          <div class="anl-health-msg" id="healthMsg">ডাটা লোড হচ্ছে</div>
+        </div>
+      </div>
+      <div class="anl-hb-rows">
+        <div class="anl-hb-row">
+          <span class="anl-hb-lbl">সঞ্চয় হার</span>
+          <div class="anl-hb-bar"><div class="anl-hb-fill" id="hbS" style="background:#a855f7"></div></div>
+          <span class="anl-hb-pct" id="hbSPct" style="color:#a855f7">0%</span>
+        </div>
+        <div class="anl-hb-row">
+          <span class="anl-hb-lbl">ব্যয় নিয়ন্ত্রণ</span>
+          <div class="anl-hb-bar"><div class="anl-hb-fill" id="hbE" style="background:#10b981"></div></div>
+          <span class="anl-hb-pct" id="hbEPct" style="color:#10b981">0%</span>
+        </div>
+        <div class="anl-hb-row">
+          <span class="anl-hb-lbl">ব্যালেন্স রেশিও</span>
+          <div class="anl-hb-bar"><div class="anl-hb-fill" id="hbB" style="background:#3b82f6"></div></div>
+          <span class="anl-hb-pct" id="hbBPct" style="color:#3b82f6">0%</span>
+        </div>
+        <div class="anl-hb-row">
+          <span class="anl-hb-lbl">দেনা পরিস্থিতি</span>
+          <div class="anl-hb-bar"><div class="anl-hb-fill" id="hbD" style="background:#f59e0b"></div></div>
+          <span class="anl-hb-pct" id="hbDPct" style="color:#f59e0b">0%</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#f59e0b,#d97706)">📐</div>
+      <h3>মূল সূচক (KPI)</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-kpi-grid">
+        <div class="anl-kpi"><span class="ki">📅</span><span class="kv" id="kDInc">৳0</span><span class="kl">দৈনিক আয়</span></div>
+        <div class="anl-kpi"><span class="ki">🛒</span><span class="kv" id="kDExp">৳0</span><span class="kl">দৈনিক ব্যয়</span></div>
+        <div class="anl-kpi"><span class="ki">📊</span><span class="kv" id="kSR">0%</span><span class="kl">সঞ্চয় হার</span></div>
+        <div class="anl-kpi"><span class="ki">💸</span><span class="kv" id="kER">0%</span><span class="kl">ব্যয় হার</span></div>
+        <div class="anl-kpi"><span class="ki">🔢</span><span class="kv" id="kTC">0</span><span class="kl">লেনদেন</span></div>
+        <div class="anl-kpi"><span class="ki">📈</span><span class="kv" id="kAT">৳0</span><span class="kl">গড় লেনদেন</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPARE -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#10b981,#059669)">⚖️</div>
+      <h3>আয় ও ব্যয় তুলনা</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-cmp-row">
+        <div class="anl-cmp-side l"><div class="cv-l">মোট আয়</div><div class="cv-v" id="cmpI">৳ 0</div></div>
+        <div class="anl-cmp-mid">VS</div>
+        <div class="anl-cmp-side r"><div class="cv-l">মোট ব্যয়</div><div class="cv-v" id="cmpE">৳ 0</div></div>
+      </div>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
+        <div class="anl-hb-row">
+          <span class="anl-hb-lbl">আয়</span>
+          <div class="anl-hb-bar" style="height:10px"><div class="anl-hb-fill" id="cIBar" style="background:linear-gradient(90deg,#10b981,#34d399)"></div></div>
+          <span class="anl-hb-pct" id="cIPct" style="color:#10b981">0%</span>
+        </div>
+        <div class="anl-hb-row">
+          <span class="anl-hb-lbl">ব্যয়</span>
+          <div class="anl-hb-bar" style="height:10px"><div class="anl-hb-fill" id="cEBar" style="background:linear-gradient(90deg,#ef4444,#f87171)"></div></div>
+          <span class="anl-hb-pct" id="cEPct" style="color:#ef4444">0%</span>
+        </div>
+      </div>
+      <div id="cmpMsg" style="margin-top:10px;text-align:center;-size:.78rem;-weight:800;padding:8px;border-radius:10px;background:rgba(0,0,0,.04)"></div>
+    </div>
+  </div>
+
+  <!-- PIE/BAR CHART -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#3b82f6,#2563eb)">📊</div>
+      <h3>আয় বনাম ব্যয়</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-ct-tabs">
+        <button class="anl-ct-btn on" id="ct1a" onclick="switchPieType('pie',this)">পাই চার্ট</button>
+        <button class="anl-ct-btn" id="ct1b" onclick="switchPieType('bar',this)">বার চার্ট</button>
+        <button class="anl-ct-btn" id="ct1c" onclick="switchPieType('doughnut',this)">ডোনাট</button>
+      </div>
+      <div class="anl-chart-wrap" style="height:250px"><canvas id="pieChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- MONTHLY TREND -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed)">📈</div>
+      <h3>মাসিক ট্রেন্ড</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-chart-wrap" style="height:230px"><canvas id="barChart"></canvas></div>
+      <div class="anl-ml" id="monthlyList"></div>
+    </div>
+  </div>
+
+  <!-- LINE CHART -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">📉</div>
+      <h3>দৈনিক ক্যাশ ফ্লো</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-ct-tabs">
+        <button class="anl-ct-btn on" id="lp7" onclick="setLinePeriod(this,7)">৭ দিন</button>
+        <button class="anl-ct-btn" id="lp14" onclick="setLinePeriod(this,14)">১৪ দিন</button>
+        <button class="anl-ct-btn" id="lp30" onclick="setLinePeriod(this,30)">৩০ দিন</button>
+      </div>
+      <div class="anl-chart-wrap" style="height:210px"><canvas id="lineChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- DOUGHNUT + CAT BARS -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#ef4444,#dc2626)">🍩</div>
+      <h3>ব্যয়ের ক্যাটাগরি</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-chart-wrap" style="height:210px;margin-bottom:14px"><canvas id="doughnutChart"></canvas></div>
+      <div class="anl-cat-list" id="catList"></div>
+    </div>
+  </div>
+
+  <!-- INCOME SOURCES -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#10b981,#059669)">💼</div>
+      <h3>আয়ের উৎস বিশ্লেষণ</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-src-grid" id="srcGrid"></div>
+    </div>
+  </div>
+
+  <!-- SAVINGS -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#a855f7,#9333ea)">💜</div>
+      <h3>সঞ্চয় বৃদ্ধি ও লক্ষ্য</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-chart-wrap" style="height:210px;margin-bottom:14px"><canvas id="savingsChart"></canvas></div>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="-size:.78rem;-weight:800;color:var(--text-primary)">সঞ্চয় অগ্রগতি</span>
+        <span style="-size:1.3rem;-weight:900;color:var(--anl-c3,#a855f7)" id="goalPct">0%</span>
+      </div>
+      <div class="anl-goal-bar"><div class="anl-goal-fill" id="goalFill"></div></div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="-size:.7rem;-weight:700;color:var(--text-secondary)" id="goalCurrent">বর্তমান: ৳০</span>
+        <span style="-size:.7rem;-weight:700;color:var(--text-secondary)" id="goalTarget">লক্ষ্য: গড়ের ৩×</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEDGER -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#f59e0b,#d97706)">📒</div>
+      <h3>দেনাপাওনা সারসংক্ষেপ</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-led-grid">
+        <div class="anl-led-card dena">
+          <span class="ll-ico">📕</span>
+          <span class="ll-lbl">দেনা (বাকি)</span>
+          <div class="ll-val" id="ledUnpaidDena">৳ 0</div>
+          <div class="ll-cnt" id="ledDenaCnt">0 টি</div>
+        </div>
+        <div class="anl-led-card pabona">
+          <span class="ll-ico">📗</span>
+          <span class="ll-lbl">পাওনা (বাকি)</span>
+          <div class="ll-val" id="ledUnpaidPabona">৳ 0</div>
+          <div class="ll-cnt" id="ledPabonaCnt">0 টি</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div class="anl-kpi">
+          <span class="ki">✅</span>
+          <span class="kv" id="ledPaidDena" style="color:#d97706">৳ 0</span>
+          <span class="kl">পরিশোধিত দেনা</span>
+        </div>
+        <div class="anl-kpi">
+          <span class="ki">✅</span>
+          <span class="kv" id="ledPaidPabona" style="color:#059669">৳ 0</span>
+          <span class="kl">আদায়কৃত পাওনা</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 
+  <!-- HEATMAP -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#f97316,#ea580c)">🗓️</div>
+      <h3>ব্যয় হিটম্যাপ (শেষ ৩৫ দিন)</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-heatmap" id="heatmapGrid"></div>
+      <div style="display:flex;align-items:center;gap:5px;margin-top:9px;flex-wrap:wrap">
+        <span style="-size:.65rem;-weight:700;color:var(--text-secondary)">কম</span>
+        <div style="width:13px;height:13px;border-radius:3px;background:#f3f4f6"></div>
+        <div style="width:13px;height:13px;border-radius:3px;background:#bfdbfe"></div>
+        <div style="width:13px;height:13px;border-radius:3px;background:#60a5fa"></div>
+        <div style="width:13px;height:13px;border-radius:3px;background:#2563eb"></div>
+        <div style="width:13px;height:13px;border-radius:3px;background:#1e40af"></div>
+        <span style="-size:.65rem;-weight:700;color:var(--text-secondary)">বেশি</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILED STATS -->
+  <div class="anl-card">
+    <div class="anl-card-hdr">
+      <div class="ico" style="background:linear-gradient(135deg,#06b6d4,#0891b2)">📋</div>
+      <h3>বিস্তারিত পরিসংখ্যান</h3>
+    </div>
+    <div class="anl-card-body">
+      <div class="anl-daily-grid">
+        <div class="anl-dc"><span class="d-l">দৈনিক গড় আয়</span><div class="d-v" id="avgDailyIncome">৳ 0</div></div>
+        <div class="anl-dc"><span class="d-l">দৈনিক গড় ব্যয়</span><div class="d-v" id="avgDailyExpense">৳ 0</div></div>
+        <div class="anl-dc"><span class="d-l">সঞ্চয় হার</span><div class="d-v" id="savingsRate">0%</div></div>
+        <div class="anl-dc"><span class="d-l">ব্যয় হার</span><div class="d-v" id="expenseRate">0%</div></div>
+        <div class="anl-dc"><span class="d-l">মোট লেনদেন</span><div class="d-v" id="statTxCount">0</div></div>
+        <div class="anl-dc"><span class="d-l">নেট পজিশন</span><div class="d-v" id="statNetPos">৳ 0</div></div>
+        <div class="anl-dc"><span class="d-l">সর্বোচ্চ আয়</span><div class="d-v" id="statMaxInc">৳ 0</div></div>
+        <div class="anl-dc"><span class="d-l">সর্বোচ্চ ব্যয়</span><div class="d-v" id="statMaxExp">৳ 0</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/chart.min.js"></script>
+<script src="../js/db.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/analysis.js"></script>
+
+<!-- FLOAT BALL -->
+<div id="__fb" style="position:fixed;z-index:99998;bottom:86px;right:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9,#0284c7);box-shadow:0 6px 22px #0ea5e988,0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;-size:1.45rem;cursor:grab;user-select:none;touch-action:none;border:2px solid rgba(255,255,255,.3)">📈</div>
+<div id="__fbo" style="display:none;position:fixed;inset:0;z-index:99996;background:rgba(0,0,0,.52);backdrop-filter:blur(6px)"></div>
+<div id="__fbd" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;height:54vh;background:linear-gradient(175deg,#0f172a 0%,#1a1040 100%);border-radius:26px 26px 0 0;border-top:2.5px solid #0ea5e966;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1);overflow:hidden;-family:inherit">
+  <div style="width:44px;height:5px;background:rgba(255,255,255,.18);border-radius:4px;margin:11px auto 0"></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 14px 8px;border-bottom:1px solid rgba(255,255,255,.07)">
+    <div style="width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#0ea5e9,#0284c7);display:flex;align-items:center;justify-content:center;-size:1.15rem">📈</div>
+    <div style="flex:1"><div style="color:white;-size:.88rem;-weight:900">বিশ্লেষণ</div><div style="color:#0ea5e9;-size:.62rem;-weight:700">জাকির আল জিহাদ</div></div>
+    <button onclick="__fbClose()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:5px 10px;color:#94a3b8;-size:.72rem;-weight:700;cursor:pointer;-family:inherit">✕ বন্ধ</button>
+  </div>
+  <div style="overflow-y:auto;height:calc(54vh - 72px);padding:10px 12px 24px">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+      <a href="../index.html" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;-size:.68rem;-weight:800">📈<span>তালিকা</span></a>
+      <a href="full-page-setup.html?pg=analysis" style="background:linear-gradient(135deg,#667eea,#764ba2);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;-size:.68rem;-weight:800">🖌️<span>Page Setup</span></a>
+      <a href="css-changer.html" style="background:linear-gradient(135deg,#ec4899,#db2777);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;-size:.68rem;-weight:800">🎨<span>CSS</span></a>
+      <a href="extra-backup.html" style="background:linear-gradient(135deg,#0369a1,#0284c7);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;-size:.68rem;-weight:800">📦<span>Backup</span></a>
+      <a href="accounting.html" style="background:linear-gradient(135deg,#1e3a5f,#0f2744);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;-size:.68rem;-weight:800">📚<span>Accounting</span></a>
+      <a href="calculator.html" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;-size:.68rem;-weight:800">🧮<span>Calculator</span></a>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:11px;border:1px solid rgba(255,255,255,.07)">
+      <div style="color:#0ea5e9;-size:.68rem;-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">⚡ কাস্টমাইজ</div>
+      <div class="__fbr"><span class="__fbl">হেডার রং ১</span><input type="color" class="__fbc" data-k="hBg1" value="#0ea5e9" oninput="__fbA(this)"></div>
+      <div class="__fbr"><span class="__fbl">হেডার রং ২</span><input type="color" class="__fbc" data-k="hBg2" value="#0284c7" oninput="__fbA(this)"></div>
+      <div class="__fbr"><span class="__fbl">ফন্ট সাইজ</span><div style="display:flex;align-items:center;gap:5px"><input type="range" class="__fbr2" min="11" max="22" value="17" data-k="fs" oninput="__fbA(this)"><span class="__fbv" id="__fbv_fs">17px</span></div></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button onclick="__fbSave()" style="flex:1;padding:9px;background:linear-gradient(135deg,#0ea5e9,#0284c7);color:white;border:none;border-radius:10px;-size:.78rem;-weight:900;cursor:pointer;-family:inherit">💾 সেভ</button>
+        <a href="full-page-setup.html?pg=analysis" style="flex:1;padding:9px;background:rgba(255,255,255,.06);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:10px;-size:.78rem;-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center">🖌️ Full Setup</a>
+        <button onclick="__fbReset()" style="padding:9px 12px;background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.18);border-radius:10px;-size:.78rem;cursor:pointer;-family:inherit">↺</button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>.__fbr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}.__fbr:last-child{border:none}.__fbl{color:#cbd5e1;-size:.74rem;-weight:700}.__fbc{width:32px;height:24px;border:none;border-radius:6px;cursor:pointer;padding:2px}.__fbr2{width:85px;accent-color:#0ea5e9;cursor:pointer}.__fbv{color:#0ea5e9;-size:.68rem;-weight:700;min-width:26px;text-align:right}</style>
+<script>
+(function(){
+  var ball=document.getElementById('__fb'),ov=document.getElementById('__fbo'),dr=document.getElementById('__fbd');
+  if(!ball)return;
+  try{var s=JSON.parse(localStorage.getItem('settings')||'{}');if(s.floatBallOff){ball.style.display='none';return;}}catch(e){}
+  var drag=false,sx=0,sy=0,bx=0,by=0,mv=false;
+  function gp(){var r=ball.getBoundingClientRect();return{x:r.left,y:r.top};}
+  function onS(ex,ey){drag=true;mv=false;var p=gp();bx=p.x;by=p.y;sx=ex;sy=ey;ball.style.transition='none';ball.style.cursor='grabbing';}
+  function onM(ex,ey){if(!drag)return;var dx=ex-sx,dy=ey-sy;if(Math.abs(dx)>4||Math.abs(dy)>4)mv=true;var nx=Math.max(4,Math.min(window.innerWidth-56,bx+dx)),ny=Math.max(4,Math.min(window.innerHeight-56,by+dy));ball.style.left=nx+'px';ball.style.top=ny+'px';ball.style.right='auto';ball.style.bottom='auto';}
+  function onE(){drag=false;ball.style.cursor='grab';ball.style.transition='box-shadow .2s';}
+  ball.addEventListener('mousedown',function(e){onS(e.clientX,e.clientY);e.preventDefault();});
+  ball.addEventListener('touchstart',function(e){onS(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mousemove',function(e){onM(e.clientX,e.clientY);});
+  document.addEventListener('touchmove',function(e){onM(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mouseup',onE);document.addEventListener('touchend',onE);
+  ball.addEventListener('click',function(){if(!mv)window.__fbOpen();});
+  window.__fbOpen=function(){ov.style.display='block';dr.style.display='block';requestAnimationFrame(function(){requestAnimationFrame(function(){dr.style.transform='translateY(0)';});});__fbLoad();};
+  window.__fbClose=function(){dr.style.transform='translateY(100%)';setTimeout(function(){ov.style.display='none';dr.style.display='none';},300);};
+  ov.addEventListener('click',window.__fbClose);
+  var _pg='analysis';
+  function _gc(){try{return JSON.parse(localStorage.getItem('pageConfig')||'{}')[_pg]||{};}catch(e){return{};}}
+  function _sc(o){try{var all=JSON.parse(localStorage.getItem('pageConfig')||'{}');all[_pg]=Object.assign({},all[_pg]||{},o);localStorage.setItem('pageConfig',JSON.stringify(all));}catch(e){}}
+  window.__fbA=function(inp){var k=inp.dataset.k,v=inp.value;var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=isNaN(v)?v:v+'px';var o={};o[k]=isNaN(v)?v:Number(v);_sc(o);if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}};
+  window.__fbSave=function(){var cfg={};dr.querySelectorAll('[data-k]').forEach(function(i){var v=i.value;cfg[i.dataset.k]=isNaN(v)?v:Number(v);});_sc(cfg);if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}if(typeof showToast==='function')showToast('✅ সেভ হয়েছে');};
+  window.__fbReset=function(){_sc({});if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}if(typeof showToast==='function')showToast('↺ রিসেট হয়েছে');};
+  window.__fbLoad=function(){var cfg=_gc();dr.querySelectorAll('[data-k]').forEach(function(i){var k=i.dataset.k;if(cfg[k]!==undefined){i.value=cfg[k];var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=i.value+(i.type==='range'?'px':'');}});};
+})();
+</script>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>ক্যালকুলেটর - Daily Account</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg-main);min-height:100vh;padding-bottom:30px;font-family:var(--font-bangla)}
+.calc-header{background:linear-gradient(135deg,#667eea,#764ba2);padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 20px rgba(102,126,234,.4);border-radius:0 0 20px 20px}
+.calc-header h1{color:white;font-size:1.1rem;font-weight:900;flex:1;text-align:center}
+.back-btn{background:rgba(255,255,255,.25);border:2px solid rgba(255,255,255,.3);width:36px;height:36px;border-radius:50%;color:white;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.calc-tabs{display:flex;gap:0;margin:10px 12px 0;background:#f1f5f9;border-radius:13px;padding:4px}
+.dark-mode .calc-tabs{background:#1e2435}
+.calc-tab{flex:1;padding:8px 4px;border:none;border-radius:9px;font-size:.72rem;font-weight:800;cursor:pointer;background:transparent;color:#64748b;transition:all .2s;font-family:inherit}
+.calc-tab.active{background:white;color:#667eea;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.dark-mode .calc-tab.active{background:#252d3d;color:#818cf8}
+.calc-display{margin:10px 12px 0;background:linear-gradient(160deg,#0f172a,#1e1b4b);border-radius:16px;padding:12px 16px 10px;box-shadow:0 8px 24px rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.08);min-height:90px}
+.display-history{font-size:.7rem;color:#475569;text-align:right;min-height:16px;font-family:monospace;word-break:break-all}
+.display-expr{font-size:.9rem;color:#94a3b8;text-align:right;min-height:20px;font-family:monospace;word-break:break-all;margin:2px 0}
+.display-result{font-size:2.2rem;font-weight:900;color:#22d3ee;text-align:right;font-family:monospace;text-shadow:0 0 12px rgba(34,211,238,.5);line-height:1.1}
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;padding:10px 12px}
+.key{padding:15px 6px;font-size:1.1rem;font-weight:800;border:none;border-radius:13px;cursor:pointer;transition:all .1s;position:relative;font-family:inherit;box-shadow:0 4px 10px rgba(0,0,0,.1)}
+.key:active{transform:scale(.9);box-shadow:0 2px 5px rgba(0,0,0,.15)}
+.key-num{background:linear-gradient(145deg,#f8fafc,#e2e8f0);color:#1e293b}
+.dark-mode .key-num{background:linear-gradient(145deg,#252d3d,#1e2435);color:#e2e8f0}
+.key-op{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white}
+.key-eq{background:linear-gradient(135deg,#10b981,#059669);color:white;grid-column:span 2;font-size:1.4rem}
+.key-clr{background:linear-gradient(135deg,#ef4444,#dc2626);color:white}
+.key-clr2{background:linear-gradient(135deg,#f59e0b,#d97706);color:white}
+.key-fn{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white;font-size:.7rem}
+.key-zero{grid-column:span 2}
+.panel{display:none}
+.panel.active{display:block}
+.fn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 12px 8px}
+.key-adv{padding:10px 5px;font-size:.72rem;font-weight:800;border:none;border-radius:11px;cursor:pointer;font-family:inherit;transition:all .1s;box-shadow:0 3px 8px rgba(0,0,0,.1)}
+.key-adv:active{transform:scale(.92)}
+.adv-purple{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white}
+.adv-teal{background:linear-gradient(135deg,#0891b2,#0e7490);color:white}
+.adv-pink{background:linear-gradient(135deg,#ec4899,#db2777);color:white}
+.adv-orange{background:linear-gradient(135deg,#f97316,#ea580c);color:white}
+.adv-green{background:linear-gradient(135deg,#10b981,#059669);color:white}
+.adv-blue{background:linear-gradient(135deg,#3b82f6,#2563eb);color:white}
+.finance-card{background:white;border-radius:14px;padding:13px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:9px}
+.dark-mode .finance-card{background:#1e2435}
+.finance-title{font-size:.82rem;font-weight:900;color:#374151;margin-bottom:9px}
+.dark-mode .finance-title{color:#e2e8f0}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px}
+.f-inp{padding:8px 10px;border:2px solid #e2e8f0;border-radius:10px;font-size:.85rem;font-family:inherit;background:white;color:#1f2937;outline:none;width:100%}
+.dark-mode .f-inp{background:#252d3d;border-color:#334155;color:#e2e8f0}
+.f-inp:focus{border-color:#667eea}
+.f-label{font-size:.68rem;font-weight:700;color:#64748b;margin-bottom:3px}
+.dark-mode .f-label{color:#94a3b8}
+.f-btn{width:100%;padding:10px;border:none;border-radius:11px;font-size:.82rem;font-weight:900;cursor:pointer;font-family:inherit}
+.f-result{margin-top:7px;padding:9px 12px;background:linear-gradient(135deg,#f0f4ff,#e0e7ff);border-radius:10px;font-size:.82rem;font-weight:800;color:#4338ca;display:none;line-height:1.5}
+.dark-mode .f-result{background:linear-gradient(135deg,#1e2435,#252d3d);color:#818cf8}
+.conv-sel{width:100%;padding:7px 9px;border:2px solid #e2e8f0;border-radius:10px;font-size:.78rem;font-weight:700;font-family:inherit;background:white;color:#1f2937;outline:none;margin-top:5px}
+.dark-mode .conv-sel{background:#252d3d;border-color:#334155;color:#e2e8f0}
+.history-item{background:white;border-radius:12px;padding:10px 12px;box-shadow:0 2px 8px rgba(0,0,0,.06);border-left:4px solid #667eea;margin-bottom:7px}
+.dark-mode .history-item{background:#1e2435}
+.history-expr{font-size:.72rem;color:#64748b;font-family:monospace;margin-bottom:2px}
+.history-res{font-size:1rem;font-weight:900;color:#667eea;font-family:monospace}
+.dark-mode .history-res{color:#818cf8}
+.history-time{font-size:.65rem;color:#9ca3af;margin-top:2px}
+.h-note-inp{width:100%;margin-top:5px;padding:5px 8px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:.72rem;font-family:inherit;background:#f8fafc;color:#374151;outline:none}
+.dark-mode .h-note-inp{background:#252d3d;border-color:#334155;color:#e2e8f0}
+.h-actions{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.hb{padding:5px 8px;border:none;border-radius:7px;font-size:.68rem;font-weight:800;cursor:pointer;font-family:inherit}
+.hb-use{background:#e0e7ff;color:#4338ca}
+.hb-rel{background:#dcfce7;color:#166534}
+.hb-del{background:#fee2e2;color:#dc2626}
+.rel-badge{display:inline-flex;align-items:center;gap:3px;background:#e0f2fe;color:#0369a1;padding:2px 7px;border-radius:7px;font-size:.65rem;font-weight:800;margin-top:3px}
+.sec-pad{padding:8px 12px 0}
+    </style>
+</head>
+<body data-page="calculator">
+
+<header class="calc-header">
+    <h1>🧮 ক্যালকুলেটর — জাকির আল জিহাদ</h1>
+</header>
+
+<div class="calc-tabs">
+    <button class="calc-tab active" onclick="switchTab('basic',this)">মূল</button>
+    <button class="calc-tab" onclick="switchTab('adv',this)">উন্নত</button>
+    <button class="calc-tab" onclick="switchTab('finance',this)">হিসাব</button>
+    <button class="calc-tab" onclick="switchTab('convert',this)">রূপান্তর</button>
+    <button class="calc-tab" onclick="switchTab('history',this)">ইতিহাস</button>
+</div>
+
+<div class="calc-display">
+    <div class="display-history" id="dH"></div>
+    <div class="display-expr" id="dE"></div>
+    <div class="display-result" id="dR">0</div>
+</div>
+
+<!-- BASIC -->
+<div class="panel active" id="panelbasic">
+<div class="keypad">
+    <button class="key key-clr" onclick="cClear()">C</button>
+    <button class="key key-clr2" onclick="cCE()">CE</button>
+    <button class="key key-op" onclick="cBs()">⌫</button>
+    <button class="key key-op" onclick="cOp('/')">÷</button>
+    <button class="key key-num" onclick="cNum('7')">7</button>
+    <button class="key key-num" onclick="cNum('8')">8</button>
+    <button class="key key-num" onclick="cNum('9')">9</button>
+    <button class="key key-op" onclick="cOp('*')">×</button>
+    <button class="key key-num" onclick="cNum('4')">4</button>
+    <button class="key key-num" onclick="cNum('5')">5</button>
+    <button class="key key-num" onclick="cNum('6')">6</button>
+    <button class="key key-op" onclick="cOp('-')">−</button>
+    <button class="key key-num" onclick="cNum('1')">1</button>
+    <button class="key key-num" onclick="cNum('2')">2</button>
+    <button class="key key-num" onclick="cNum('3')">3</button>
+    <button class="key key-op" onclick="cOp('+')">+</button>
+    <button class="key key-num" onclick="cSign()">±</button>
+    <button class="key key-num key-zero" onclick="cNum('0')">0</button>
+    <button class="key key-num" onclick="cNum('.')">.</button>
+    <button class="key key-op" onclick="cOp('%')">%</button>
+    <button class="key key-eq" onclick="cEqual()">=</button>
+    <button class="key key-fn" onclick="cSave()">💾 সংরক্ষণ</button>
+</div>
+</div>
+
+<!-- ADVANCED -->
+<div class="panel" id="paneladv">
+<div class="keypad" style="padding-bottom:4px">
+    <button class="key key-clr" onclick="cClear()">C</button>
+    <button class="key key-clr2" onclick="cCE()">CE</button>
+    <button class="key key-op" onclick="cBs()">⌫</button>
+    <button class="key key-op" onclick="cOp('/')">÷</button>
+    <button class="key key-num" onclick="cNum('7')">7</button>
+    <button class="key key-num" onclick="cNum('8')">8</button>
+    <button class="key key-num" onclick="cNum('9')">9</button>
+    <button class="key key-op" onclick="cOp('*')">×</button>
+    <button class="key key-num" onclick="cNum('4')">4</button>
+    <button class="key key-num" onclick="cNum('5')">5</button>
+    <button class="key key-num" onclick="cNum('6')">6</button>
+    <button class="key key-op" onclick="cOp('-')">−</button>
+    <button class="key key-num" onclick="cNum('1')">1</button>
+    <button class="key key-num" onclick="cNum('2')">2</button>
+    <button class="key key-num" onclick="cNum('3')">3</button>
+    <button class="key key-op" onclick="cOp('+')">+</button>
+    <button class="key key-num" onclick="cSign()">±</button>
+    <button class="key key-num key-zero" onclick="cNum('0')">0</button>
+    <button class="key key-num" onclick="cNum('.')">.</button>
+    <button class="key key-eq" onclick="cEqual()">=</button>
+</div>
+<div class="fn-grid">
+    <button class="key-adv adv-purple" onclick="cFn('sqrt')">√ বর্গমূল</button>
+    <button class="key-adv adv-purple" onclick="cFn('sq')">x² বর্গ</button>
+    <button class="key-adv adv-purple" onclick="cFn('cube')">x³ ঘন</button>
+    <button class="key-adv adv-teal" onclick="cFn('log')">log₁₀</button>
+    <button class="key-adv adv-teal" onclick="cFn('ln')">ln</button>
+    <button class="key-adv adv-teal" onclick="cFn('exp')">eˣ</button>
+    <button class="key-adv adv-pink" onclick="cFn('sin')">sin°</button>
+    <button class="key-adv adv-pink" onclick="cFn('cos')">cos°</button>
+    <button class="key-adv adv-pink" onclick="cFn('tan')">tan°</button>
+    <button class="key-adv adv-orange" onclick="cFn('pi')">π</button>
+    <button class="key-adv adv-orange" onclick="cFn('inv')">1/x</button>
+    <button class="key-adv adv-orange" onclick="cFn('abs')">|x|</button>
+    <button class="key-adv adv-green" onclick="cFn('floor')">⌊x⌋</button>
+    <button class="key-adv adv-green" onclick="cFn('ceil')">⌈x⌉</button>
+    <button class="key-adv adv-green" onclick="cFn('round')">≈রাউন্ড</button>
+    <button class="key-adv adv-blue" onclick="cOp('**')">xⁿ পাওয়ার</button>
+    <button class="key-adv adv-blue" onclick="cFn('mp')">M+ মেমরি</button>
+    <button class="key-adv adv-blue" onclick="cFn('mr')">MR রিকল</button>
+</div>
+<div style="padding:0 12px 8px">
+    <button onclick="cSave()" style="width:100%;padding:10px;background:linear-gradient(135deg,#10b981,#059669);color:white;border:none;border-radius:12px;font-weight:900;cursor:pointer;font-family:inherit;font-size:.82rem">💾 ইতিহাসে সংরক্ষণ</button>
+</div>
+</div>
+
+<!-- FINANCE -->
+<div class="panel" id="panelfinance">
+<div class="sec-pad">
+<div class="finance-card">
+    <div class="finance-title">📊 শতাংশ হিসাব</div>
+    <div class="f-row">
+        <div><div class="f-label">মোট মূল্য (৳)</div><input class="f-inp" type="number" id="pct_total" placeholder="১০০০"></div>
+        <div><div class="f-label">শতাংশ (%)</div><input class="f-inp" type="number" id="pct_rate" placeholder="১৫"></div>
+    </div>
+    <button class="f-btn" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:white" onclick="fPercent()">শতাংশ বের করুন</button>
+    <div class="f-result" id="r_pct"></div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">💰 লাভ / ক্ষতি</div>
+    <div class="f-row">
+        <div><div class="f-label">ক্রয় মূল্য (৳)</div><input class="f-inp" type="number" id="pl_buy" placeholder="৫০০"></div>
+        <div><div class="f-label">বিক্রয় মূল্য (৳)</div><input class="f-inp" type="number" id="pl_sell" placeholder="৬৫০"></div>
+    </div>
+    <button class="f-btn" style="background:linear-gradient(135deg,#10b981,#059669);color:white" onclick="fPL()">লাভ/ক্ষতি বের করুন</button>
+    <div class="f-result" id="r_pl"></div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">🏦 EMI / কিস্তি হিসাব</div>
+    <div class="f-row">
+        <div><div class="f-label">ঋণের পরিমাণ (৳)</div><input class="f-inp" type="number" id="emi_p" placeholder="১০০০০০"></div>
+        <div><div class="f-label">সুদের হার (% বার্ষিক)</div><input class="f-inp" type="number" id="emi_r" placeholder="১২"></div>
+    </div>
+    <div class="f-row">
+        <div><div class="f-label">মেয়াদ (মাস)</div><input class="f-inp" type="number" id="emi_n" placeholder="২৪"></div>
+        <div style="display:flex;align-items:flex-end"><button class="f-btn" style="background:linear-gradient(135deg,#3b82f6,#2563eb);color:white" onclick="fEMI()">হিসাব করুন</button></div>
+    </div>
+    <div class="f-result" id="r_emi"></div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">🧾 ভ্যাট / ট্যাক্স হিসাব</div>
+    <div class="f-row">
+        <div><div class="f-label">মূল্য (৳)</div><input class="f-inp" type="number" id="vat_p" placeholder="১০০০"></div>
+        <div><div class="f-label">ভ্যাট হার (%)</div><input class="f-inp" type="number" id="vat_r" placeholder="১৫" value="15"></div>
+    </div>
+    <button class="f-btn" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:white" onclick="fVAT()">ভ্যাট সহ মূল্য</button>
+    <div class="f-result" id="r_vat"></div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">🍽️ বিল ভাগ করুন</div>
+    <div class="f-row">
+        <div><div class="f-label">মোট বিল (৳)</div><input class="f-inp" type="number" id="sp_t" placeholder="৩০০০"></div>
+        <div><div class="f-label">মানুষ সংখ্যা</div><input class="f-inp" type="number" id="sp_c" placeholder="৪"></div>
+    </div>
+    <button class="f-btn" style="background:linear-gradient(135deg,#ec4899,#db2777);color:white" onclick="fSplit()">প্রতিজনের ভাগ</button>
+    <div class="f-result" id="r_sp"></div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">📈 সরল সুদ</div>
+    <div class="f-row">
+        <div><div class="f-label">মূলধন (৳)</div><input class="f-inp" type="number" id="si_p" placeholder="১০০০০"></div>
+        <div><div class="f-label">সুদের হার (%)</div><input class="f-inp" type="number" id="si_r" placeholder="১০"></div>
+    </div>
+    <div class="f-row">
+        <div><div class="f-label">সময় (বছর)</div><input class="f-inp" type="number" id="si_t" placeholder="৩"></div>
+        <div style="display:flex;align-items:flex-end"><button class="f-btn" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:white" onclick="fSI()">সুদ বের করুন</button></div>
+    </div>
+    <div class="f-result" id="r_si"></div>
+</div>
+</div>
+</div>
+
+<!-- CONVERT -->
+<div class="panel" id="panelconvert">
+<div class="sec-pad">
+<div class="finance-card">
+    <div class="finance-title">💱 মুদ্রা রূপান্তর (আনুমানিক)</div>
+    <div class="f-row">
+        <div><div class="f-label">পরিমাণ</div><input class="f-inp" type="number" id="cv_a" placeholder="১০০" oninput="cvCur()"></div>
+        <div><div class="f-label">থেকে</div>
+            <select class="conv-sel" id="cv_f" onchange="cvCur()">
+                <option value="BDT">৳ টাকা</option><option value="USD">$ ডলার</option><option value="EUR">€ ইউরো</option>
+                <option value="GBP">£ পাউন্ড</option><option value="SAR">﷼ রিয়াল</option><option value="AED">د.إ দিরহাম</option><option value="INR">₹ রুপি</option>
+            </select>
+        </div>
+    </div>
+    <div class="f-row">
+        <div><div class="f-label">ফলাফল</div><input class="f-inp" type="number" id="cv_b" readonly placeholder="ফলাফল"></div>
+        <div><div class="f-label">তে</div>
+            <select class="conv-sel" id="cv_t" onchange="cvCur()">
+                <option value="USD">$ ডলার</option><option value="BDT">৳ টাকা</option><option value="EUR">€ ইউরো</option>
+                <option value="GBP">£ পাউন্ড</option><option value="SAR">﷼ রিয়াল</option><option value="AED">د.إ দিরহাম</option><option value="INR">₹ রুপি</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">📏 দৈর্ঘ্য রূপান্তর</div>
+    <div class="f-row">
+        <div><input class="f-inp" type="number" id="ln_a" placeholder="পরিমাণ" oninput="cvLen()">
+        <select class="conv-sel" id="ln_f" onchange="cvLen()"><option value="m">মিটার</option><option value="km">কিলোমিটার</option><option value="cm">সেন্টিমিটার</option><option value="mm">মিলিমিটার</option><option value="mile">মাইল</option><option value="ft">ফুট</option><option value="inch">ইঞ্চি</option><option value="yard">গজ</option></select></div>
+        <div><input class="f-inp" type="number" id="ln_b" readonly placeholder="ফলাফল">
+        <select class="conv-sel" id="ln_t" onchange="cvLen()"><option value="km">কিলোমিটার</option><option value="m">মিটার</option><option value="cm">সেন্টিমিটার</option><option value="mm">মিলিমিটার</option><option value="mile">মাইল</option><option value="ft">ফুট</option><option value="inch">ইঞ্চি</option><option value="yard">গজ</option></select></div>
+    </div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">⚖️ ওজন রূপান্তর</div>
+    <div class="f-row">
+        <div><input class="f-inp" type="number" id="wt_a" placeholder="পরিমাণ" oninput="cvWt()">
+        <select class="conv-sel" id="wt_f" onchange="cvWt()"><option value="kg">কিলোগ্রাম</option><option value="g">গ্রাম</option><option value="mg">মিলিগ্রাম</option><option value="lb">পাউন্ড</option><option value="oz">আউন্স</option><option value="ton">টন</option></select></div>
+        <div><input class="f-inp" type="number" id="wt_b" readonly placeholder="ফলাফল">
+        <select class="conv-sel" id="wt_t" onchange="cvWt()"><option value="g">গ্রাম</option><option value="kg">কিলোগ্রাম</option><option value="mg">মিলিগ্রাম</option><option value="lb">পাউন্ড</option><option value="oz">আউন্স</option><option value="ton">টন</option></select></div>
+    </div>
+</div>
+<div class="finance-card">
+    <div class="finance-title">🌡️ তাপমাত্রা রূপান্তর</div>
+    <div class="f-row">
+        <div><input class="f-inp" type="number" id="tp_a" placeholder="পরিমাণ" oninput="cvTemp()">
+        <select class="conv-sel" id="tp_f" onchange="cvTemp()"><option value="C">সেলসিয়াস °C</option><option value="F">ফারেনহাইট °F</option><option value="K">কেলভিন K</option></select></div>
+        <div><input class="f-inp" type="number" id="tp_b" readonly placeholder="ফলাফল">
+        <select class="conv-sel" id="tp_t" onchange="cvTemp()"><option value="F">ফারেনহাইট °F</option><option value="C">সেলসিয়াস °C</option><option value="K">কেলভিন K</option></select></div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- HISTORY -->
+<div class="panel" id="panelhistory">
+<div style="padding:10px 12px 0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-size:.85rem;font-weight:900;color:#374151" class="dark-mode-text">📋 হিসাবের ইতিহাস</div>
+        <button onclick="clearHist()" style="padding:5px 11px;background:#fee2e2;color:#dc2626;border:none;border-radius:8px;font-size:.72rem;font-weight:800;cursor:pointer;font-family:inherit">🗑️ সব মুছুন</button>
+    </div>
+    <div id="histList"><div style="text-align:center;padding:30px;color:#9ca3af;font-size:.82rem">কোনো ইতিহাস নেই</div></div>
+</div>
+</div>
+
+<script src="../js/db.js"></script>
+<script src="../js/app.js"></script>
+<script>
+var _ex='', _res='0', _lastR=null, _mem=0, _curTab='basic';
+
+function _upd(){
+    var exD=document.getElementById('dE'), rD=document.getElementById('dR');
+    if(exD) exD.textContent=_ex.replace(/\*/g,'×').replace(/\//g,'÷').replace(/\*\*/g,'^');
+    if(rD)  rD.textContent=_res;
+}
+function _fmt(n){ if(!isFinite(n)||isNaN(n)) return '0'; return parseFloat(n.toFixed(10)).toString(); }
+function _eval(expr){ try{ return Function('"use strict";return('+expr.replace(/\*\*/g,'**')+')')(); }catch(e){ return null; } }
+
+function cNum(n){
+    if(_res==='Error'){_ex='';_res='0';}
+    if(_ex===''&&_res!=='0'){_ex=_res;}
+    _ex+=n;
+    var v=_eval(_ex); if(v!==null&&isFinite(v)) _res=_fmt(v);
+    _upd();
+}
+function cOp(op){
+    if(_res==='Error'){_ex='';_res='0';return;}
+    if(_ex===''){_ex=_res;}
+    var last=_ex.slice(-1);
+    if(['+','-','*','/','%'].includes(last)) _ex=_ex.slice(0,-1);
+    _ex+=op; _res='0'; _upd();
+}
+function cEqual(){
+    if(!_ex) return;
+    var v=_eval(_ex);
+    if(v===null||!isFinite(v)||isNaN(v)){_res='Error';_ex='';_upd();return;}
+    var r=_fmt(v);
+    document.getElementById('dH').textContent=_ex.replace(/\*/g,'×').replace(/\//g,'÷')+' = '+r;
+    _lastR={expr:_ex,result:r,time:new Date().toISOString()};
+    _ex=''; _res=r; _upd();
+    // auto-save
+    _autoSave(_lastR);
+}
+function _autoSave(entry){
+    if(!entry) return;
+    var h=DB.get('calcHistory')||[];
+    // avoid duplicate last entry
+    if(h.length&&h[0].expr===entry.expr&&h[0].result===entry.result) return;
+    h.unshift({id:DB.generateId(),expr:entry.expr,result:entry.result,note:'',relation:null,time:entry.time,auto:true});
+    if(h.length>500) h=h.slice(0,500);
+    DB.set('calcHistory',h);
+}
+function cClear(){_ex='';_res='0';document.getElementById('dH').textContent='';_upd();}
+function cCE(){_ex='';_res='0';_upd();}
+function cBs(){
+    if(_ex===''){_res='0';_upd();return;}
+    _ex=_ex.slice(0,-1);
+    if(_ex===''){_res='0';}
+    else{var v=_eval(_ex);if(v!==null&&isFinite(v))_res=_fmt(v);}
+    _upd();
+}
+function cSign(){
+    var n=parseFloat(_res); if(isNaN(n)) return;
+    _res=_fmt(-n); _ex=_res; _upd();
+}
+function cFn(fn){
+    var n=parseFloat(_res); if(isNaN(n)) return;
+    var r, nm='';
+    switch(fn){
+        case 'sqrt': r=Math.sqrt(Math.abs(n));nm='√';break;
+        case 'sq':   r=n*n;nm='²';break;
+        case 'cube': r=n*n*n;nm='³';break;
+        case 'log':  r=Math.log10(n);nm='log';break;
+        case 'ln':   r=Math.log(n);nm='ln';break;
+        case 'exp':  r=Math.exp(n);nm='eˣ';break;
+        case 'sin':  r=Math.sin(n*Math.PI/180);nm='sin';break;
+        case 'cos':  r=Math.cos(n*Math.PI/180);nm='cos';break;
+        case 'tan':  r=Math.tan(n*Math.PI/180);nm='tan';break;
+        case 'pi':   r=Math.PI;nm='π';break;
+        case 'inv':  r=1/n;nm='1/';break;
+        case 'abs':  r=Math.abs(n);nm='|·|';break;
+        case 'floor':r=Math.floor(n);nm='⌊⌋';break;
+        case 'ceil': r=Math.ceil(n);nm='⌈⌉';break;
+        case 'round':r=Math.round(n);nm='≈';break;
+        case 'mp':   _mem+=n; showToast&&showToast('M = '+_fmt(_mem)); return;
+        case 'mr':   _ex=_fmt(_mem);_res=_fmt(_mem);_upd(); return;
+        default: return;
+    }
+    var rs=_fmt(r);
+    document.getElementById('dH').textContent=nm+'('+_fmt(n)+') = '+rs;
+    _lastR={expr:nm+'('+_fmt(n)+')',result:rs,time:new Date().toISOString()};
+    _ex=''; _res=rs; _upd();
+    _autoSave(_lastR);
+}
+function cSave(){
+    if(!_lastR&&_res!=='0'&&_res!=='Error') _lastR={expr:_res,result:_res,time:new Date().toISOString()};
+    if(!_lastR){if(typeof showToast!=='undefined')showToast('আগে কোনো হিসাব করুন');return;}
+    var h=DB.get('calcHistory')||[];
+    h.unshift({id:DB.generateId(),expr:_lastR.expr,result:_lastR.result,note:'',relation:null,time:_lastR.time,manual:true});
+    if(h.length>500) h=h.slice(0,500);
+    DB.set('calcHistory',h);
+    if(typeof showToast!=='undefined') showToast('✅ ইতিহাসে সংরক্ষিত');
+    _lastR=null;
+}
+
+/* HISTORY PANEL */
+function loadHist(){
+    var h=DB.get('calcHistory')||[];
+    var el=document.getElementById('histList'); if(!el) return;
+    if(!h.length){el.innerHTML='<div style="text-align:center;padding:30px;color:#9ca3af;font-size:.82rem">কোনো ইতিহাস নেই</div>';return;}
+    el.innerHTML=h.map(function(entry){
+        var dt=new Date(entry.time||Date.now());
+        var ts=String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+' '+String(dt.getHours()).padStart(2,'0')+':'+String(dt.getMinutes()).padStart(2,'0');
+        var relHtml=entry.relation?'<div class="rel-badge">🔗 '+entry.relation.label+' — ৳'+Math.round(entry.relation.amount||0)+'</div>':'';
+        return '<div class="history-item">'+
+            '<div class="history-expr">'+(entry.expr||'')+'</div>'+
+            '<div class="history-res">= '+(entry.result||'')+'</div>'+
+            (entry.note?'<div style="font-size:.7rem;color:#64748b;margin-top:2px">📝 '+entry.note+'</div>':'')+
+            relHtml+
+            '<div class="history-time">🕑 '+ts+(entry.auto?' · স্বয়ংক্রিয়':'')+'</div>'+
+            '<input class="h-note-inp" placeholder="নোট যোগ করুন..." value="'+(entry.note||'')+'" onchange="hNote(\''+entry.id+'\',this.value)">'+
+            '<div class="h-actions">'+
+            '<button class="hb hb-use" onclick="hUse(\''+entry.result+'\')">↩ ব্যবহার</button>'+
+            '<button class="hb hb-rel" onclick="hAddRel(\''+entry.id+'\')">🔗 সম্পর্ক</button>'+
+            '<button class="hb hb-del" onclick="hDel(\''+entry.id+'\')">🗑️</button>'+
+            '</div></div>';
+    }).join('');
+}
+function hNote(id,note){var h=DB.get('calcHistory')||[];var i=h.findIndex(function(x){return x.id===id;});if(i>-1){h[i].note=note;DB.set('calcHistory',h);}}
+function hDel(id){DB.set('calcHistory',(DB.get('calcHistory')||[]).filter(function(x){return x.id!==id;}));loadHist();}
+function clearHist(){if(!confirm('সব ইতিহাস মুছে ফেলবেন?'))return;DB.set('calcHistory',[]);loadHist();}
+function hUse(val){_res=val;_ex=val;_upd();switchTab('basic',document.querySelector('.calc-tab'));}
+function hAddRel(id){
+    var ex=document.getElementById('__cRM');if(ex)ex.remove();
+    var modal=document.createElement('div');modal.id='__cRM';
+    modal.style.cssText='position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.85);display:flex;align-items:flex-end;justify-content:center';
+    var isDark=document.body.classList.contains('dark-mode');
+    var bg=isDark?'#1e2435':'white'; var tc=isDark?'#e2e8f0':'#1f2937';
+    var stores=[{key:'income',lbl:'💰 আয়',nf:'source',c:'#10b981'},{key:'expense',lbl:'💸 ব্যয়',nf:'category',c:'#ef4444'},{key:'ledger',lbl:'📋 লেনদেন',nf:'person',c:'#f59e0b'},{key:'savings',lbl:'🏦 সঞ্চয়',nf:'method',c:'#a855f7'}];
+    var lHtml='';
+    stores.forEach(function(s){
+        var items=(DB.get(s.key)||[]).slice(0,6);if(!items.length)return;
+        lHtml+='<div style="margin-bottom:8px"><div style="font-size:.7rem;font-weight:800;color:'+s.c+';margin-bottom:4px">'+s.lbl+'</div>';
+        items.forEach(function(item){
+            var name=item[s.nf]||item.source||item.name||'--';
+            lHtml+='<button onclick="__cRMset(\''+id+'\',\''+s.key+'\',\''+item.id+'\',\''+name.replace(/['"]/g,'')+'\','+Math.round(item.amount||0)+')" style="width:100%;text-align:left;padding:8px 11px;background:rgba(0,0,0,.04);border:1.5px solid #e5e7eb;border-radius:9px;margin-bottom:4px;cursor:pointer;font-family:inherit;font-size:.78rem;font-weight:700;color:'+tc+'">'+name+' — ৳'+Math.round(item.amount||0)+'</button>';
+        });
+        lHtml+='</div>';
+    });
+    modal.innerHTML='<div style="background:'+bg+';border-radius:22px 22px 0 0;padding:18px 14px 36px;width:100%;max-height:70vh;overflow-y:auto">'+
+        '<div style="width:36px;height:4px;background:#e5e7eb;border-radius:4px;margin:0 auto 12px"></div>'+
+        '<h3 style="color:'+tc+';font-size:.9rem;font-weight:900;margin-bottom:12px;text-align:center">🔗 সম্পর্কিত লেনদেন</h3>'+
+        lHtml+
+        '<button onclick="document.getElementById(\'__cRM\').remove()" style="width:100%;padding:10px;background:#f3f4f6;color:#6b7280;border:none;border-radius:11px;font-weight:700;cursor:pointer;font-family:inherit">বাতিল</button></div>';
+    document.body.appendChild(modal);
+    modal.onclick=function(e){if(e.target===modal)modal.remove();};
+    window.__cRMset=function(hid,sk,iid,label,amt){
+        var h=DB.get('calcHistory')||[];var i=h.findIndex(function(x){return x.id===hid;});
+        if(i>-1){h[i].relation={store:sk,id:iid,label:label,amount:amt};DB.set('calcHistory',h);}
+        modal.remove();loadHist();
+        if(typeof showToast!=='undefined')showToast('✅ সম্পর্ক যোগ হয়েছে');
+    };
+}
+
+/* FINANCE */
+function fPercent(){var t=parseFloat(document.getElementById('pct_total').value)||0,r=parseFloat(document.getElementById('pct_rate').value)||0,p=t*r/100;var el=document.getElementById('r_pct');el.style.display='block';el.textContent=r+'% = ৳'+_fmt(p)+' | মোট+: ৳'+_fmt(t+p)+' | মোট-: ৳'+_fmt(t-p);_res=_fmt(p);_upd();}
+function fPL(){var b=parseFloat(document.getElementById('pl_buy').value)||0,s=parseFloat(document.getElementById('pl_sell').value)||0,d=s-b,p=b>0?(d/b*100):0;var el=document.getElementById('r_pl');el.style.display='block';el.innerHTML=d>=0?'✅ লাভ: ৳'+_fmt(d)+' ('+_fmt(p.toFixed(2))+'%)':'❌ ক্ষতি: ৳'+_fmt(Math.abs(d))+' ('+_fmt(Math.abs(p).toFixed(2))+'%)';_res=_fmt(Math.abs(d));_upd();}
+function fEMI(){var P=parseFloat(document.getElementById('emi_p').value)||0,r=(parseFloat(document.getElementById('emi_r').value)||0)/12/100,n=parseInt(document.getElementById('emi_n').value)||1;var emi=r>0?P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):P/n;var tot=emi*n;var el=document.getElementById('r_emi');el.style.display='block';el.textContent='মাসিক কিস্তি: ৳'+_fmt(Math.round(emi))+' | মোট পরিশোধ: ৳'+_fmt(Math.round(tot))+' | মোট সুদ: ৳'+_fmt(Math.round(tot-P));_res=_fmt(Math.round(emi));_upd();}
+function fVAT(){var p=parseFloat(document.getElementById('vat_p').value)||0,r=parseFloat(document.getElementById('vat_r').value)||15,v=p*r/100;var el=document.getElementById('r_vat');el.style.display='block';el.textContent='ভ্যাট: ৳'+_fmt(v)+' | মোট: ৳'+_fmt(p+v);_res=_fmt(p+v);_upd();}
+function fSplit(){var t=parseFloat(document.getElementById('sp_t').value)||0,c=parseInt(document.getElementById('sp_c').value)||1,e=t/c;var el=document.getElementById('r_sp');el.style.display='block';el.textContent='প্রতিজন: ৳'+_fmt(Math.round(e*100)/100);_res=_fmt(Math.round(e*100)/100);_upd();}
+function fSI(){var p=parseFloat(document.getElementById('si_p').value)||0,r=parseFloat(document.getElementById('si_r').value)||0,t=parseFloat(document.getElementById('si_t').value)||0,si=p*r*t/100;var el=document.getElementById('r_si');el.style.display='block';el.textContent='সরল সুদ: ৳'+_fmt(si)+' | মোট: ৳'+_fmt(p+si);_res=_fmt(si);_upd();}
+
+/* CONVERTERS */
+var RBDT={BDT:1,USD:110,EUR:120,GBP:140,SAR:29.3,AED:30,INR:1.32};
+function cvCur(){var a=parseFloat(document.getElementById('cv_a').value)||0,f=document.getElementById('cv_f').value,t=document.getElementById('cv_t').value;document.getElementById('cv_b').value=_fmt(Math.round(a*(RBDT[f]||1)/(RBDT[t]||1)*100)/100);}
+var LM={m:1,km:1000,cm:.01,mm:.001,mile:1609.34,ft:.3048,inch:.0254,yard:.9144};
+function cvLen(){var a=parseFloat(document.getElementById('ln_a').value)||0,f=document.getElementById('ln_f').value,t=document.getElementById('ln_t').value;document.getElementById('ln_b').value=_fmt(a*(LM[f]||1)/(LM[t]||1));}
+var WG={kg:1000,g:1,mg:.001,lb:453.592,oz:28.3495,ton:1e6};
+function cvWt(){var a=parseFloat(document.getElementById('wt_a').value)||0,f=document.getElementById('wt_f').value,t=document.getElementById('wt_t').value;document.getElementById('wt_b').value=_fmt(a*(WG[f]||1)/(WG[t]||1));}
+function cvTemp(){var a=parseFloat(document.getElementById('tp_a').value)||0,f=document.getElementById('tp_f').value,t=document.getElementById('tp_t').value;var c=f==='C'?a:f==='F'?(a-32)*5/9:a-273.15;var r=t==='C'?c:t==='F'?c*9/5+32:c+273.15;document.getElementById('tp_b').value=_fmt(Math.round(r*100)/100);}
+
+/* TAB SWITCH */
+function switchTab(tab, btn){
+    _curTab=tab;
+    var tabs=['basic','adv','finance','convert','history'];
+    document.querySelectorAll('.calc-tab').forEach(function(b,i){b.classList.toggle('active',tabs[i]===tab);});
+    tabs.forEach(function(t){var el=document.getElementById('panel'+t);if(el)el.style.display=t===tab?'block':'none';el&&el.classList.toggle('active',t===tab);});
+    if(tab==='history') loadHist();
+}
+
+/* KEYBOARD */
+document.addEventListener('keydown',function(e){
+    if(['basic','adv'].indexOf(_curTab)===-1) return;
+    if(e.key>='0'&&e.key<='9') cNum(e.key);
+    else if(e.key==='.') cNum('.');
+    else if(['+','-','*','/'].indexOf(e.key)>-1) cOp(e.key);
+    else if(e.key==='Enter'||e.key==='=') cEqual();
+    else if(e.key==='Backspace') cBs();
+    else if(e.key==='Escape') cClear();
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+    ['paneladv','panelfinance','panelconvert','panelhistory'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+    _upd();
+});
+</script>
+
+
+
+<!-- ══ FLOAT BALL v4 ══ -->
+<div id="__fb" style="position:fixed;z-index:99998;bottom:86px;right:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);box-shadow:0 6px 22px #667eea88,0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:1.45rem;cursor:grab;user-select:none;touch-action:none;border:2px solid rgba(255,255,255,.3)">🧮</div>
+<div id="__fbo" style="display:none;position:fixed;inset:0;z-index:99996;background:rgba(0,0,0,.52);backdrop-filter:blur(6px)"></div>
+<div id="__fbd" style="display:none;position:fixed;bottom:0;left:0;right:0;z-index:99997;height:54vh;background:linear-gradient(175deg,#0f172a 0%,#1a1040 100%);border-radius:26px 26px 0 0;border-top:2.5px solid #667eea66;transform:translateY(100%);transition:transform .3s cubic-bezier(.34,1.1,.64,1);overflow:hidden;font-family:inherit">
+  <div style="width:44px;height:5px;background:rgba(255,255,255,.18);border-radius:4px;margin:11px auto 0"></div>
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 14px 8px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0">
+    <div style="width:34px;height:34px;border-radius:11px;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:1.15rem;flex-shrink:0">🧮</div>
+    <div style="flex:1;min-width:0"><div style="color:white;font-size:.88rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">ক্যালকুলেটর</div><div style="color:#667eea;font-size:.62rem;font-weight:700">জাকির আল জিহাদ</div></div>
+    <button onclick="__fbClose()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:9px;padding:5px 10px;color:#94a3b8;font-size:.72rem;font-weight:700;cursor:pointer;font-family:inherit;flex-shrink:0">✕ বন্ধ</button>
+  </div>
+  <div style="overflow-y:auto;height:calc(54vh - 72px);padding:10px 12px 24px;-webkit-overflow-scrolling:touch">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:10px">
+      <a href="../index.html" style="background:linear-gradient(135deg,#667eea,#764ba2);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🧮<span>তালিকা</span></a>
+      <a href="full-page-setup.html?pg=calculator" style="background:linear-gradient(135deg,#667eea,#764ba2);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🖌️<span>Page Setup</span></a>
+      <a href="css-changer.html" style="background:linear-gradient(135deg,#ec4899,#db2777);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🎨<span>CSS</span></a>
+      <a href="extra-backup.html" style="background:linear-gradient(135deg,#0369a1,#0284c7);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📦<span>Backup</span></a>
+      <a href="accounting.html" style="background:linear-gradient(135deg,#1e3a5f,#0f2744);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">📚<span>Accounting</span></a>
+      <a href="calculator.html" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:12px;color:white;font-size:.68rem;font-weight:800">🧮<span>Calculator</span></a>
+    </div>
+    <div style="background:rgba(255,255,255,.04);border-radius:14px;padding:11px;border:1px solid rgba(255,255,255,.07)">
+      <div style="color:#667eea;font-size:.68rem;font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px">⚡ কাস্টমাইজ — calculator</div>
+    <div class="__fbr"><span class="__fbl">হেডার রং ১</span><input type="color" class="__fbc" data-k="hBg1" value="#667eea" oninput="__fbA(this)"></div>
+    <div class="__fbr"><span class="__fbl">হেডার রং ২</span><input type="color" class="__fbc" data-k="hBg2" value="#667eea" oninput="__fbA(this)"></div>
+    <div class="__fbr"><span class="__fbl">ফন্ট সাইজ</span><div style="display:flex;align-items:center;gap:5px"><input type="range" class="__fbr2" min="11" max="22" value="17" data-k="fs" oninput="__fbA(this)"><span class="__fbv" id="__fbv_fs">17px</span></div></div>
+      <div style="display:flex;gap:6px;margin-top:10px">
+        <button onclick="__fbSave()" style="flex:1;padding:9px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;border:none;border-radius:10px;font-size:.78rem;font-weight:900;cursor:pointer;font-family:inherit">💾 সেভ</button>
+        <a href="full-page-setup.html?pg=calculator" style="flex:1;padding:9px;background:rgba(255,255,255,.06);color:#94a3b8;border:1px solid rgba(255,255,255,.1);border-radius:10px;font-size:.78rem;font-weight:800;text-decoration:none;display:flex;align-items:center;justify-content:center">🖌️ Full Setup</a>
+        <button onclick="__fbReset()" style="padding:9px 12px;background:rgba(239,68,68,.12);color:#fca5a5;border:1px solid rgba(239,68,68,.18);border-radius:10px;font-size:.78rem;cursor:pointer;font-family:inherit">↺</button>
+      </div>
+    </div>
+  </div>
+</div>
+<style>
+.__fbr{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.__fbr:last-child{border:none}.__fbl{color:#cbd5e1;font-size:.74rem;font-weight:700}
+.__fbc{width:32px;height:24px;border:none;border-radius:6px;cursor:pointer;padding:2px}
+.__fbr2{width:85px;accent-color:#667eea;cursor:pointer}.__fbv{color:#667eea;font-size:.68rem;font-weight:700;min-width:26px;text-align:right}
+</style>
+<script>
+(function(){
+  var ball=document.getElementById('__fb'),ov=document.getElementById('__fbo'),dr=document.getElementById('__fbd');
+  if(!ball)return;
+  try{var s=JSON.parse(localStorage.getItem('settings')||'{}');if(s.floatBallOff){ball.style.display='none';return;}}catch(e){}
+  var drag=false,sx=0,sy=0,bx=0,by=0,mv=false;
+  function gp(){var r=ball.getBoundingClientRect();return{x:r.left,y:r.top};}
+  function onS(ex,ey){drag=true;mv=false;var p=gp();bx=p.x;by=p.y;sx=ex;sy=ey;ball.style.transition='none';ball.style.cursor='grabbing';}
+  function onM(ex,ey){if(!drag)return;var dx=ex-sx,dy=ey-sy;if(Math.abs(dx)>4||Math.abs(dy)>4)mv=true;var nx=Math.max(4,Math.min(window.innerWidth-56,bx+dx)),ny=Math.max(4,Math.min(window.innerHeight-56,by+dy));ball.style.left=nx+'px';ball.style.top=ny+'px';ball.style.right='auto';ball.style.bottom='auto';}
+  function onE(){drag=false;ball.style.cursor='grab';ball.style.transition='box-shadow .2s';}
+  ball.addEventListener('mousedown',function(e){onS(e.clientX,e.clientY);e.preventDefault();});
+  ball.addEventListener('touchstart',function(e){onS(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mousemove',function(e){onM(e.clientX,e.clientY);});
+  document.addEventListener('touchmove',function(e){onM(e.touches[0].clientX,e.touches[0].clientY);},{passive:true});
+  document.addEventListener('mouseup',onE);document.addEventListener('touchend',onE);
+  ball.addEventListener('click',function(){if(!mv)window.__fbOpen();});
+  window.__fbOpen=function(){
+    ov.style.display='block';dr.style.display='block';
+    requestAnimationFrame(function(){requestAnimationFrame(function(){dr.style.transform='translateY(0)';});});
+    __fbLoad();
+  };
+  window.__fbClose=function(){
+    dr.style.transform='translateY(100%)';
+    setTimeout(function(){ov.style.display='none';dr.style.display='none';},300);
+  };
+  ov.addEventListener('click',window.__fbClose);
+  var _pg='calculator';
+  function _gc(){try{return JSON.parse(localStorage.getItem('pageConfig')||'{}')[_pg]||{};}catch(e){return{};}}
+  function _sc(o){try{var all=JSON.parse(localStorage.getItem('pageConfig')||'{}');all[_pg]=Object.assign({},all[_pg]||{},o);localStorage.setItem('pageConfig',JSON.stringify(all));}catch(e){}}
+  window.__fbA=function(inp){
+    var k=inp.dataset.k,v=inp.value;
+    var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=isNaN(v)?v:v+'px';
+    var o={};o[k]=isNaN(v)?v:Number(v);_sc(o);
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+  };
+  window.__fbSave=function(){
+    var cfg={};dr.querySelectorAll('[data-k]').forEach(function(i){var v=i.value;cfg[i.dataset.k]=isNaN(v)?v:Number(v);});
+    _sc(cfg);
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+    if(typeof showToast==='function')showToast('✅ কাস্টমাইজেশন সেভ হয়েছে');
+  };
+  window.__fbReset=function(){
+    _sc({});
+    if(typeof applyPageConfig==='function'){try{applyPageConfig();}catch(e){}}
+    if(typeof showToast==='function')showToast('↺ রিসেট হয়েছে');
+  };
+  window.__fbLoad=function(){
+    var cfg=_gc();dr.querySelectorAll('[data-k]').forEach(function(i){
+      var k=i.dataset.k;if(cfg[k]!==undefined){i.value=cfg[k];var vEl=dr.querySelector('#__fbv_'+k);if(vEl)vEl.textContent=i.value+(i.type==='range'?'px':'');}
+    });
+  };
+})();
+</script>
+<!-- ══ END FLOAT BALL ══ -->
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

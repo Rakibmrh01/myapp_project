@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title> MRH Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ffffff;
+      font-family: 'Hind Siliguri', Georgia, serif;
+      color: #111827;
+      font-size: 17px;
+      line-height: 1.8;
+    }
+    .topbar {
+      background: #065f46;
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-back {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      color: white; padding: 6px 14px; border-radius: 8px;
+      font-size: .82rem; font-weight: 700; cursor: pointer;
+      font-family: inherit; text-decoration: none;
+    }
+    .topbar h1 { color: white; font-size: .95rem; font-weight: 700; flex: 1; }
+    .topbar-badge {
+      background: rgba(255,255,255,.2); color: white;
+      font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+    }
+    .doc-cover {
+      background: linear-gradient(135deg, #064e3b, #065f46, #047857);
+      padding: 40px 24px 36px; color: white;
+    }
+    .doc-cover-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+    .doc-cover h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    .doc-cover p { font-size: 1rem; opacity: .8; line-height: 1.7; }
+    .doc-meta { display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap; }
+    .doc-meta-item {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px; padding: 6px 14px; font-size: .78rem; font-weight: 600;
+    }
+    .highlight-strip {
+      background: #f0fdf4; border-left: 5px solid #10b981; padding: 18px 20px;
+    }
+    .highlight-strip p { font-size: 1rem; font-weight: 600; color: #065f46; line-height: 1.7; margin: 0; }
+
+    /* TOC */
+    .toc {
+      background: #f9fafb; border: 1px solid #e5e7eb;
+      margin: 24px 20px 0; border-radius: 10px; overflow: hidden;
+    }
+    .toc-title {
+      background: #f3f4f6; padding: 12px 18px;
+      font-size: .85rem; font-weight: 800; color: #374151;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .toc a {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 18px; text-decoration: none;
+      color: #374151; font-size: .9rem; font-weight: 600;
+      border-bottom: 1px solid #f3f4f6;
+      transition: background .1s;
+    }
+    .toc a:last-child { border: none; }
+    .toc a:active { background: #eff6ff; }
+    .toc a .toc-num {
+      width: 24px; height: 24px; border-radius: 6px;
+      background: #10b981; color: white;
+      font-size: .72rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .doc-body { padding: 0 20px 80px; max-width: 700px; }
+    .doc-section { padding: 32px 0 0; border-bottom: 1px solid #e5e7eb; }
+    .doc-section:last-child { border: none; }
+    .section-num {
+      display: inline-block; background: #10b981; color: white;
+      font-size: .72rem; font-weight: 800; padding: 3px 10px; border-radius: 4px;
+      margin-bottom: 8px; letter-spacing: .5px;
+    }
+    .doc-section h2 { font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 14px; line-height: 1.4; }
+    .doc-section h3 { font-size: 1.05rem; font-weight: 700; color: #1f2937; margin: 20px 0 10px; }
+    .doc-section p { font-size: 1rem; color: #374151; line-height: 1.85; margin-bottom: 14px; }
+    .doc-section p:last-child { margin-bottom: 28px; }
+
+    /* STEP LIST */
+    .step-list { list-style: none; padding: 0; margin: 12px 0 20px; }
+    .step-list li {
+      display: flex; gap: 14px; align-items: flex-start;
+      padding: 12px 0; border-bottom: 1px solid #f3f4f6;
+    }
+    .step-list li:last-child { border: none; }
+    .step-num {
+      width: 32px; height: 32px; border-radius: 8px; flex-shrink: 0;
+      background: #10b981; color: white;
+      font-size: .8rem; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; margin-top: 2px;
+    }
+    .step-content .step-title { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 4px; }
+    .step-content .step-desc { font-size: .9rem; color: #6b7280; line-height: 1.7; }
+
+    /* FEATURE TABLE */
+    .feat-table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; font-size: .95rem; }
+    .feat-table th {
+      background: #f3f4f6; padding: 10px 14px; text-align: left;
+      font-size: .8rem; font-weight: 800; color: #374151;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .feat-table td { padding: 11px 14px; border-bottom: 1px solid #f3f4f6; color: #374151; vertical-align: top; line-height: 1.6; }
+    .feat-table tr:last-child td { border: none; }
+    .feat-table tr:hover td { background: #f9fafb; }
+    .feat-em { font-size: 1.1rem; }
+
+    /* DOC LIST */
+    .doc-list { list-style: none; padding: 0; margin: 12px 0 20px; }
+    .doc-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid #f3f4f6;
+      font-size: 1rem; color: #374151; line-height: 1.7;
+    }
+    .doc-list li:last-child { border: none; }
+    .doc-list li .li-mark {
+      width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; margin-top: 2px;
+    }
+
+    /* CALLOUTS */
+    .callout-green {
+      background: #f0fdf4; border: 1.5px solid #86efac;
+      border-radius: 10px; padding: 16px 18px; margin: 14px 0;
+    }
+    .callout-green p { color: #166534; font-weight: 600; margin: 0; font-size: 1rem; line-height: 1.65; }
+    .callout-blue {
+      background: #eff6ff; border: 1.5px solid #93c5fd;
+      border-radius: 10px; padding: 16px 18px; margin: 14px 0;
+    }
+    .callout-blue p { color: #1e40af; font-weight: 600; margin: 0; font-size: 1rem; line-height: 1.65; }
+    .callout-yellow {
+      background: #fffbeb; border: 1.5px solid #fcd34d;
+      border-radius: 10px; padding: 16px 18px; margin: 14px 0;
+    }
+    .callout-yellow p { color: #92400e; font-weight: 600; margin: 0; font-size: 1rem; }
+
+    .doc-footer {
+      background: #f9fafb; border-top: 2px solid #e5e7eb;
+      padding: 24px 20px; margin-top: 20px;
+    }
+    .doc-footer h3 { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+    .doc-footer p { font-size: .9rem; color: #6b7280; line-height: 1.7; }
+    .doc-footer a { color: #065f46; text-decoration: none; font-weight: 700; }
+    .doc-updated { font-size: .8rem; color: #9ca3af; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="settings.html" class="topbar-back">← ফিরুন</a>
+  <h1>ব্যবহার গাইড</h1>
+  <span class="topbar-badge">v5.1</span>
+</div>
+
+<div class="doc-cover">
+  <span class="doc-cover-icon">📖</span>
+  <h1>কীভাবে ব্যবহার করবেন</h1>
+  <p>mrh Daily Account অ্যাপের সমস্ত ফিচার, ব্যবহারবিধি এবং প্রো টিপস — একটি সম্পূর্ণ গাইড।</p>
+  <div class="doc-meta">
+    <span class="doc-meta-item">📅 এপ্রিল ২০২৬</span>
+    <span class="doc-meta-item">📱 Mrh Account v5.1 </span>
+    <span class="doc-meta-item">🚀 ৯+ ফিচার</span>
+  </div>
+</div>
+
+<div class="highlight-strip">
+  <p>🚀 Daily Account একটি সম্পূর্ণ Offline অ্যাপ। ইন্টারনেট ছাড়াও সব ফিচার ব্যবহার করা যায়। আপনার ডাটা সম্পূর্ণ আপনার ফোনে থাকে।</p>
+</div>
+
+<!-- Table of Contents -->
+<div class="toc">
+  <div class="toc-title">📋 বিষয়সূচি</div>
+  <a href="#start"><span class="toc-num">১</span> শুরু করার ধাপসমূহ</a>
+  <a href="#features"><span class="toc-num">২</span> সকল ফিচার পরিচিতি</a>
+  <a href="#dashboard"><span class="toc-num">৩</span> ড্যাশবোর্ড ব্যবহার</a>
+  <a href="#income-expense"><span class="toc-num">৪</span> আয় ও ব্যয় রেকর্ড</a>
+  <a href="#ledger"><span class="toc-num">৫</span> দেনা-পাওনা ব্যবস্থাপনা</a>
+  <a href="#analysis"><span class="toc-num">৬</span> বিশ্লেষণ ও রিপোর্ট</a>
+  <a href="#backup"><span class="toc-num">৭</span> ব্যাকআপ পদ্ধতি</a>
+  <a href="#customize"><span class="toc-num">৮</span> কাস্টমাইজেশন</a>
+  <a href="#tips"><span class="toc-num">৯</span> প্রো টিপস ও কৌশল</a>
+</div>
+
+<div class="doc-body">
+
+  <!-- 1. GETTING STARTED -->
+  <div class="doc-section" id="start">
+    <span class="section-num">অধ্যায় ১</span>
+    <h2>শুরু করার ধাপসমূহ</h2>
+    <p>Daily Account প্রথমবার ব্যবহার শুরু করতে নিচের ধাপগুলো অনুসরণ করুন:</p>
+    <ul class="step-list">
+      <li>
+        <div class="step-num">১</div>
+        <div class="step-content">
+          <div class="step-title">অ্যাপ ইন্সটল করুন (PWA)</div>
+          <div class="step-desc">Chrome বা যেকোনো ব্রাউজারে অ্যাপটি খুলুন। ব্রাউজারের মেনু থেকে "Add to Home Screen" বা "Install App" অপশন চাপুন। এরপর অ্যাপটি সরাসরি হোম স্ক্রিন থেকে খোলা যাবে।</div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">২</div>
+        <div class="step-content">
+          <div class="step-title">ড্যাশবোর্ড পরিচিত হন</div>
+          <div class="step-desc">হোম স্ক্রিনে মোট ব্যালেন্স, আয়, ব্যয়, দেনা, পাওনা ও সঞ্চয় একনজরে দেখাবে। কোনো কার্ডে চাপলে সেই বিভাগের বিস্তারিত তালিকা দেখতে পাবেন।</div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">৩</div>
+        <div class="step-content">
+          <div class="step-title">প্রথম এন্ট্রি যোগ করুন</div>
+          <div class="step-desc">হোম পেজের নিচের মেনু থেকে "আয়" বা "ব্যয়" বাটনে চাপুন। ফর্মে পরিমাণ, ক্যাটাগরি, তারিখ এবং বিবরণ দিয়ে "সেভ করুন" চাপুন।</div>
+        </div>
+      </li>
+      <li>
+        <div class="step-num">৪</div>
+        <div class="step-content">
+          <div class="step-title">প্রথম ব্যাকআপ নিন</div>
+          <div class="step-desc">সেটিংস পেজে যান এবং ব্যাকআপ অপশন থেকে ডাটা সেভ করুন। এটি অত্যন্ত গুরুত্বপূর্ণ — ফোন হারালে বা ব্রাউজার ক্লিয়ার হলে ডাটা পুনরুদ্ধার করতে পারবেন।</div>
+        </div>
+      </li>
+    </ul>
+    <div class="callout-green">
+      <p>✅ টিপ: প্রথমবার ব্যবহারের আগেই সেটিংস থেকে ডার্ক মোড ও ফন্ট সাইজ নিজের পছন্দমতো সেট করে নিন।</p>
+    </div>
+  </div>
+
+  <!-- 2. ALL FEATURES -->
+  <div class="doc-section" id="features">
+    <span class="section-num">অধ্যায় ২</span>
+    <h2>সকল ফিচার পরিচিতি</h2>
+    <p>Mrh Account v5.1 Max Edition-এ মোট ১২টিরও বেশি ফিচার রয়েছে:</p>
+    <table class="feat-table">
+      <thead>
+        <tr>
+          <th>ফিচার</th>
+          <th>বিবরণ</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><span class="feat-em">💰</span> <strong>আয় ট্র্যাকিং</strong></td><td>আয়ের উৎস, পরিমাণ ও তারিখ রেকর্ড। ক্যাটাগরি অনুযায়ী ফিল্টার করার সুবিধা।</td></tr>
+        <tr><td><span class="feat-em">💸</span> <strong>ব্যয় ট্র্যাকিং</strong></td><td>খরচের ক্যাটাগরি নির্বাচন করে বিস্তারিত হিসাব। বাজেট সতর্কতা সিস্টেম।</td></tr>
+        <tr><td><span class="feat-em">📕</span> <strong>দেনা-পাওনা লেজার</strong></td><td>কাকে কত দিলেন বা নিলেন তার পূর্ণ রেকর্ড। পরিশোধ স্ট্যাটাস ট্র্যাকিং।</td></tr>
+        <tr><td><span class="feat-em">💚</span> <strong>সঞ্চয় লক্ষ্য</strong></td><td>লক্ষ্য নির্ধারণ করে সঞ্চয়ের অগ্রগতি পর্যবেক্ষণ। প্রগ্রেস বার।</td></tr>
+        <tr><td><span class="feat-em">📊</span> <strong>AI বিশ্লেষণ</strong></td><td>পাই চার্ট, বার চার্ট, লাইন চার্ট সহ ৫ ধরনের গ্রাফ। স্মার্ট AI পরামর্শ।</td></tr>
+        <tr><td><span class="feat-em">📝</span> <strong>নোটস</strong></td><td>ব্যক্তিগত নোট ও স্মরণিকা। ফরম্যাটিং সাপোর্ট সহ।</td></tr>
+        <tr><td><span class="feat-em">🧮</span> <strong>ক্যালকুলেটর</strong></td><td>অ্যাপের ভেতর থেকেই দ্রুত হিসাব। বৈজ্ঞানিক ক্যালকুলেটর।</td></tr>
+        <tr><td><span class="feat-em">📚</span> <strong>হিসাব বিজ্ঞান</strong></td><td>পেশাদার ডবল-এন্ট্রি সিস্টেম। ব্যালেন্স শিট ও লাভ-ক্ষতি বিবরণী।</td></tr>
+        <tr><td><span class="feat-em">📦</span> <strong>ব্যাকআপ সিস্টেম</strong></td><td>Local, Telegram, Google Drive ও JSONBin — ৪ পদ্ধতিতে ব্যাকআপ।</td></tr>
+        <tr><td><span class="feat-em">🎨</span> <strong>CSS কাস্টমাইজার</strong></td><td>প্রতিটি পেজের রং, ফন্ট ও স্টাইল আলাদাভাবে কাস্টমাইজ।</td></tr>
+        <tr><td><span class="feat-em">🔵</span> <strong>Float Ball</strong></td><td>সব পেজে ভাসমান মেনু বাটন। টেনে সরানো যায়।</td></tr>
+        <tr><td><span class="feat-em">🗑️</span> <strong>Trash Manager</strong></td><td>মুছে ফেলা এন্ট্রি পুনরুদ্ধার করুন।</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. DASHBOARD -->
+  <div class="doc-section" id="dashboard">
+    <span class="section-num">অধ্যায় ৩</span>
+    <h2>ড্যাশবোর্ড ব্যবহার</h2>
+    <p>হোম পেজ বা ড্যাশবোর্ড হলো অ্যাপের কেন্দ্রীয় পর্দা। এখানে আপনার সমস্ত আর্থিক তথ্য এক জায়গায় দেখা যায়।</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#dbeafe;">💰</span> <strong>মোট ব্যালেন্স কার্ড:</strong> বর্তমান মোট ব্যালেন্স দেখায়। চাপলে বিশ্লেষণ পেজে যাবে।</li>
+      <li><span class="li-mark" style="background:#dcfce7;">📈</span> <strong>আয় কার্ড:</strong> মোট আয়ের পরিমাণ। চাপলে আয়ের তালিকা দেখাবে।</li>
+      <li><span class="li-mark" style="background:#fee2e2;">📉</span> <strong>ব্যয় কার্ড:</strong> মোট ব্যয়ের পরিমাণ। চাপলে ব্যয়ের তালিকা দেখাবে।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">📕</span> <strong>দেনা কার্ড:</strong> মোট দেনার পরিমাণ এবং তালিকা।</li>
+      <li><span class="li-mark" style="background:#f0fdf4;">📗</span> <strong>পাওনা কার্ড:</strong> মোট পাওনার পরিমাণ এবং তালিকা।</li>
+      <li><span class="li-mark" style="background:#f3e8ff;">💚</span> <strong>সঞ্চয় কার্ড:</strong> মোট সঞ্চয়ের পরিমাণ এবং বিস্তারিত।</li>
+    </ul>
+    <p>ড্যাশবোর্ডের নিচে <strong>স্মার্ট AI পরামর্শ</strong> বিভাগে আপনার আর্থিক অবস্থার উপর ভিত্তি করে স্বয়ংক্রিয় পরামর্শ দেওয়া হয়।</p>
+  </div>
+
+  <!-- 4. INCOME/EXPENSE -->
+  <div class="doc-section" id="income-expense">
+    <span class="section-num">অধ্যায় ৪</span>
+    <h2>আয় ও ব্যয় রেকর্ড করা</h2>
+
+    <h3>💰 নতুন আয় যোগ করুন</h3>
+    <ul class="step-list">
+      <li><div class="step-num">১</div><div class="step-content"><div class="step-title">আয় পেজে যান</div><div class="step-desc">হোম পেজের মেনু থেকে "আয়" বা আয় কার্ড থেকে "+" বাটন চাপুন।</div></div></li>
+      <li><div class="step-num">২</div><div class="step-content"><div class="step-title">তথ্য পূরণ করুন</div><div class="step-desc">পরিমাণ, আয়ের উৎস (বেতন, ব্যবসা, ফ্রিল্যান্স ইত্যাদি), তারিখ এবং বিবরণ লিখুন।</div></div></li>
+      <li><div class="step-num">৩</div><div class="step-content"><div class="step-title">সেভ করুন</div><div class="step-desc">"সেভ করুন" বাটন চাপলে এন্ট্রি সংরক্ষিত হবে এবং ব্যালেন্স আপডেট হবে।</div></div></li>
+    </ul>
+
+    <h3>💸 নতুন ব্যয় যোগ করুন</h3>
+    <p>আয় যোগের মতোই — মেনু থেকে "ব্যয়" চাপুন, ক্যাটাগরি নির্বাচন করুন (খাদ্য, পরিবহন, শিক্ষা ইত্যাদি), পরিমাণ ও তারিখ দিন এবং সেভ করুন।</p>
+    <div class="callout-blue">
+      <p>💡 টিপ: "বিবরণ" ঘরে বিস্তারিত লিখলে পরে খুঁজে পাওয়া সহজ হয়। যেমন "বাজার — চাল, ডাল, তেল"।</p>
+    </div>
+  </div>
+
+  <!-- 5. LEDGER -->
+  <div class="doc-section" id="ledger">
+    <span class="section-num">অধ্যায় ৫</span>
+    <h2>দেনা-পাওনা ব্যবস্থাপনা</h2>
+    <p>দেনা-পাওনা বা লেজার ফিচার দিয়ে কার কাছ থেকে কত টাকা নেওয়া বা দেওয়া হয়েছে তার পূর্ণ রেকর্ড রাখুন।</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#fee2e2;">📕</span> <strong>দেনা (আপনি দিয়েছেন):</strong> অন্যকে ধার দিলে বা বাকিতে কিনলে এখানে রেকর্ড করুন।</li>
+      <li><span class="li-mark" style="background:#dcfce7;">📗</span> <strong>পাওনা (অন্যে দিয়েছে):</strong> কেউ আপনার কাছ থেকে ধার নিলে এখানে রেকর্ড করুন।</li>
+      <li><span class="li-mark" style="background:#dbeafe;">✅</span> <strong>পরিশোধ স্ট্যাটাস:</strong> টাকা ফেরত পেলে বা দিলে "পরিশোধিত" চিহ্নিত করুন।</li>
+    </ul>
+    <p>লেজার তালিকায় নাম দিয়ে সার্চ করা যাবে এবং ফিল্টার করে দেনা বা পাওনা আলাদাভাবে দেখা যাবে।</p>
+  </div>
+
+  <!-- 6. ANALYSIS -->
+  <div class="doc-section" id="analysis">
+    <span class="section-num">অধ্যায় ৬</span>
+    <h2>বিশ্লেষণ ও রিপোর্ট</h2>
+    <p>Analysis পেজে আপনার সমস্ত আর্থিক ডাটা ভিজুয়াল চার্টে দেখানো হয়:</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#dbeafe;">🥧</span> <strong>Pie Chart:</strong> আয় বনাম ব্যয়ের তুলনামূলক চিত্র</li>
+      <li><span class="li-mark" style="background:#dbeafe;">📊</span> <strong>Bar Chart:</strong> মাসওয়ারি আয়-ব্যয়ের তুলনা</li>
+      <li><span class="li-mark" style="background:#dbeafe;">🍩</span> <strong>Doughnut Chart:</strong> ব্যয়ের ক্যাটাগরি ভাঙ্গন</li>
+      <li><span class="li-mark" style="background:#dbeafe;">📈</span> <strong>Line Chart:</strong> সময়ের সাথে ট্রেন্ড বিশ্লেষণ</li>
+      <li><span class="li-mark" style="background:#dbeafe;">💜</span> <strong>Savings Chart:</strong> সঞ্চয় বৃদ্ধির গ্রাফ</li>
+    </ul>
+    <p>এছাড়া <strong>দৈনিক গড় আয়-ব্যয়, সঞ্চয় হার ও ব্যয় হার</strong> সংখ্যায় দেখানো হয়। পেজের উপরে AI স্বয়ংক্রিয়ভাবে আপনার অবস্থা বিশ্লেষণ করে পরামর্শ দেয়।</p>
+  </div>
+
+  <!-- 7. BACKUP -->
+  <div class="doc-section" id="backup">
+    <span class="section-num">অধ্যায় ৭</span>
+    <h2>ব্যাকআপ পদ্ধতি</h2>
+    <p>Daily Account-এ ৫টি ব্যাকআপ পদ্ধতি রয়েছে। সব পদ্ধতি Extra Backup পেজ থেকে পাওয়া যাবে:</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#dcfce7;">📥</span> <strong>Local JSON Backup:</strong> ডাটা JSON ফাইল হিসেবে আপনার ফোনে ডাউনলোড হবে। সবচেয়ে সহজ পদ্ধতি।</li>
+      <li><span class="li-mark" style="background:#dbeafe;">✈️</span> <strong>Telegram Bot Backup:</strong> নিজের Telegram চ্যানেল বা বটে স্বয়ংক্রিয়ভাবে ব্যাকআপ পাঠান।</li>
+      <li><span class="li-mark" style="background:#dcfce7;">🟢</span> <strong>Google Drive Backup:</strong> Google Drive-এ সরাসরি ফাইল সেভ করুন। যেকোনো ডিভাইস থেকে অ্যাক্সেস করা যাবে।</li>
+      <li><span class="li-mark" style="background:#f3e8ff;">🗄️</span> <strong>JSONBin.io Cloud:</strong> অনলাইন ডেটাবেসে এনক্রিপ্টেড ব্যাকআপ।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">📤</span> <strong>Share / Copy:</strong> ডাটা WhatsApp, Email বা অন্য যেকোনো অ্যাপে শেয়ার করুন।</li>
+    </ul>
+    <div class="callout-yellow">
+      <p>⚠️ সুপারিশ: প্রতি সপ্তাহে অন্তত একবার Telegram বা Google Drive-এ ব্যাকআপ নিন। ডাটা হারালে পুনরুদ্ধার করা সম্ভব হবে না।</p>
+    </div>
+  </div>
+
+  <!-- 8. CUSTOMIZE -->
+  <div class="doc-section" id="customize">
+    <span class="section-num">অধ্যায় ৮</span>
+    <h2>কাস্টমাইজেশন</h2>
+    <p>Mrh Account-এ ৩ স্তরের কাস্টমাইজেশন সুবিধা আছে:</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#fef3c7;">🔵</span> <strong>Float Ball (দ্রুত):</strong> যেকোনো পেজের Float Ball চেপে সেই পেজের হেডার রং ও ফন্ট সাইজ সঙ্গে সঙ্গে বদলানো যায়।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">🖌️</span> <strong>Full Page Setup (বিস্তারিত):</strong> প্রতিটি পেজের জন্য আলাদাভাবে শিরোনাম সাইজ, রং, প্যাডিং সব নিয়ন্ত্রণ করুন।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">🎨</span> <strong>CSS Changer (এক্সপার্ট):</strong> সরাসরি CSS কোড দিয়ে সম্পূর্ণ ডিজাইন বদলান।</li>
+    </ul>
+    <p>সেটিংস থেকে ডার্ক মোড, ফন্ট সাইজ, ভাষা (বাংলা/English) এবং বাজেট সতর্কতা চালু-বন্ধ করা যায়।</p>
+  </div>
+
+  <!-- 9. TIPS -->
+  <div class="doc-section" id="tips">
+    <span class="section-num">অধ্যায় ৯</span>
+    <h2>প্রো টিপস ও কৌশল</h2>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#fee2e2;">🔒</span> <strong>PIN Lock ব্যবহার করুন:</strong> সেটিংস → Security থেকে PIN দিয়ে অ্যাপ লক করুন। ফোন অন্যের হাতে পড়লেও আর্থিক তথ্য সুরক্ষিত থাকবে।</li>
+      <li><span class="li-mark" style="background:#dbeafe;">📊</span> <strong>মাসিক রিভিউ করুন:</strong> প্রতি মাসের ১ তারিখে Analysis পেজে গিয়ে গত মাসের খরচ পর্যালোচনা করুন এবং এই মাসের বাজেট ঠিক করুন।</li>
+      <li><span class="li-mark" style="background:#dcfce7;">📦</span> <strong>সাপ্তাহিক ব্যাকআপ রুটিন:</strong> প্রতি রবিবার Extra Backup থেকে একটি ব্যাকআপ নিন। এটি মাত্র ৫ সেকেন্ডের কাজ কিন্তু বিপদে অনেক কাজে লাগবে।</li>
+      <li><span class="li-mark" style="background:#f3e8ff;">🎨</span> <strong>পেজ রং আলাদা করুন:</strong> আয় পেজ সবুজ, ব্যয় পেজ লাল — এভাবে রং আলাদা করলে দ্রুত পার্থক্য বোঝা যায়।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">🗑️</span> <strong>Trash ব্যবহার করুন:</strong> ভুলে কোনো এন্ট্রি মুছে ফেললে আতঙ্কিত হবেন না — Trash Manager থেকে পুনরুদ্ধার করা যাবে।</li>
+      <li><span class="li-mark" style="background:#dbeafe;">🤖</span> <strong>AI পরামর্শ মনোযোগ দিন:</strong> ড্যাশবোর্ড ও Analysis পেজে AI যে পরামর্শ দেয় সেগুলো আপনার প্রকৃত ডাটার উপর ভিত্তি করে তৈরি।</li>
+    </ul>
+    <div class="callout-green">
+      <p>✅ সর্বোত্তম ফলাফলের জন্য: প্রতিদিনের আয়-ব্যয় সঙ্গে সঙ্গেই রেকর্ড করুন — জমিয়ে রাখলে ভুলে যাওয়ার সম্ভাবনা থাকে।</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="doc-footer">
+  <h3>🙋 সাহায্য দরকার?</h3>
+  <p>কোনো ফিচার বুঝতে সমস্যা হলে বা নতুন কিছু যোগ করার পরামর্শ থাকলে সরাসরি ডেভেলপারের সাথে যোগাযোগ করুন।</p>
+  <p style="margin-top:8px;">👤 <strong>Md Rakib Hossain </strong> &nbsp;·&nbsp; <a href="tel:+8801300168630">📞 01300168630</a> &nbsp;·&nbsp; <a href="https://wa.me/8801300168630">💬 WhatsApp</a></p>
+  <p class="doc-updated">সর্বশেষ আপডেট: এপ্রিল ২০২৬ &nbsp;·&nbsp; Mrh Account v5.1</p>
+</div>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

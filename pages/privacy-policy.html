@@ -1,0 +1,230 @@
+)<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>গোপনীয়তা নীতি —Mrh Daily Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #ffffff;
+      font-family: 'Hind Siliguri', Georgia, serif;
+      color: #111827;
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      background: #1e40af;
+      padding: 12px 20px;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-back {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      color: white; padding: 6px 14px; border-radius: 8px;
+      font-size: .82rem; font-weight: 700; cursor: pointer;
+      font-family: inherit; text-decoration: none;
+    }
+    .topbar h1 { color: white; font-size: .95rem; font-weight: 700; flex: 1; }
+    .topbar-badge {
+      background: rgba(255,255,255,.2); color: white;
+      font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px;
+    }
+
+    /* ── DOC HEADER ── */
+    .doc-cover {
+      background: linear-gradient(135deg, #1e3a8a, #1e40af, #1d4ed8);
+      padding: 40px 24px 36px;
+      color: white;
+    }
+    .doc-cover-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+    .doc-cover h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
+    .doc-cover p { font-size: 1rem; opacity: .8; line-height: 1.7; }
+    .doc-meta {
+      display: flex; gap: 16px; margin-top: 18px; flex-wrap: wrap;
+    }
+    .doc-meta-item {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px; padding: 6px 14px;
+      font-size: .78rem; font-weight: 600;
+    }
+
+    /* ── HIGHLIGHT STRIP ── */
+    .highlight-strip {
+      background: #eff6ff;
+      border-left: 5px solid #2563eb;
+      padding: 18px 20px;
+      margin: 0;
+    }
+    .highlight-strip p {
+      font-size: 1rem; font-weight: 600; color: #1e40af;
+      line-height: 1.7; margin: 0;
+    }
+
+    /* ── DOC BODY ── */
+    .doc-body { padding: 0 20px 80px; max-width: 700px; }
+
+    /* ── SECTION ── */
+    .doc-section { padding: 32px 0 0; border-bottom: 1px solid #e5e7eb; }
+    .doc-section:last-child { border: none; }
+
+    .section-num {
+      display: inline-block;
+      background: #2563eb; color: white;
+      font-size: .72rem; font-weight: 800;
+      padding: 3px 10px; border-radius: 4px;
+      margin-bottom: 8px; letter-spacing: .5px;
+    }
+    .doc-section h2 {
+      font-size: 1.25rem; font-weight: 700; color: #111827;
+      margin-bottom: 14px; line-height: 1.4;
+    }
+    .doc-section p {
+      font-size: 1rem; color: #374151; line-height: 1.85;
+      margin-bottom: 14px;
+    }
+    .doc-section p:last-child { margin-bottom: 28px; }
+
+    /* ── LIST ── */
+    .doc-list { list-style: none; padding: 0; margin: 12px 0 20px; }
+    .doc-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid #f3f4f6;
+      font-size: 1rem; color: #374151; line-height: 1.7;
+    }
+    .doc-list li:last-child { border: none; }
+    .doc-list li .li-mark {
+      width: 26px; height: 26px; border-radius: 6px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; margin-top: 2px;
+    }
+
+    /* ── CALLOUT BOXES ── */
+    .callout-green {
+      background: #f0fdf4; border: 1.5px solid #86efac;
+      border-radius: 10px; padding: 16px 18px; margin: 14px 0;
+    }
+    .callout-green p { color: #166534; font-weight: 600; margin: 0; font-size: 1rem; }
+
+    .callout-yellow {
+      background: #fffbeb; border: 1.5px solid #fcd34d;
+      border-radius: 10px; padding: 16px 18px; margin: 14px 0;
+    }
+    .callout-yellow p { color: #92400e; font-weight: 600; margin: 0; font-size: 1rem; }
+
+    /* ── FOOTER ── */
+    .doc-footer {
+      background: #f9fafb; border-top: 2px solid #e5e7eb;
+      padding: 24px 20px; margin-top: 20px;
+    }
+    .doc-footer h3 { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 8px; }
+    .doc-footer p { font-size: .9rem; color: #6b7280; line-height: 1.7; }
+    .doc-footer a { color: #2563eb; text-decoration: none; font-weight: 700; }
+    .doc-updated { font-size: .8rem; color: #9ca3af; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="settings.html" class="topbar-back">←</a>
+  <h1>গোপনীয়তা নীতি</h1>
+  <span class="topbar-badge">@jakir_al_jihad</span>
+</div>
+
+
+<!-- Highlight -->
+<div class="highlight-strip">
+  <p>✅ সংক্ষেপে: Daily Account সম্পূর্ণ Offline। আপনার কোনো ডাটা কোনো সার্ভারে পাঠানো হয় না। সব তথ্য শুধু আপনার নিজের ডিভাইসে থাকে।</p>
+</div>
+
+<div class="doc-body">
+
+  <div class="doc-section">
+    <span class="section-num">ধারা ১</span>
+    <h2>আমরা কী তথ্য সংগ্রহ করি?</h2>
+    <p>Daily Account অ্যাপ ব্যবহার করার সময় আপনি যে তথ্যগুলো ইনপুট করেন, সেগুলো আপনার নিজের ডিভাইসে সংরক্ষিত হয়। আমরা কোনো তথ্য সংগ্রহ করি না বা কোনো সার্ভারে পাঠাই না।</p>
+    <p>অ্যাপের মধ্যে যেসব তথ্য রাখা যায়:</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#dbeafe;">💰</span> আয়ের পরিমাণ, তারিখ, উৎস এবং বিবরণ</li>
+      <li><span class="li-mark" style="background:#fee2e2;">💸</span> ব্যয়ের পরিমাণ, তারিখ, ক্যাটাগরি এবং বিবরণ</li>
+      <li><span class="li-mark" style="background:#dcfce7;">📗</span> দেনা-পাওনার রেকর্ড, ব্যক্তির নাম এবং পরিমাণ</li>
+      <li><span class="li-mark" style="background:#f3e8ff;">💚</span> সঞ্চয়ের লক্ষ্য, পরিমাণ এবং অগ্রগতি</li>
+      <li><span class="li-mark" style="background:#fef3c7;">📝</span> ব্যক্তিগত নোট এবং স্মরণিকা</li>
+      <li><span class="li-mark" style="background:#e0f2fe;">⚙️</span> অ্যাপের সেটিংস, থিম এবং কাস্টমাইজেশন পছন্দ</li>
+    </ul>
+    <div class="callout-green">
+      <p>✅ উপরের সমস্ত তথ্য শুধুমাত্র আপনার ফোনের Local Storage-এ সংরক্ষিত হয়। এটি আপনার ডিভাইসের বাইরে কোথাও যায় না।</p>
+    </div>
+  </div>
+
+  <div class="doc-section">
+    <span class="section-num">ধারা ২</span>
+    <h2>ডাটা কীভাবে ব্যবহার করা হয়?</h2>
+    <p>আপনার ইনপুট করা তথ্য কেবল নিচের কাজগুলোর জন্য ব্যবহার করা হয়, অন্য কোনো উদ্দেশ্যে নয়:</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#dbeafe;">📊</span> আপনার আর্থিক তথ্য ড্যাশবোর্ডে প্রদর্শন করতে</li>
+      <li><span class="li-mark" style="background:#dbeafe;">📈</span> আয়-ব্যয়ের চার্ট ও বিশ্লেষণ তৈরি করতে</li>
+      <li><span class="li-mark" style="background:#dbeafe;">🤖</span> AI-ভিত্তিক স্মার্ট আর্থিক পরামর্শ দিতে</li>
+      <li><span class="li-mark" style="background:#dbeafe;">🎨</span> আপনার পছন্দমতো অ্যাপ কাস্টমাইজ করতে</li>
+      <li><span class="li-mark" style="background:#dbeafe;">📦</span> ব্যাকআপ তৈরি এবং পুনরুদ্ধার করতে</li>
+    </ul>
+    <p>আপনার ডাটা কখনো কোনো বিজ্ঞাপনদাতা, তৃতীয় পক্ষ বা অন্য কোনো সংস্থার সাথে শেয়ার করা হয় না।</p>
+  </div>
+
+  <div class="doc-section">
+    <span class="section-num">ধারা ৩</span>
+    <h2>ইন্টারনেট এবং সার্ভার সংক্রান্ত নীতি</h2>
+    <p>Daily Account একটি <strong>Offline-First Progressive Web App (PWA)</strong>। এর অর্থ হলো এই অ্যাপ চালাতে ইন্টারনেট সংযোগের প্রয়োজন নেই এবং কোনো কেন্দ্রীয় সার্ভারের উপর নির্ভরশীল নয়।</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#dcfce7;">✅</span> ইন্টারনেট ছাড়াই সম্পূর্ণরূপে কার্যকর</li>
+      <li><span class="li-mark" style="background:#dcfce7;">✅</span> কোনো ক্লাউড সার্ভারে স্বয়ংক্রিয়ভাবে ডাটা আপলোড হয় না</li>
+      <li><span class="li-mark" style="background:#dcfce7;">✅</span> কোনো ওয়েব অ্যানালিটিক্স বা ব্যবহারকারী ট্র্যাকিং নেই</li>
+      <li><span class="li-mark" style="background:#dcfce7;">✅</span> কোনো থার্ড-পার্টি বিজ্ঞাপন নেটওয়ার্ক বা SDK নেই</li>
+      <li><span class="li-mark" style="background:#dcfce7;">✅</span> কোনো ক্র্যাশ রিপোর্ট বা ডায়াগনস্টিক ডাটা পাঠানো হয় না</li>
+    </ul>
+    <p><em>বিশেষ দ্রষ্টব্য: Extra Backup ফিচার ব্যবহার করলে আপনি নিজে যে সার্ভিসটি বেছে নেন (যেমন Telegram, Google Drive বা JSONBin) সেখানে ডাটা পাঠানো হয়। এটি সম্পূর্ণ আপনার ইচ্ছাধীন।</em></p>
+  </div>
+
+  <div class="doc-section">
+    <span class="section-num">ধারা ৪</span>
+    <h2>আপনার অধিকার ও নিয়ন্ত্রণ</h2>
+    <p>আপনার ডাটার উপর আপনারই সম্পূর্ণ নিয়ন্ত্রণ রয়েছে। নিচে আপনার অধিকারগুলো বর্ণিত হলো:</p>
+    <ul class="doc-list">
+      <li><span class="li-mark" style="background:#fef3c7;">🗑️</span> <strong>মুছে দেওয়ার অধিকার:</strong> সেটিংস থেকে যেকোনো সময় সব ডাটা মুছে দিতে পারবেন।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">📦</span> <strong>ব্যাকআপের অধিকার:</strong> আপনার সব ডাটা JSON ফরম্যাটে এক্সপোর্ট করতে পারবেন।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">🔒</span> <strong>সুরক্ষার অধিকার:</strong> PIN Lock দিয়ে অ্যাপ সুরক্ষিত রাখতে পারবেন।</li>
+      <li><span class="li-mark" style="background:#fef3c7;">📵</span> <strong>স্বয়ংক্রিয় মুছে যাওয়া:</strong> অ্যাপ আনইন্সটল বা ব্রাউজার ক্লিয়ার করলে সব ডাটা মুছে যাবে।</li>
+    </ul>
+    <div class="callout-yellow">
+      <p>⚠️ সতর্কতা: ব্যাকআপ না নিয়ে ব্রাউজারের Cache বা Storage ক্লিয়ার করলে আপনার সমস্ত ডাটা স্থায়ীভাবে হারিয়ে যেতে পারে। নিয়মিত Extra Backup ব্যবহার করুন।</p>
+    </div>
+  </div>
+
+  <div class="doc-section">
+    <span class="section-num">ধারা ৫</span>
+    <h2>নীতি পরিবর্তন</h2>
+    <p>ডেভেলপার প্রয়োজনে এই গোপনীয়তা নীতি পরিবর্তন করার অধিকার রাখেন। গুরুত্বপূর্ণ পরিবর্তনের ক্ষেত্রে অ্যাপের মধ্যে নোটিশ দেওয়া হবে। অ্যাপ ব্যবহার অব্যাহত রাখলে আপনি নতুন নীতিতে সম্মত বলে গণ্য হবেন।</p>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="doc-footer">
+  <h3>📞 প্রশ্ন আছে?</h3>
+  <p>গোপনীয়তা নীতি সম্পর্কে কোনো প্রশ্ন বা উদ্বেগ থাকলে সরাসরি ডেভেলপারের সাথে যোগাযোগ করুন।</p>
+  <p style="margin-top:8px;">👤 <strong>Jakir Al Jihad</strong> &nbsp;·&nbsp; <a href="tel:+8801737930168">📞 01737930168</a> &nbsp;·&nbsp; <a href="https://wa.me/8801737930168">💬 WhatsApp</a></p>
+  <p class="doc-updated">সর্বশেষ আপডেট: এপ্রিল ২০২৫ &nbsp;·&nbsp; Daily Account v5.0.0</p>
+</div>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

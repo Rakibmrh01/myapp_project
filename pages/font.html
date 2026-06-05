@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>কাস্টম ফন্ট — Daily Account</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans Bengali','Segoe UI',Arial,sans-serif;background:#080e1a;color:#e2e8f0;min-height:100vh;overflow-x:hidden;line-height:1.6;position:relative;}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 60% 40% at 15% 25%,rgba(59,130,246,.07) 0%,transparent 55%),radial-gradient(ellipse 50% 35% at 85% 75%,rgba(168,85,247,.06) 0%,transparent 50%);z-index:0;pointer-events:none;}
+body>*{position:relative;z-index:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes bounceIn{0%{opacity:0;transform:scale(.75)}60%{transform:scale(1.05)}100%{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% center}100%{background-position:200% center}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes slideDown{from{opacity:0;transform:translateY(-14px)}to{opacity:1;transform:translateY(0)}}
+.hdr{display:flex;align-items:center;gap:12px;padding:14px 16px 12px;background:linear-gradient(135deg,#0d1b2e,#111827);border-bottom:1px solid rgba(255,255,255,.07);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);animation:slideDown .4s ease both;}
+.hdr-back{background:rgba(99,102,241,.15);border:1px solid rgba(99,102,241,.3);border-radius:10px;color:#a5b4fc;font-size:1.1rem;padding:7px 12px;cursor:pointer;transition:all .22s;flex-shrink:0;}
+.hdr-back:active{background:rgba(99,102,241,.35);transform:scale(.94)}
+.hdr h1{font-size:1.05rem;font-weight:900;color:#e2e8f0;flex:1;letter-spacing:-.01em}
+.hdr-badge{background:linear-gradient(135deg,#3b82f6,#6366f1);color:white;font-size:.62rem;font-weight:800;padding:3px 9px;border-radius:20px;flex-shrink:0;text-transform:uppercase;letter-spacing:.04em;}
+.wrap{padding:16px 14px 50px;max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+.card{background:#111827;border-radius:18px;border:1px solid rgba(255,255,255,.07);overflow:hidden;box-shadow:0 8px 28px rgba(0,0,0,.3);animation:fadeUp .4s ease both;transition:transform .22s,box-shadow .22s;}
+.card:hover{transform:translateY(-1px);box-shadow:0 12px 36px rgba(0,0,0,.4)}
+.card:nth-child(1){animation-delay:.04s}.card:nth-child(2){animation-delay:.09s}.card:nth-child(3){animation-delay:.14s}.card:nth-child(4){animation-delay:.19s}
+.card-hdr{padding:13px 16px;font-size:.88rem;font-weight:900;color:white;display:flex;align-items:center;justify-content:space-between;gap:8px;position:relative;overflow:hidden;}
+.card-hdr::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);background-size:200% 100%;animation:shimmer 3s ease-in-out infinite;}
+.card-body{padding:14px}
+.font-row{display:flex;align-items:center;gap:9px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.06);transition:all .2s;}
+.font-row:last-of-type{border-bottom:none}
+.font-icon{font-size:1.3rem;flex-shrink:0;animation:float 3s ease-in-out infinite}
+.font-info{flex:1;min-width:0}
+.font-label{font-size:.82rem;font-weight:800;color:#e2e8f0;display:block}
+.font-sub{font-size:.69rem;color:#64748b;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+.fu{padding:7px 11px;background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.3);border-radius:9px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap;max-width:108px;overflow:hidden;text-overflow:ellipsis;flex-shrink:0;}
+.fu:hover{background:rgba(99,102,241,.28);transform:scale(.97)}.fu:active{transform:scale(.93)}
+.fu.loaded{background:rgba(16,185,129,.15);color:#34d399;border-color:rgba(16,185,129,.35)}
+.fu.loaded:hover{background:rgba(16,185,129,.25)}
+.fc2{padding:7px 10px;background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:9px;font-size:.8rem;font-weight:800;cursor:pointer;transition:all .2s;flex-shrink:0;}
+.fc2:hover{background:rgba(239,68,68,.22);transform:scale(.95)}.fc2:active{transform:scale(.9)}
+input[type="file"]{display:none}
+.preview-wrap{background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px;margin-bottom:8px;}
+.preview-wrap:last-child{margin-bottom:0}
+.preview-label{font-size:.68rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.preview-text{font-size:1.05rem;line-height:1.7;color:#e2e8f0;word-break:break-word}
+.preview-amt{font-size:1.35rem;font-weight:900;color:#34d399;margin-top:2px}
+.preview-amt.red{color:#f87171}
+.preview-en{font-size:.88rem;color:#94a3b8;font-style:italic;margin-top:2px}
+.info-box{background:rgba(59,130,246,.1);border-left:3px solid #3b82f6;border-radius:0 10px 10px 0;padding:9px 12px;font-size:.75rem;color:#93c5fd;font-weight:600;line-height:1.6;margin-bottom:12px;}
+.info-box.green{background:rgba(16,185,129,.1);border-color:#10b981;color:#6ee7b7}
+.info-box.yellow{background:rgba(245,158,11,.1);border-color:#f59e0b;color:#fcd34d}
+.gf-group{margin-bottom:12px}.gf-group:last-child{margin-bottom:0}
+.gf-title{display:flex;align-items:center;gap:7px;font-size:.8rem;font-weight:800;color:#94a3b8;margin-bottom:6px;}
+.gf-row{display:flex;gap:8px;align-items:center}
+.gf-input{flex:1;padding:10px 12px;background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#e2e8f0;font-size:.82rem;font-family:inherit;outline:none;transition:border-color .2s,box-shadow .2s;}
+.gf-input:focus{border-color:rgba(99,102,241,.5);box-shadow:0 0 0 3px rgba(99,102,241,.08)}
+.gf-input::placeholder{color:#475569}
+.gf-btn{padding:10px 13px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;border:none;border-radius:10px;font-size:.77rem;font-weight:800;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap;flex-shrink:0;}
+.gf-btn:hover{filter:brightness(1.1);transform:scale(.97)}.gf-btn:active{transform:scale(.93)}
+.st{font-size:.77rem;font-weight:700;border-radius:9px;min-height:0;max-height:0;overflow:hidden;transition:all .3s;padding:0;margin-top:0;}
+.st.ok-st{background:rgba(16,185,129,.12);color:#34d399;padding:9px 12px;margin-top:10px;max-height:60px;border:1px solid rgba(16,185,129,.25);animation:bounceIn .35s ease both}
+.st.er-st{background:rgba(239,68,68,.12);color:#fca5a5;padding:9px 12px;margin-top:10px;max-height:60px;border:1px solid rgba(239,68,68,.25);animation:bounceIn .35s ease both}
+.st.info-st{background:rgba(59,130,246,.12);color:#93c5fd;padding:9px 12px;margin-top:10px;max-height:60px;border:1px solid rgba(59,130,246,.25);animation:bounceIn .35s ease both}
+.reset-all{width:100%;padding:12px;background:rgba(239,68,68,.1);color:#fca5a5;border:1px solid rgba(239,68,68,.2);border-radius:12px;font-size:.82rem;font-weight:800;cursor:pointer;transition:all .22s;font-family:inherit;margin-top:4px;}
+.reset-all:hover{background:rgba(239,68,68,.2);transform:scale(.98)}.reset-all:active{transform:scale(.95)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:rgba(255,255,255,.03);border-radius:4px}
+::-webkit-scrollbar-thumb{background:rgba(99,102,241,.4);border-radius:4px}
+::selection{background:rgba(99,102,241,.4);color:white}
+@media(max-width:380px){.hdr h1{font-size:.9rem}.preview-text{font-size:.95rem}.preview-amt{font-size:1.2rem}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>🔤 কাস্টম ফন্ট সেটিংস</h1>
+  <span class="hdr-badge">Live</span>
+</div>
+
+<div class="wrap">
+
+  <!-- ① ফাইল আপলোড -->
+  <div class="card">
+    <div class="card-hdr" style="background:linear-gradient(135deg,#1d4ed8,#2563eb)">
+      📁 ফন্ট ফাইল আপলোড
+    </div>
+    <div class="card-body">
+      <div class="info-box">
+        💡 .ttf / .otf / .woff / .woff2 ফাইল আপলোড করুন। ফোনের ফাইল ম্যানেজার থেকে ফন্ট নিন।
+      </div>
+
+      <div class="font-row">
+        <span class="font-icon">🔤</span>
+        <div class="font-info">
+          <span class="font-label">বাংলা ফন্ট</span>
+          <span class="font-sub" id="subBn">কোনো ফন্ট নেই — ডিফল্ট ব্যবহার হচ্ছে</span>
+        </div>
+        <button class="fu" id="btnBn" onclick="document.getElementById('fBn').click()">📁 আপলোড</button>
+        <button class="fc2" onclick="clearFont('bangla')">✕</button>
+        <input type="file" id="fBn" accept=".ttf,.otf,.woff,.woff2" onchange="uploadFont(event,'bangla')">
+      </div>
+
+      <div class="font-row">
+        <span class="font-icon" style="animation-delay:.35s">🔡</span>
+        <div class="font-info">
+          <span class="font-label">ইংরেজি ফন্ট</span>
+          <span class="font-sub" id="subEn">কোনো ফন্ট নেই — ডিফল্ট ব্যবহার হচ্ছে</span>
+        </div>
+        <button class="fu" id="btnEn" onclick="document.getElementById('fEn').click()">📁 আপলোড</button>
+        <button class="fc2" onclick="clearFont('english')">✕</button>
+        <input type="file" id="fEn" accept=".ttf,.otf,.woff,.woff2" onchange="uploadFont(event,'english')">
+      </div>
+
+      <div class="font-row">
+        <span class="font-icon" style="animation-delay:.7s">🔢</span>
+        <div class="font-info">
+          <span class="font-label">সংখ্যা ফন্ট</span>
+          <span class="font-sub" id="subNum">কোনো ফন্ট নেই — ডিফল্ট ব্যবহার হচ্ছে</span>
+        </div>
+        <button class="fu" id="btnNum" onclick="document.getElementById('fNum').click()">📁 আপলোড</button>
+        <button class="fc2" onclick="clearFont('number')">✕</button>
+        <input type="file" id="fNum" accept=".ttf,.otf,.woff,.woff2" onchange="uploadFont(event,'number')">
+      </div>
+
+      <div class="st" id="fntSt"></div>
+    </div>
+  </div>
+
+  <!-- ② Google Fonts -->
+  <div class="card">
+    <div class="card-hdr" style="background:linear-gradient(135deg,#0f766e,#0d9488)">
+      🌐 Google Fonts (অনলাইন)
+    </div>
+    <div class="card-body">
+      <div class="info-box green">
+        ✅ ইন্টারনেট থাকলে নাম লিখুন: <strong>Noto Sans Bengali</strong>, <strong>Hind Siliguri</strong>, <strong>Baloo Da 2</strong>, <strong>Roboto</strong>, <strong>Nunito</strong>
+      </div>
+
+      <div class="gf-group">
+        <div class="gf-title"><span>🔤</span> বাংলা Google Font</div>
+        <div class="gf-row">
+          <input class="gf-input" id="gfBn" placeholder="যেমন: Noto Sans Bengali" oninput="gfLivePreview('bangla',this.value)">
+          <button class="gf-btn" onclick="applyGoogleFont('bangla')">✅ প্রয়োগ</button>
+        </div>
+      </div>
+
+      <div class="gf-group">
+        <div class="gf-title"><span>🔡</span> ইংরেজি Google Font</div>
+        <div class="gf-row">
+          <input class="gf-input" id="gfEn" placeholder="যেমন: Roboto" oninput="gfLivePreview('english',this.value)">
+          <button class="gf-btn" onclick="applyGoogleFont('english')">✅ প্রয়োগ</button>
+        </div>
+      </div>
+
+      <div class="gf-group">
+        <div class="gf-title"><span>🔢</span> সংখ্যা Google Font</div>
+        <div class="gf-row">
+          <input class="gf-input" id="gfNum" placeholder="যেমন: Nunito" oninput="gfLivePreview('number',this.value)">
+          <button class="gf-btn" onclick="applyGoogleFont('number')">✅ প্রয়োগ</button>
+        </div>
+      </div>
+
+      <div class="st" id="gfSt"></div>
+    </div>
+  </div>
+
+  <!-- ③ লাইভ প্রিভিউ -->
+  <div class="card">
+    <div class="card-hdr" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+      👁️ লাইভ প্রিভিউ
+    </div>
+    <div class="card-body">
+      <div class="preview-wrap">
+        <div class="preview-label">বাংলা টেক্সট</div>
+        <div class="preview-text" id="pvBn">আমার দৈনন্দিন আয় ও ব্যয়ের হিসাব — Daily Account</div>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-label">পরিমাণ / সংখ্যা</div>
+        <div class="preview-amt" id="pvAmt">৳ ১২,৩৪৫</div>
+        <div class="preview-amt red" id="pvAmt2">৳ ৪,৫৬৭</div>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-label">ইংরেজি / ইনপুট</div>
+        <div class="preview-en" id="pvEn">Daily Account v6.0 | Input: abcd 1234</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ রিসেট -->
+  <div class="card">
+    <div class="card-hdr" style="background:linear-gradient(135deg,#374151,#1f2937)">
+      🔄 রিসেট
+    </div>
+    <div class="card-body">
+      <div class="info-box yellow">
+        ⚠️ রিসেট করলে সব কাস্টম ফন্ট মুছে ডিফল্টে ফিরে যাবে।
+      </div>
+      <button class="reset-all" onclick="resetAllFonts()">🗑️ সব ফন্ট রিসেট করুন</button>
+      <div class="st" id="rstSt"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var DB={
+  get:function(k){try{var d=localStorage.getItem(k);return d?JSON.parse(d):null;}catch(e){return null;}},
+  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}}
+};
+
+function showSt(id,msg,type){
+  var el=document.getElementById(id);if(!el)return;
+  el.textContent=msg;
+  el.className='st '+(type==='ok'?'ok-st':type==='info'?'info-st':'er-st');
+  setTimeout(function(){el.className='st';},5500);
+}
+
+function applyCustomFonts(){
+  var cfg=DB.get('customFonts')||{};
+  var up={};try{up=JSON.parse(localStorage.getItem('uploadedFonts')||'{}');}catch(e){}
+  /* @font-face or Google Font link */
+  ['bangla','english','number'].forEach(function(type){
+    var name=cfg[type];if(!name)return;
+    if(up[type]&&up[type].b64){
+      var id='__uf_'+type;var ex=document.getElementById(id);if(ex)ex.remove();
+      var st=document.createElement('style');st.id=id;
+      var mime=up[type].mime||'truetype';
+      var fmt=mime==='woff2'?'woff2':mime==='woff'?'woff':mime==='otf'?'opentype':'truetype';
+      st.textContent="@font-face{font-family:'"+name+"';src:url('data:font/"+mime+";base64,"+up[type].b64+"') format('"+fmt+"');font-weight:100 900;font-style:normal;}";
+      document.head.appendChild(st);
+    }else{
+      var lid='__gf_'+name.replace(/\s+/g,'_');
+      if(!document.getElementById(lid)){
+        var lnk=document.createElement('link');lnk.id=lid;lnk.rel='stylesheet';
+        lnk.href='https://fonts.googleapis.com/css2?family='+encodeURIComponent(name)+':wght@400;500;600;700;800;900&display=swap';
+        document.head.appendChild(lnk);
+      }
+    }
+  });
+  /* CSS variables */
+  var r=document.documentElement;
+  if(cfg.bangla)  r.style.setProperty('--font-bangla', "'"+cfg.bangla +"','Hind Siliguri',sans-serif");
+  if(cfg.english) r.style.setProperty('--font-english',"'"+cfg.english+"','Segoe UI',sans-serif");
+  if(cfg.number)  r.style.setProperty('--font-number', "'"+cfg.number +"','Segoe UI',monospace");
+  /* override <style> */
+  var oid='__fontOverride';var old=document.getElementById(oid);if(old)old.remove();
+  var rules='';
+  if(cfg.bangla)  rules+="body,p,h1,h2,h3,h4,h5,h6,span,div,label,button,a,li,td,th{font-family:'"+cfg.bangla +"','Hind Siliguri',sans-serif!important;}\n";
+  if(cfg.number)  rules+=".amount,.balance-amount,.card-amount,.summary-value,.preview-amt{font-family:'"+cfg.number +"','Segoe UI',monospace!important;}\n";
+  if(cfg.english) rules+="input,textarea,select,code,pre,.preview-en{font-family:'"+cfg.english+"','Segoe UI',sans-serif!important;}\n";
+  if(rules){var st2=document.createElement('style');st2.id=oid;st2.textContent=rules;document.head.appendChild(st2);}
+  _updatePreview();
+}
+
+function _updatePreview(){
+  var cfg=DB.get('customFonts')||{};
+  var pvBn=document.getElementById('pvBn'),pvA1=document.getElementById('pvAmt'),pvA2=document.getElementById('pvAmt2'),pvEn=document.getElementById('pvEn');
+  if(pvBn&&cfg.bangla)  pvBn.style.fontFamily="'"+cfg.bangla +"',sans-serif";
+  if(pvA1&&cfg.number)  pvA1.style.fontFamily="'"+cfg.number +"',monospace";
+  if(pvA2&&cfg.number)  pvA2.style.fontFamily="'"+cfg.number +"',monospace";
+  if(pvEn&&cfg.english) pvEn.style.fontFamily="'"+cfg.english+"',sans-serif";
+}
+
+function uploadFont(ev,type){
+  var f=ev.target.files[0];if(!f)return;ev.target.value='';
+  if(f.size>4*1024*1024){showSt('fntSt','❌ ফাইল ৪ MB এর বেশি! ছোট ফন্ট ব্যবহার করুন।','err');return;}
+  showSt('fntSt','⏳ "'+f.name+'" লোড হচ্ছে...','info');
+  var r=new FileReader();
+  r.onload=function(e){
+    var b64=e.target.result.split(',')[1];
+    var ext=f.name.split('.').pop().toLowerCase();
+    var fname=f.name.replace(/\.[^.]+$/,'');
+    var stored={};try{stored=JSON.parse(localStorage.getItem('uploadedFonts')||'{}');}catch(e2){}
+    stored[type]={b64:b64,mime:ext,name:f.name};
+    localStorage.setItem('uploadedFonts',JSON.stringify(stored));
+    var cf=DB.get('customFonts')||{};cf[type]=fname;DB.set('customFonts',cf);
+    _updateBtn(type,f.name);
+    applyCustomFonts();
+    showSt('fntSt','✅ "'+f.name+'" সফলভাবে লোড হয়েছে! প্রিভিউতে দেখুন।','ok');
+  };
+  r.onerror=function(){showSt('fntSt','❌ ফাইল পড়তে সমস্যা।','err');};
+  r.readAsDataURL(f);
+}
+
+function clearFont(type){
+  var stored={};try{stored=JSON.parse(localStorage.getItem('uploadedFonts')||'{}');}catch(e){}
+  delete stored[type];localStorage.setItem('uploadedFonts',JSON.stringify(stored));
+  var cf=DB.get('customFonts')||{};delete cf[type];DB.set('customFonts',cf);
+  var ex=document.getElementById('__uf_'+type);if(ex)ex.remove();
+  _updateBtn(type,null);
+  var gfIds={bangla:'gfBn',english:'gfEn',number:'gfNum'};
+  var inp=document.getElementById(gfIds[type]);if(inp)inp.value='';
+  applyCustomFonts();
+  showSt('fntSt','🗑️ ফন্ট সরানো হয়েছে।','info');
+}
+
+function applyGoogleFont(type){
+  var ids={bangla:'gfBn',english:'gfEn',number:'gfNum'};
+  var inp=document.getElementById(ids[type]);if(!inp)return;
+  var name=inp.value.trim();
+  if(!name){showSt('gfSt','❌ ফন্টের নাম লিখুন','err');return;}
+  var stored={};try{stored=JSON.parse(localStorage.getItem('uploadedFonts')||'{}');}catch(e){}
+  delete stored[type];localStorage.setItem('uploadedFonts',JSON.stringify(stored));
+  var ex=document.getElementById('__uf_'+type);if(ex)ex.remove();
+  var cf=DB.get('customFonts')||{};cf[type]=name;DB.set('customFonts',cf);
+  _updateBtn(type,name);
+  applyCustomFonts();
+  showSt('gfSt','✅ "'+name+'" Google Font লোড হচ্ছে... প্রিভিউতে দেখুন।','ok');
+}
+
+function gfLivePreview(type,val){
+  if(!val||val.length<3)return;
+  var pvMap={bangla:'pvBn',english:'pvEn',number:'pvAmt'};
+  var el=document.getElementById(pvMap[type]);if(el)el.style.fontFamily="'"+val+"',sans-serif";
+  if(type==='number'){var el2=document.getElementById('pvAmt2');if(el2)el2.style.fontFamily="'"+val+"',sans-serif";}
+}
+
+function resetAllFonts(){
+  if(!confirm('⚠️ সব কাস্টম ফন্ট মুছে ডিফল্টে ফিরে যাবে। নিশ্চিত?'))return;
+  localStorage.removeItem('uploadedFonts');DB.set('customFonts',{});
+  ['__uf_bangla','__uf_english','__uf_number','__fontOverride'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});
+  var root=document.documentElement;
+  root.style.removeProperty('--font-bangla');root.style.removeProperty('--font-english');root.style.removeProperty('--font-number');
+  ['bangla','english','number'].forEach(function(t){_updateBtn(t,null);});
+  ['gfBn','gfEn','gfNum'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});
+  ['pvBn','pvAmt','pvAmt2','pvEn'].forEach(function(id){var el=document.getElementById(id);if(el)el.style.fontFamily='';});
+  showSt('rstSt','✅ সব ফন্ট রিসেট হয়েছে। ডিফল্ট ফন্ট ব্যবহার হচ্ছে।','ok');
+}
+
+function _updateBtn(type,fname){
+  var btnMap={bangla:'btnBn',english:'btnEn',number:'btnNum'};
+  var subMap={bangla:'subBn',english:'subEn',number:'subNum'};
+  var btn=document.getElementById(btnMap[type]),sub=document.getElementById(subMap[type]);
+  var def='কোনো ফন্ট নেই — ডিফল্ট ব্যবহার হচ্ছে';
+  if(fname){
+    if(btn){btn.textContent='✅ '+fname.slice(0,14);btn.className='fu loaded';}
+    if(sub)sub.textContent=fname;
+  }else{
+    if(btn){btn.textContent='📁 আপলোড';btn.className='fu';}
+    if(sub)sub.textContent=def;
+  }
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  var cf=DB.get('customFonts')||{};
+  var up={};try{up=JSON.parse(localStorage.getItem('uploadedFonts')||'{}');}catch(e){}
+  ['bangla','english','number'].forEach(function(type){
+    var name=cf[type];if(name)_updateBtn(type,up[type]?up[type].name:name);
+  });
+  var gfMap={bangla:'gfBn',english:'gfEn',number:'gfNum'};
+  Object.keys(gfMap).forEach(function(type){
+    if(cf[type]&&!up[type]){var el=document.getElementById(gfMap[type]);if(el)el.value=cf[type];}
+  });
+  applyCustomFonts();
+});
+</script>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>

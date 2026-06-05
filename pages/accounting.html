@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>হিসাব বিজ্ঞান ছক — Daily Account</title>
+<link rel="stylesheet" href="../css/base.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;min-height:100vh}
+body{background:#0f172a;font-family:var(--font-bangla,'Hind Siliguri',sans-serif);padding-bottom:70px}
+
+/* ══ HEADER ══ */
+.hdr{background:linear-gradient(135deg,#1e3a5f,#0f2744);
+     padding:14px 16px 0;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+.hdr-top{display:flex;align-items:center;gap:10px;padding-bottom:10px}
+.hdr-top h1{color:white;font-size:1.05rem;font-weight:800;flex:1;line-height:1.3}
+.hdr-sub{font-size:.65rem;font-weight:500;color:rgba(255,255,255,.5);display:block;margin-top:1px}
+
+/* ══ TABS ══ */
+.tabs{display:grid;grid-template-columns:repeat(4,1fr)}
+.tab-btn{padding:9px 2px 8px;font-size:.67rem;font-weight:800;
+         border:none;background:transparent;color:rgba(255,255,255,.45);
+         cursor:pointer;font-family:inherit;border-bottom:3px solid transparent;
+         transition:all .15s;line-height:1.3;letter-spacing:.1px}
+.tab-btn.active{color:white}
+.tab-btn:nth-child(1).active{color:#93c5fd;border-bottom-color:#93c5fd}
+.tab-btn:nth-child(2).active{color:#c4b5fd;border-bottom-color:#c4b5fd}
+.tab-btn:nth-child(3).active{color:#fbbf24;border-bottom-color:#fbbf24}
+.tab-btn:nth-child(4).active{color:#6ee7b7;border-bottom-color:#6ee7b7}
+
+/* ══ SORT + COPY BAR ══ */
+.action-bar{display:none;background:#1e293b;border-bottom:1px solid #334155;
+            padding:8px 12px;flex-direction:column;gap:6px}
+.action-bar.show{display:flex}
+.sort-row{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.sort-lbl{font-size:.63rem;font-weight:800;color:#475569;min-width:36px}
+.sort-btn{padding:4px 10px;border-radius:16px;border:1.5px solid #334155;
+          background:transparent;color:#64748b;font-size:.65rem;font-weight:700;
+          cursor:pointer;font-family:inherit;transition:all .15s;white-space:nowrap}
+.sort-btn.s-active{background:#1d4ed8;border-color:#3b82f6;color:white;
+                   box-shadow:0 2px 8px rgba(59,130,246,.35)}
+.sort-btn:not(.s-active):active{background:#334155;color:white}
+.copy-bar-btn{display:flex;align-items:center;justify-content:center;gap:6px;
+              padding:7px;background:linear-gradient(135deg,#334155,#1e293b);
+              border:1.5px solid #475569;border-radius:10px;color:#94a3b8;
+              font-size:.72rem;font-weight:800;cursor:pointer;font-family:inherit;
+              transition:all .15s;width:100%}
+.copy-bar-btn:active{background:#3b82f6;border-color:#3b82f6;color:white}
+
+/* ══ WRAP ══ */
+.wrap{padding:0;display:flex;flex-direction:column}
+.section-wrap{display:none}
+.section-wrap.active{display:block}
+
+/* ══ SECTION HEADER ══ */
+.sec-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;
+         font-size:.84rem;font-weight:800;color:white;letter-spacing:.1px}
+.sec-hdr .badge{font-size:.58rem;font-weight:700;padding:2px 7px;
+                border-radius:7px;background:rgba(255,255,255,.15);margin-left:auto}
+
+/* ══ TABLE WRAPPER ══ */
+.tbl-outer{width:100%;overflow-x:auto;background:white}
+textarea.hidden-ta{display:none}
+.empty-msg{text-align:center;color:#9ca3af;padding:24px 14px;font-size:.8rem}
+
+/* ══════════════════════════════
+   JOURNAL — জাবেদা
+══════════════════════════════ */
+.jrn-tbl{width:100%;border-collapse:collapse;font-size:.77rem;min-width:320px}
+.jrn-tbl thead tr th{
+  background:#1e3a5f;color:white;font-weight:800;font-size:.68rem;
+  padding:8px 10px;border:1px solid #1d4ed8;text-align:center;
+  white-space:nowrap}
+.jrn-tbl .j-sl{
+  width:28px;text-align:center;vertical-align:middle;
+  color:#64748b;font-size:.63rem;font-weight:700;
+  border:1px solid #cbd5e1;background:#f8fafc;padding:3px}
+.jrn-tbl .j-date{
+  width:72px;vertical-align:middle;text-align:center;
+  font-size:.7rem;font-weight:600;color:#334155;
+  border:1px solid #cbd5e1;padding:3px 5px;background:#f8fafc;white-space:nowrap}
+.jrn-tbl .j-name{
+  padding:5px 10px 3px;border:1px solid #cbd5e1;font-size:.77rem}
+.jrn-tbl .j-amt{
+  width:75px;text-align:right;padding:5px 10px 3px;
+  border:1px solid #cbd5e1;white-space:nowrap;font-size:.77rem}
+.dr-row td{border-top:2px solid #94a3b8!important;padding-top:6px}
+.dr-row:first-child td{border-top:1px solid #cbd5e1!important}
+.j-dr-amt{color:#1d4ed8;font-weight:800}
+.j-cr-amt{color:#16a34a;font-weight:800}
+.narr-row td{
+  padding:2px 12px 6px!important;
+  color:#64748b;font-size:.68rem;font-style:italic;
+  border-bottom:1px solid #e2e8f0!important;
+  border-left:1px solid #cbd5e1!important;
+  border-right:1px solid #cbd5e1!important}
+.total-row td{
+  background:#1e3a5f;color:white;font-weight:800;font-size:.78rem;
+  padding:8px 10px;border:1px solid #1d4ed8;text-align:center}
+.total-row .j-dr-amt,.total-row .j-cr-amt{color:#93c5fd}
+
+/* ══════════════════════════════
+   LEDGER — খতিয়ান T-Account
+══════════════════════════════ */
+.t-wrapper{display:flex;flex-direction:column;gap:15px;background:white}
+.t-account{border-bottom:2px solid #1e293b}
+.t-title{
+  padding:8px 12px;
+  background:linear-gradient(135deg,#1e3a5f,#312e81);
+  color:white;font-size:.78rem;font-weight:800;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:2px solid #3730a3}
+.t-title span{
+  font-size:.80rem;font-weight:700;
+  background:rgba(255,255,255,.15);
+  padding:2px 8px;border-radius:6px}
+.t-body{display:grid;grid-template-columns:1fr 1fr}
+.t-side{overflow-x:auto}
+.t-side:first-child{border-right:2px solid #1e293b}
+.t-table{width:100%;border-collapse:collapse;font-size:.72rem;min-width:160px}
+.t-dr-head{
+  background:#1d4ed8;color:white;font-size:.67rem;font-weight:800;
+  padding:6px 8px;text-align:center;border:1px solid #1e40af}
+.t-cr-head{
+  background:#15803d;color:white;font-size:.67rem;font-weight:800;
+  padding:6px 8px;text-align:center;border:1px solid #166534}
+.t-table th{
+  padding:5px 7px;font-size:.65rem;font-weight:700;color:#374151;
+  background:#f1f5f9;border:1px solid #cbd5e1;text-align:center}
+.t-table td{
+  padding:5px 7px;border:1px solid #e2e8f0;vertical-align:middle}
+.t-dr-amt{color:#1d4ed8;font-weight:700;text-align:right}
+.t-cr-amt{color:#15803d;font-weight:700;text-align:right}
+.t-total{background:#f8fafc}
+.t-total td{
+  font-weight:900;border-top:2px solid #94a3b8!important;
+  background:#f1f5f9;padding:6px 7px}
+.t-jer{color:#64748b;font-style:italic;font-size:.67rem}
+
+/* ══════════════════════════════
+   TRIAL BALANCE — রেওয়ামিল
+══════════════════════════════ */
+.trial-status{padding:10px 14px;background:white}
+.balance-ok{
+  background:#dcfce7;color:#15803d;font-weight:800;
+  padding:10px 14px;font-size:.8rem;border-radius:10px;
+  border:1.5px solid #86efac;display:flex;align-items:center;gap:8px}
+.balance-fail{
+  background:#fee2e2;color:#dc2626;font-weight:800;
+  padding:10px 14px;font-size:.8rem;border-radius:10px;
+  border:1.5px solid #fca5a5;display:flex;align-items:center;gap:8px}
+.trial-tbl{width:100%;border-collapse:collapse;font-size:.77rem;min-width:300px}
+.trial-tbl thead th{
+  background:#92400e;color:white;font-weight:800;font-size:.68rem;
+  padding:8px 10px;border:1px solid #78350f;text-align:center}
+.trial-tbl td{padding:6px 10px;border:1px solid #e2e8f0}
+.section-head td{
+  background:#1e3a5f!important;color:white!important;
+  font-weight:900!important;font-size:.72rem!important;
+  padding:6px 10px!important;border:1px solid #1d4ed8!important;
+  letter-spacing:.2px}
+.tb-dr{color:#1d4ed8;font-weight:800;text-align:right}
+.tb-cr{color:#15803d;font-weight:800;text-align:right}
+.trial-tbl .total-row td{
+  background:#92400e;color:white;font-weight:800;
+  padding:8px 10px;border:1px solid #78350f;text-align:right}
+.trial-tbl .total-row td:first-child{text-align:center}
+.trial-tbl tr:nth-child(even) td:not(.section-head td){background:#fafafa}
+
+/* ══════════════════════════════
+   FINANCIAL STATEMENTS
+══════════════════════════════ */
+.fs-wrap{background:white;padding:12px;display:flex;flex-direction:column;gap:14px}
+.fs-card{border-radius:10px;overflow:hidden;border:1.5px solid #e2e8f0;
+         box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.fs-card-title{
+  padding:10px 14px;font-size:.82rem;font-weight:800;color:white;
+  display:flex;align-items:center;gap:6px}
+.fs-green .fs-card-title{background:linear-gradient(135deg,#15803d,#166534)}
+.fs-blue  .fs-card-title{background:linear-gradient(135deg,#1d4ed8,#1e40af)}
+.fs-purple.fs-card-title{background:linear-gradient(135deg,#7c3aed,#6d28d9)}
+.fs-table{width:100%;border-collapse:collapse;font-size:.77rem}
+.fs-table th{
+  padding:7px 10px;background:#f1f5f9;color:#374151;
+  font-weight:800;font-size:.68rem;border:1px solid #e2e8f0;text-align:left}
+.fs-table td{padding:6px 10px;border:1px solid #e8ecf0}
+.fs-table tr:nth-child(even) td{background:#fafafa}
+.fs-cr{color:#15803d;font-weight:800;text-align:right}
+.fs-dr{color:#dc2626;font-weight:800;text-align:right}
+.fs-right{text-align:right}
+.indent td:first-child{padding-left:26px}
+.sub-total td{
+  background:#f0fdf4!important;font-weight:800;
+  border-top:2px solid #86efac!important}
+.sub-total .fs-dr{background:#fef2f2!important}
+.net-profit td{
+  background:#dcfce7!important;color:#15803d;font-weight:900;
+  font-size:.8rem;border-top:2px solid #4ade80!important}
+.net-loss td{
+  background:#fee2e2!important;color:#dc2626;font-weight:900;
+  font-size:.8rem;border-top:2px solid #f87171!important}
+.grand-total td{
+  background:#1e293b!important;color:white;font-weight:800;
+  font-size:.77rem;padding:9px 12px;border:1px solid #334155!important}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<div class="hdr">
+  <div class="hdr-top">
+    <h1>📒 হিসাব বিজ্ঞান ছক
+      <span class="hdr-sub">জাবেদা · খতিয়ান · রেওয়ামিল · আর্থিক বিবরণী</span>
+    </h1>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('journal')">📝<br>জাবেদা</button>
+    <button class="tab-btn"        onclick="showTab('ledger')">📖<br>খতিয়ান</button>
+    <button class="tab-btn"        onclick="showTab('trial')">⚖️<br>রেওয়ামিল</button>
+    <button class="tab-btn"        onclick="showTab('financial')">📊<br>বিবরণী</button>
+  </div>
+</div>
+
+<!-- ══ ACTION BAR (sort + copy) ══ -->
+<div class="action-bar show" id="actionBar">
+  <button class="copy-bar-btn" onclick="copySection('journal')">
+    📋 জাবেদা কপি করুন
+  </button>
+  <div class="sort-row">
+    <span class="sort-lbl">সাজান:</span>
+    <button class="sort-btn s-active" id="sBtn_date_desc" onclick="setSort('date_desc')">🆕 নতুন আগে</button>
+    <button class="sort-btn"          id="sBtn_date_asc"  onclick="setSort('date_asc')">🕐 পুরাতন আগে</button>
+    <button class="sort-btn"          id="sBtn_amt_desc"  onclick="setSort('amt_desc')">⬇ বেশি→কম</button>
+    <button class="sort-btn"          id="sBtn_amt_asc"   onclick="setSort('amt_asc')">⬆ কম→বেশি</button>
+  </div>
+</div>
+
+<!-- ══ CONTENT ══ -->
+<div class="wrap">
+
+  <!-- জাবেদা -->
+  <div class="section-wrap active" id="sec_journal">
+    <div class="sec-hdr" style="background:linear-gradient(135deg,#1d4ed8,#1e3a5f)">
+      📝 জাবেদা (Journal)
+      <span class="badge">দুতরফা দাখিলা পদ্ধতি</span>
+    </div>
+    <div class="tbl-outer">
+      <table class="jrn-tbl">
+        <thead>
+          <tr>
+            <th style="width:28px">ক্র.</th>
+            <th style="width:72px">তারিখ</th>
+            <th style="text-align:left">হিসাবের নাম ও বিবরণ</th>
+            <th style="width:80px">ডেবিট (৳)</th>
+            <th style="width:80px">ক্রেডিট (৳)</th>
+          </tr>
+        </thead>
+        <tbody id="body_journal">
+          <tr><td colspan="5" class="empty-msg">লোড হচ্ছে...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <textarea class="hidden-ta" id="copy_journal"></textarea>
+  </div>
+
+  <!-- খতিয়ান -->
+  <div class="section-wrap" id="sec_ledger">
+    <div class="sec-hdr" style="background:linear-gradient(135deg,#4c1d95,#312e81)">
+      📖 খতিয়ান (Ledger)
+      <span class="badge">T-Account পদ্ধতি</span>
+    </div>
+    <div id="ledger_accounts" style="background:white">
+      <div class="empty-msg">লোড হচ্ছে...</div>
+    </div>
+    <textarea class="hidden-ta" id="copy_ledger"></textarea>
+  </div>
+
+  <!-- রেওয়ামিল -->
+  <div class="section-wrap" id="sec_trial">
+    <div class="sec-hdr" style="background:linear-gradient(135deg,#92400e,#78350f)">
+      ⚖️ রেওয়ামিল (Trial Balance)
+      <span class="badge">Dr = Cr</span>
+    </div>
+    <div class="trial-status" id="trial_status"></div>
+    <div class="tbl-outer">
+      <table class="trial-tbl">
+        <thead>
+          <tr>
+            <th style="width:30px;text-align:center">ক্র.</th>
+            <th style="text-align:left">হিসাব শিরোনাম</th>
+            <th style="width:90px">ডেবিট (৳)</th>
+            <th style="width:90px">ক্রেডিট (৳)</th>
+          </tr>
+        </thead>
+        <tbody id="body_trial">
+          <tr><td colspan="4" class="empty-msg">লোড হচ্ছে...</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <textarea class="hidden-ta" id="copy_trial"></textarea>
+  </div>
+
+  <!-- আর্থিক বিবরণী -->
+  <div class="section-wrap" id="sec_financial">
+    <div class="sec-hdr" style="background:linear-gradient(135deg,#15803d,#14532d)">
+      📊 আর্থিক বিবরণী
+      <span class="badge">Income Statement + Balance Sheet</span>
+    </div>
+    <div id="financial_content" class="fs-wrap">
+      <div class="empty-msg">লোড হচ্ছে...</div>
+    </div>
+    <textarea class="hidden-ta" id="copy_financial"></textarea>
+  </div>
+
+</div><!-- /wrap -->
+
+<script src="../js/db.js"></script>
+<script src="../js/app.js"></script>
+<script src="../js/accounting.js"></script>
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+</html>
