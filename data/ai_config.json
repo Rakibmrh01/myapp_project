@@ -1,0 +1,41 @@
+{
+  "ai": {
+    "model": "gemini-2.0-flash",
+    "provider": "Google AI Studio (Free)",
+    "api_base": "https://generativelanguage.googleapis.com/v1beta/models/",
+    "free_daily_limit": 1500,
+    "free_rpm_limit": 15,
+    "free_rpd_limit": 1500
+  },
+  "dashboard": {
+    "default_daily_limit": 5,
+    "cache_ttl_hours": 3,
+    "badge_max_tokens": 100,
+    "advice_max_tokens": 220,
+    "retry_on_429": true,
+    "max_retries": 4,
+    "retry_delay_ms": 1500
+  },
+  "chat": {
+    "max_tokens": 1000,
+    "temperature": 0.65,
+    "top_p": 0.9,
+    "language": "bn",
+    "data_only": true,
+    "multi_key_rotation": true
+  },
+  "storage_keys": {
+    "api_keys": "geminiApiKeys",
+    "single_key": "geminiApiKey",
+    "key_index": "geminiKeyIdx",
+    "settings": "aiDashSettings",
+    "usage": "aiDashUsage",
+    "cache": "aiDashCache",
+    "chat_theme": "aiChatTheme"
+  },
+  "notes": {
+    "get_key_url": "https://aistudio.google.com/app/apikey",
+    "key_prefix": "AIza",
+    "key_min_length": 20
+  }
+}
