@@ -1,5 +1,7 @@
-// Daily Account — notes.js v4.0
-// Google Keep style — text, photo, drawing, voice, tags, search, relation
+// Daily Account — notes.js v6.0 — HACKER TERMINAL
+// ██████████████████████████████████████████████████
+// সব লজিক অক্ষুণ্ণ — UI: terminal / hacker aesthetic
+// ██████████████████████████████████████████████████
 
 var allNotes = [];
 var filteredNotes = [];
@@ -10,8 +12,25 @@ var audioChunks = [];
 var isRecording = false;
 var drawingHistory = [];
 var drawingStep = -1;
-var currentColor = '#1f2937';
+var currentColor = '#00ff41';
 var currentSize = 3;
+
+/* ── shared style vars ── */
+var _H = {
+  bg:      '#010b01',
+  card:    '#020d02',
+  surface: '#031103',
+  green:   '#00ff41',
+  cyan:    '#00fff9',
+  amber:   '#ffb300',
+  red:     '#ff003c',
+  muted:   '#1a6b1a',
+  dim:     '#00c032',
+  border:  'rgba(0,255,65,.25)',
+  borderHi:'rgba(0,255,65,.6)',
+  mono:    "'Share Tech Mono','Courier New',monospace",
+  bengali: "'Hind Siliguri','Noto Sans Bengali',sans-serif",
+};
 
 document.addEventListener('DOMContentLoaded', function() {
     loadNotes();
@@ -23,6 +42,15 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadNotes() {
     allNotes = DB.get('notes') || [];
     filteredNotes = allNotes.slice().reverse();
+    _updateCountBadge();
+}
+
+function _updateCountBadge() {
+    var badge = document.getElementById('noteCountBadge');
+    if (!badge) return;
+    var n = filteredNotes.length;
+    if (n > 0) { badge.textContent = '[' + n + ' RECORDS]'; badge.style.display = 'block'; }
+    else { badge.style.display = 'none'; }
 }
 
 function setupSearch() {
@@ -41,6 +69,7 @@ function filterNotes(q) {
         }).reverse();
     }
     renderNotes();
+    _updateCountBadge();
 }
 
 function setupTagFilter() {
@@ -52,58 +81,54 @@ function setupTagFilter() {
             if (tag === 'all') { filteredNotes = allNotes.slice().reverse(); }
             else { filteredNotes = allNotes.filter(function(n){ return n.tag===tag; }).reverse(); }
             renderNotes();
+            _updateCountBadge();
         });
     });
 }
 
-/* ── RENDER ── */
+/* ════════════════════════════════
+   RENDER
+════════════════════════════════ */
 function renderNotes() {
     var container = document.getElementById('notesList');
     if (!container) return;
     if (filteredNotes.length === 0) {
-        container.innerHTML = '<div class="notes-empty"><span>📝</span><p>কোনো নোট নেই</p></div>';
+        container.innerHTML = '<div class="notes-empty"><span>X</span><p>কোনো নোট নেই</p></div>';
         return;
     }
     var html = '';
     filteredNotes.forEach(function(note) {
-        var tagColors = {income:'#10b981',expense:'#ef4444',dena:'#f59e0b',pabona:'#3b82f6',general:'#8b5cf6'};
+        /* tag system — all rendered green in CSS, labels kept for search */
         var tagLabels = {income:'💰 আয়',expense:'💸 ব্যয়',dena:'📕 দেনা',pabona:'📗 পাওনা',general:'🗒️ সাধারণ'};
-        var tc = tagColors[note.tag||'general'] || '#8b5cf6';
+        var tagCodes  = {income:'INCOME',expense:'EXPENSE',dena:'DENA',pabona:'PABONA',general:'GENERAL'};
         var tl = tagLabels[note.tag||'general'] || '🗒️ সাধারণ';
-        var bgColor = note.color || '#ffffff';
+        var tc_code = tagCodes[note.tag||'general'] || 'GENERAL';
+        var bgColor = note.color || '#020d02';
 
         var mediaHtml = '';
-        if (note.photo) {
-            mediaHtml += '<img src="'+note.photo+'" class="note-thumb" onclick="_viewPhoto(\''+note.id+'\')" />';
-        }
-        if (note.drawing) {
-            mediaHtml += '<img src="'+note.drawing+'" class="note-thumb note-drawing-thumb" onclick="_viewNoteDrawing(\''+note.id+'\')" />';
-        }
-        if (note.voice) {
-            mediaHtml += '<div class="note-voice-chip" onclick="_playVoice(\''+note.id+'\')">'
-                +'<span>🎙️</span><span>ভয়েস</span></div>';
-        }
+        if (note.photo)   mediaHtml += '<img src="'+note.photo+'" class="note-thumb" onclick="_viewPhoto(\''+note.id+'\')" />';
+        if (note.drawing) mediaHtml += '<img src="'+note.drawing+'" class="note-thumb note-drawing-thumb" onclick="_viewNoteDrawing(\''+note.id+'\')" />';
+        if (note.voice)   mediaHtml += '<div class="note-voice-chip" onclick="_playVoice(\''+note.id+'\')">[🎙 AUDIO]</div>';
 
         var relationHtml = '';
         if (note.relation) {
-            var ricons = {income:'💰',expense:'💸',ledger:'📒',savings:'🏦'};
-            relationHtml = '<div class="note-relation-chip">'
-                +(ricons[note.relation.store]||'🔗')+' '+(note.relation.label||'সম্পর্ক')
-                +'</div>';
+            var ricons = {income:'$',expense:'$',ledger:'#',savings:'#'};
+            relationHtml = '<div class="note-relation-chip">['+(ricons[note.relation.store]||'~')+(note.relation.label||'REL')+']</div>';
         }
 
-        html += '<div class="note-card" style="background:'+bgColor+';border-top:3px solid '+tc+'" onclick="openViewNote(\''+note.id+'\')">'
+        html += '<div class="note-card" style="background:'+bgColor+';border-top:2px solid #00ff41" onclick="openViewNote(\''+note.id+'\')">'
             + (note.title ? '<div class="note-card-title">'+escHtml(note.title)+'</div>' : '')
             + '<div class="note-card-text">'+(escHtml(note.text||'').replace(/\n/g,'<br>'))+'</div>'
             + (mediaHtml ? '<div class="note-media-row">'+mediaHtml+'</div>' : '')
             + '<div class="note-card-footer">'
-            + '<span class="note-tag-chip" style="background:'+tc+'22;color:'+tc+';border:1px solid '+tc+'44">'+tl+'</span>'
+            + '<span class="note-tag-chip">'+tc_code+'</span>'
             + relationHtml
-            + '<span class="note-date">'+formatDateDisplay(note.createdAt ? note.createdAt.slice(0,10) : '')+'</span>'
+            + '<span class="note-date">'+_hackDate(note.createdAt ? note.createdAt.slice(0,10) : '')+'</span>'
             + '</div>'
             + '</div>';
     });
     container.innerHTML = html;
+
     // double tap to zoom
     var lastTap = 0;
     document.querySelectorAll('.note-card').forEach(function(card) {
@@ -125,11 +150,18 @@ function renderNotes() {
     });
 }
 
+function _hackDate(d) {
+    if (!d) return '--/--/--';
+    return d.replace(/-/g, '/');
+}
+
 function escHtml(s) {
     return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-/* ── NEW NOTE MODAL ── */
+/* ════════════════════════════════
+   NEW / EDIT NOTE MODAL
+════════════════════════════════ */
 function openNewNote() {
     currentNoteId = null;
     currentDrawing = null;
@@ -146,138 +178,172 @@ function openEditNote(id) {
 
 function _buildNoteModal(note) {
     var ex = document.getElementById('__noteModal'); if(ex) ex.remove();
-    var tagColors = {income:'#10b981',expense:'#ef4444',dena:'#f59e0b',pabona:'#3b82f6',general:'#8b5cf6'};
-    var colors = ['#ffffff','#fef3c7','#dcfce7','#dbeafe','#fce7f3','#faf5ff','#fee2e2','#e0f2fe'];
 
-    var colorBtns = colors.map(function(c){
-        return '<button onclick="_setNoteColor(\''+c+'\')" style="width:26px;height:26px;border-radius:50%;background:'+c+';border:2px solid '+(note.color===c?'#374151':'#e5e7eb')+';cursor:pointer" id="__nc_'+c.replace('#','')+'"></button>';
+    /* color palette — dark terminal tones */
+    var colors = ['#020d02','#0d1a00','#001a0d','#000d1a','#1a000d','#0d0020','#1a0000','#001010'];
+    var colorNames = ['DEFAULT','GREEN','TEAL','NAVY','MAROON','PURPLE','DARK-RED','DARK-CYAN'];
+
+    var colorBtns = colors.map(function(c, i){
+        var isActive = (note.color === c);
+        return '<button onclick="_setNoteColor(\''+c+'\')" title="'+colorNames[i]+'"'
+            + ' style="width:28px;height:28px;border-radius:2px;background:'+c+';'
+            + 'border:1.5px solid '+(isActive ? '#00ff41' : 'rgba(0,255,65,.25)')+';'
+            + 'cursor:pointer;'+(isActive ? 'box-shadow:0 0 8px #00ff41;' : '')+'font-size:0"'
+            + ' id="__nc_'+c.replace(/#/g,'')+'"></button>';
     }).join('');
 
+    var tagCodes = {income:'INCOME',expense:'EXPENSE',dena:'DENA',pabona:'PABONA',general:'GENERAL'};
     var tagBtns = [
-        ['general','🗒️ সাধারণ'],['income','💰 আয়'],['expense','💸 ব্যয়'],
-        ['dena','📕 দেনা'],['pabona','📗 পাওনা']
+        ['general','GENERAL'],['income','INCOME'],['expense','EXPENSE'],
+        ['dena','DENA'],['pabona','PABONA']
     ].map(function(t){
-        var active = (note.tag||'general')===t[0] ? 'border:2px solid '+tagColors[t[0]] : 'border:1px solid #e5e7eb';
-        return '<button class="note-tag-modal-btn" data-tag="'+t[0]+'" onclick="_setNoteTag(\''+t[0]+'\')" style="'+active+'">'+t[1]+'</button>';
+        var isActive = (note.tag||'general')===t[0];
+        return '<button class="note-tag-modal-btn" data-tag="'+t[0]+'" onclick="_setNoteTag(\''+t[0]+'\')"'
+            + ' style="'+(isActive ? 'border:1px solid #00ff41;background:rgba(0,255,65,.12);color:#00ff41;' : '')+'">'+t[1]+'</button>';
     }).join('');
 
     var drawingPreview = (note.drawing||currentDrawing)
-        ? '<img src="'+(note.drawing||currentDrawing)+'" style="width:100%;max-height:120px;object-fit:contain;border-radius:10px;border:1px solid #e5e7eb;margin-bottom:8px;cursor:pointer" onclick="openDrawingPad(true)" />'
+        ? '<img src="'+(note.drawing||currentDrawing)+'" style="width:100%;max-height:120px;object-fit:contain;border-radius:2px;border:1px solid rgba(0,255,65,.3);margin-bottom:10px;cursor:pointer;filter:brightness(.8) hue-rotate(85deg) saturate(.6);background:#000f00" onclick="openDrawingPad(true)" />'
         : '';
 
     var photoPreview = note.photo
-        ? '<img src="'+note.photo+'" style="width:100%;max-height:140px;object-fit:cover;border-radius:10px;margin-bottom:8px;cursor:pointer" onclick="_viewFullPhoto(\''+note.id+'\')" />'
+        ? '<img src="'+note.photo+'" style="width:100%;max-height:150px;object-fit:cover;border-radius:2px;border:1px solid rgba(0,255,65,.25);margin-bottom:10px;cursor:pointer;filter:brightness(.8) saturate(.5) hue-rotate(85deg)" onclick="_viewFullPhoto(\''+note.id+'\')" />'
         : '';
 
     var voicePreview = note.voice
-        ? '<div style="background:#f1f5f9;border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;margin-bottom:8px;cursor:pointer" onclick="_playVoiceById()">'
-        + '<span style="font-size:1.3rem">🎙️</span>'
-        + '<span style="font-size:.85rem;font-weight:700;color:#374151">ভয়েস নোট</span>'
-        + '<button onclick="event.stopPropagation();_deleteVoice()" style="margin-left:auto;background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem">✕</button>'
+        ? '<div style="background:rgba(0,255,65,.06);border:1px solid rgba(0,255,65,.25);border-radius:2px;padding:11px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;cursor:pointer;font-family:'+_H.mono+'" onclick="_playVoiceById()">'
+        + '<span style="color:#00ff41;font-size:1rem">▶</span>'
+        + '<span style="font-size:.76rem;font-weight:400;color:#00ff41;letter-spacing:1px">AUDIO_NOTE.webm</span>'
+        + '<button onclick="event.stopPropagation();_deleteVoice()" style="margin-left:auto;background:rgba(255,0,60,.12);border:1px solid rgba(255,0,60,.3);border-radius:2px;color:#ff003c;cursor:pointer;font-size:.7rem;padding:3px 8px;font-family:'+_H.mono+'">DEL</button>'
         + '</div>'
         : '';
 
     var relHtml = note.relation
-        ? '<div style="background:#eff6ff;border-radius:10px;padding:10px;display:flex;align-items:center;gap:8px;margin-bottom:8px">'
-        + '<span>🔗</span><span style="font-size:.85rem;font-weight:700;color:#1d4ed8">'+(note.relation.label||'সম্পর্ক')+'</span>'
-        + '<button onclick="event.stopPropagation();_removeRelation()" style="margin-left:auto;background:none;border:none;color:#ef4444;cursor:pointer;font-size:.8rem">✕</button>'
+        ? '<div style="background:rgba(0,255,249,.06);border:1px solid rgba(0,255,249,.22);border-radius:2px;padding:10px 14px;display:flex;align-items:center;gap:10px;margin-bottom:10px;font-family:'+_H.mono+'">'
+        + '<span style="color:#00fff9;font-size:.76rem;letter-spacing:1px">[LINK] '+(note.relation.label||'RELATION')+'</span>'
+        + '<button onclick="event.stopPropagation();_removeRelation()" style="margin-left:auto;background:rgba(255,0,60,.1);border:1px solid rgba(255,0,60,.25);border-radius:2px;color:#ff003c;cursor:pointer;font-size:.7rem;padding:3px 8px;font-family:'+_H.mono+'">UNLINK</button>'
         + '</div>'
         : '';
 
     var modal = document.createElement('div');
     modal.id = '__noteModal';
-    modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:flex;align-items:flex-end;justify-content:center';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(0,8,0,.85);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center';
 
-    modal.innerHTML = '<div id="__noteSheet" style="background:'+(note.color||'#ffffff')+';border-radius:24px 24px 0 0;padding:0;width:100%;max-height:95vh;overflow-y:auto;box-shadow:0 -8px 40px rgba(0,0,0,.2)">'
-        // Handle bar
-        +'<div style="width:40px;height:4px;background:rgba(0,0,0,.1);border-radius:4px;margin:12px auto 0"></div>'
-        // Top actions
-        +'<div style="display:flex;align-items:center;gap:8px;padding:10px 16px">'
-        +'<button onclick="saveNote()" style="flex:1;padding:10px;background:#374151;color:white;border:none;border-radius:12px;font-size:.88rem;font-weight:900;cursor:pointer;font-family:inherit">✅ সংরক্ষণ</button>'
-        +(currentNoteId ? '<button onclick="deleteNote()" style="padding:10px 14px;background:#fef2f2;color:#ef4444;border:1px solid #fecaca;border-radius:12px;font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit">🗑️</button>' : '')
-        +'<button onclick="document.getElementById(\'__noteModal\').remove()" style="padding:10px 14px;background:#f3f4f6;color:#6b7280;border:none;border-radius:12px;font-size:.88rem;font-weight:800;cursor:pointer;font-family:inherit">✕</button>'
-        +'</div>'
-        // Content area
-        +'<div style="padding:0 16px 8px">'
+    modal.innerHTML =
+        '<div id="__noteSheet" style="'
+        + 'background:#000d00;'
+        + 'border-top:1px solid #00ff41;'
+        + 'border-left:1px solid rgba(0,255,65,.3);'
+        + 'border-right:1px solid rgba(0,255,65,.3);'
+        + 'border-radius:0;padding:0;width:100%;max-height:96vh;overflow-y:auto;'
+        + 'box-shadow:0 -8px 40px rgba(0,255,65,.2),0 0 60px rgba(0,0,0,.9)">'
+
+        // top glow line
+        + '<div style="height:2px;background:linear-gradient(90deg,transparent,#00ff41,#00fff9,#00ff41,transparent);animation:none"></div>'
+
+        // handle
+        + '<div style="width:36px;height:3px;background:rgba(0,255,65,.3);border-radius:0;margin:10px auto 0"></div>'
+
+        // header
+        + '<div style="display:flex;align-items:center;gap:10px;padding:12px 16px 10px;border-bottom:1px solid rgba(0,255,65,.12)">'
+        + '<div style="font-family:'+_H.mono+';font-size:.68rem;color:#00fff9;letter-spacing:2px;text-shadow:0 0 8px rgba(0,255,249,.4)">'+(currentNoteId ? '[ EDIT_MODE ]' : '[ NEW_RECORD ]')+'</div>'
+        + '<div style="flex:1"></div>'
+        + '<button onclick="saveNote()" style="padding:9px 18px;background:#00ff41;color:#000;border:none;border-radius:2px;font-size:.78rem;font-family:'+_H.mono+';font-weight:700;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(0,255,65,.4)">SAVE ▶</button>'
+        + (currentNoteId ? '<button onclick="deleteNote()" style="padding:9px 14px;background:rgba(255,0,60,.1);color:#ff003c;border:1px solid rgba(255,0,60,.3);border-radius:2px;font-size:.78rem;font-family:'+_H.mono+';cursor:pointer;letter-spacing:1px">DEL</button>' : '')
+        + '<button onclick="document.getElementById(\'__noteModal\').remove()" style="padding:9px 12px;background:rgba(255,255,255,.05);color:rgba(0,255,65,.6);border:1px solid rgba(0,255,65,.15);border-radius:2px;font-size:.95rem;cursor:pointer;font-family:'+_H.mono+'">✕</button>'
+        + '</div>'
+
+        // inputs
+        + '<div style="padding:12px 16px 8px">'
         + photoPreview + voicePreview + drawingPreview + relHtml
-        +'<input type="text" id="__noteTitle" placeholder="শিরোনাম (ঐচ্ছিক)" value="'+(note.title||'')+'" style="width:100%;padding:10px 0;border:none;border-bottom:1px solid #e5e7eb;font-size:1rem;font-weight:800;color:#1f2937;background:transparent;outline:none;margin-bottom:8px;font-family:inherit" />'
-        +'<textarea id="__noteText" placeholder="নোট লিখুন..." style="width:100%;min-height:120px;border:none;font-size:.92rem;color:#374151;background:transparent;outline:none;resize:none;font-family:inherit;line-height:1.7">'+escHtml(note.text||'')+'</textarea>'
-        +'</div>'
-        // Color picker
-        +'<div style="padding:8px 16px;border-top:1px solid rgba(0,0,0,.06)">'
-        +'<div style="font-size:.7rem;font-weight:700;color:#9ca3af;margin-bottom:6px">রঙ বেছে নিন</div>'
-        +'<div style="display:flex;gap:6px;flex-wrap:wrap">'+colorBtns+'</div>'
-        +'</div>'
-        // Tag selector
-        +'<div style="padding:8px 16px;border-top:1px solid rgba(0,0,0,.06)">'
-        +'<div style="font-size:.7rem;font-weight:700;color:#9ca3af;margin-bottom:6px">ট্যাগ</div>'
-        +'<div style="display:flex;gap:6px;flex-wrap:wrap" id="__tagRow">'+tagBtns+'</div>'
-        +'</div>'
-        // Action buttons
-        +'<div style="display:flex;gap:8px;padding:10px 16px;border-top:1px solid rgba(0,0,0,.06);overflow-x:auto">'
-        +'<button onclick="_addPhotoToNote()" style="flex-shrink:0;padding:9px 14px;background:#f0fdf4;color:#15803d;border:1px solid #bbf7d0;border-radius:11px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit">📷 ফটো</button>'
-        +'<button onclick="openDrawingPad(false)" style="flex-shrink:0;padding:9px 14px;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:11px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit">✏️ হাতের লেখা</button>'
-        +'<button onclick="_startVoice()" style="flex-shrink:0;padding:9px 14px;background:#faf5ff;color:#7c3aed;border:1px solid #e9d5ff;border-radius:11px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit" id="__voiceBtn">🎙️ ভয়েস</button>'
-        +'<button onclick="_addRelationToNote()" style="flex-shrink:0;padding:9px 14px;background:#eff6ff;color:#0369a1;border:1px solid #bae6fd;border-radius:11px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit">🔗 সম্পর্ক</button>'
-        +'</div>'
-        +'<div style="height:20px"></div>'
-        +'</div>';
+        + '<input type="text" id="__noteTitle" placeholder="// শিরোনাম এখানে লিখুন" value="'+(note.title||'')+'"'
+        + ' style="width:100%;padding:11px 0;border:none;border-bottom:1px solid rgba(0,255,65,.2);'
+        + 'font-size:1rem;font-family:'+_H.mono+';color:#00fff9;background:transparent;outline:none;'
+        + 'margin-bottom:10px;letter-spacing:.5px;caret-color:#00ff41" />'
+        + '<textarea id="__noteText" placeholder=">> নোট লিখুন..."'
+        + ' style="width:100%;min-height:130px;border:1px solid rgba(0,255,65,.14);border-radius:2px;'
+        + 'padding:11px 13px;font-size:.92rem;font-family:'+_H.bengali+';color:#00c032;'
+        + 'background:rgba(0,255,65,.03);outline:none;resize:none;line-height:1.8;'
+        + 'caret-color:#00ff41">'+ escHtml(note.text||'') +'</textarea>'
+        + '</div>'
+
+        // color picker
+        + '<div style="padding:10px 16px;border-top:1px solid rgba(0,255,65,.08)">'
+        + '<div style="font-size:.64rem;font-family:'+_H.mono+';color:#1a6b1a;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px"># card_color</div>'
+        + '<div style="display:flex;gap:7px;flex-wrap:wrap">'+colorBtns+'</div>'
+        + '</div>'
+
+        // tag selector
+        + '<div style="padding:10px 16px;border-top:1px solid rgba(0,255,65,.08)">'
+        + '<div style="font-size:.64rem;font-family:'+_H.mono+';color:#1a6b1a;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px"># tag_category</div>'
+        + '<div style="display:flex;gap:6px;flex-wrap:wrap" id="__tagRow">'+tagBtns+'</div>'
+        + '</div>'
+
+        // action buttons
+        + '<div style="display:flex;gap:7px;padding:10px 16px 14px;border-top:1px solid rgba(0,255,65,.08);overflow-x:auto">'
+        + '<button onclick="_addPhotoToNote()" style="flex-shrink:0;padding:10px 14px;background:rgba(0,255,65,.07);color:#00ff41;border:1px solid rgba(0,255,65,.25);border-radius:2px;font-size:.74rem;font-family:'+_H.mono+';cursor:pointer;letter-spacing:.8px">[IMG]</button>'
+        + '<button onclick="openDrawingPad(false)" style="flex-shrink:0;padding:10px 14px;background:rgba(0,255,249,.07);color:#00fff9;border:1px solid rgba(0,255,249,.25);border-radius:2px;font-size:.74rem;font-family:'+_H.mono+';cursor:pointer;letter-spacing:.8px">[DRAW]</button>'
+        + '<button onclick="_startVoice()" style="flex-shrink:0;padding:10px 14px;background:rgba(0,255,65,.07);color:#00ff41;border:1px solid rgba(0,255,65,.25);border-radius:2px;font-size:.74rem;font-family:'+_H.mono+';cursor:pointer;letter-spacing:.8px" id="__voiceBtn">[REC]</button>'
+        + '<button onclick="_addRelationToNote()" style="flex-shrink:0;padding:10px 14px;background:rgba(255,179,0,.07);color:#ffb300;border:1px solid rgba(255,179,0,.25);border-radius:2px;font-size:.74rem;font-family:'+_H.mono+';cursor:pointer;letter-spacing:.8px">[LINK]</button>'
+        + '</div>'
+        + '<div style="height:20px"></div>'
+        + '</div>';
 
     document.body.appendChild(modal);
 
-    // animate up
     var sheet = document.getElementById('__noteSheet');
     sheet.style.transform = 'translateY(100%)';
     sheet.style.transition = 'transform .3s cubic-bezier(.34,1.1,.64,1)';
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ sheet.style.transform='translateY(0)'; }); });
-
     modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
 }
 
 function _setNoteColor(color) {
     var sheet = document.getElementById('__noteSheet');
     if (sheet) sheet.style.background = color;
-    // update border
     document.querySelectorAll('[id^="__nc_"]').forEach(function(b){
-        b.style.border = '1px solid #e5e7eb';
+        b.style.border = '1.5px solid rgba(0,255,65,.25)';
+        b.style.boxShadow = 'none';
     });
-    var btn = document.getElementById('__nc_'+color.replace('#',''));
-    if (btn) btn.style.border = '2px solid #374151';
+    var btn = document.getElementById('__nc_'+color.replace(/#/g,''));
+    if (btn) { btn.style.border = '1.5px solid #00ff41'; btn.style.boxShadow = '0 0 8px #00ff41'; }
     window.__currentNoteColor = color;
 }
 
 function _setNoteTag(tag) {
-    var tagColors = {income:'#10b981',expense:'#ef4444',dena:'#f59e0b',pabona:'#3b82f6',general:'#8b5cf6'};
     document.querySelectorAll('.note-tag-modal-btn').forEach(function(b){
-        b.style.border = '1px solid #e5e7eb';
+        b.style.border = '1px solid #1a6b1a';
+        b.style.background = 'transparent';
+        b.style.color = '#00c032';
     });
     document.querySelectorAll('[data-tag="'+tag+'"]').forEach(function(b){
-        b.style.border = '2px solid '+(tagColors[tag]||'#8b5cf6');
+        b.style.border = '1px solid #00ff41';
+        b.style.background = 'rgba(0,255,65,.12)';
+        b.style.color = '#00ff41';
     });
     window.__currentNoteTag = tag;
 }
 
-/* ── SAVE / DELETE ── */
+/* ════════════════════════════════
+   SAVE / DELETE
+════════════════════════════════ */
 function saveNote() {
     var title = document.getElementById('__noteTitle') ? document.getElementById('__noteTitle').value.trim() : '';
     var text  = document.getElementById('__noteText')  ? document.getElementById('__noteText').value.trim()  : '';
     if (!title && !text && !currentDrawing && !window.__currentNotePhoto) {
         showToast('❌ কিছু লিখুন'); return;
     }
-
     var noteData = {
-        title:   title,
-        text:    text,
-        tag:     window.__currentNoteTag || 'general',
-        color:   window.__currentNoteColor || '#ffffff',
-        drawing: currentDrawing || null,
-        photo:   window.__currentNotePhoto || null,
-        voice:   window.__currentNoteVoice || null,
-        relation:window.__currentNoteRelation || null,
+        title:    title,
+        text:     text,
+        tag:      window.__currentNoteTag  || 'general',
+        color:    window.__currentNoteColor|| '#020d02',
+        drawing:  currentDrawing           || null,
+        photo:    window.__currentNotePhoto|| null,
+        voice:    window.__currentNoteVoice|| null,
+        relation: window.__currentNoteRelation || null,
     };
-
     if (currentNoteId) {
-        // Edit
         var all = DB.get('notes') || [];
         var idx = all.findIndex(function(n){ return n.id===currentNoteId; });
         if (idx > -1) {
@@ -292,15 +358,9 @@ function saveNote() {
         DB.add('notes', noteData);
         showToast('✅ নোট সংরক্ষিত হয়েছে');
     }
-
-    // cleanup
-    window.__currentNoteColor = null;
-    window.__currentNoteTag = null;
-    window.__currentNotePhoto = null;
-    window.__currentNoteVoice = null;
-    window.__currentNoteRelation = null;
-    currentDrawing = null;
-
+    window.__currentNoteColor = null; window.__currentNoteTag = null;
+    window.__currentNotePhoto = null; window.__currentNoteVoice = null;
+    window.__currentNoteRelation = null; currentDrawing = null;
     var modal = document.getElementById('__noteModal'); if(modal) modal.remove();
     loadNotes(); renderNotes();
 }
@@ -317,7 +377,9 @@ function deleteNote() {
     });
 }
 
-/* ── PHOTO ── */
+/* ════════════════════════════════
+   PHOTO
+════════════════════════════════ */
 function _addPhotoToNote() {
     var inp = document.createElement('input');
     inp.type='file'; inp.accept='image/*';
@@ -327,12 +389,10 @@ function _addPhotoToNote() {
         reader.onload = function(e) {
             window.__currentNotePhoto = e.target.result;
             showToast('✅ ফটো যোগ হয়েছে');
-            // Refresh modal
             var id = currentNoteId;
             var modal = document.getElementById('__noteModal'); if(modal) modal.remove();
             var note = id ? (DB.get('notes')||[]).find(function(n){return n.id===id;}) : {};
-            note = note || {};
-            note.photo = e.target.result;
+            note = note || {}; note.photo = e.target.result;
             _buildNoteModal(note);
         };
         reader.readAsDataURL(file);
@@ -343,18 +403,17 @@ function _addPhotoToNote() {
 function _viewFullPhoto(id) {
     var all = DB.get('notes')||[];
     var note = all.find(function(n){ return n.id===id; });
-    if (note && note.photo) {
-        if (typeof _viewPhoto==='function') _viewPhoto(note.photo);
-    }
+    if (note && note.photo) { if (typeof _viewPhoto==='function') _viewPhoto(note.photo); }
 }
 
 function _viewPhoto(src) {
     var ex = document.getElementById('__photoFull'); if(ex) ex.remove();
     var d = document.createElement('div');
     d.id='__photoFull';
-    d.style.cssText='position:fixed;inset:0;z-index:9999999;background:rgba(0,0,0,.92);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:16px';
+    d.style.cssText='position:fixed;inset:0;z-index:9999999;background:rgba(0,4,0,.97);display:flex;align-items:center;justify-content:center;cursor:pointer;padding:16px';
     var img = document.createElement('img');
-    img.src=src; img.style.cssText='max-width:100%;max-height:88vh;border-radius:12px';
+    img.src=src;
+    img.style.cssText='max-width:100%;max-height:86vh;border-radius:2px;border:1px solid rgba(0,255,65,.3);filter:brightness(.85) saturate(.6) hue-rotate(85deg)';
     d.appendChild(img);
     d.onclick=function(){d.remove();};
     document.body.appendChild(d);
@@ -366,11 +425,11 @@ function _viewNoteDrawing(id) {
     if (note && note.drawing) _viewPhoto(note.drawing);
 }
 
-/* ── VOICE ── */
+/* ════════════════════════════════
+   VOICE
+════════════════════════════════ */
 function _startVoice() {
-    if (isRecording) {
-        _stopVoice(); return;
-    }
+    if (isRecording) { _stopVoice(); return; }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
         showToast('❌ এই ডিভাইসে ভয়েস সাপোর্ট নেই'); return;
     }
@@ -385,20 +444,18 @@ function _startVoice() {
             reader.readAsDataURL(blob);
             stream.getTracks().forEach(function(t){t.stop();});
         };
-        mediaRecorder.start();
-        isRecording = true;
+        mediaRecorder.start(); isRecording = true;
         var btn = document.getElementById('__voiceBtn');
-        if (btn) { btn.textContent='⏹️ থামান'; btn.style.background='#fee2e2'; btn.style.color='#dc2626'; }
+        if (btn) { btn.textContent='[■ STOP]'; btn.style.background='rgba(255,0,60,.12)'; btn.style.color='#ff003c'; btn.style.borderColor='rgba(255,0,60,.3)'; }
         showToast('🎙️ রেকর্ডিং শুরু...');
     }).catch(function(){ showToast('❌ মাইক্রোফোন অ্যাক্সেস নেই'); });
 }
 
 function _stopVoice() {
     if (mediaRecorder && isRecording) {
-        mediaRecorder.stop();
-        isRecording = false;
+        mediaRecorder.stop(); isRecording = false;
         var btn = document.getElementById('__voiceBtn');
-        if (btn) { btn.textContent='🎙️ ভয়েস'; btn.style.background='#faf5ff'; btn.style.color='#7c3aed'; }
+        if (btn) { btn.textContent='[REC]'; btn.style.background='rgba(0,255,65,.07)'; btn.style.color='#00ff41'; btn.style.borderColor='rgba(0,255,65,.25)'; }
     }
 }
 
@@ -407,55 +464,58 @@ function _playVoice(id) {
     var note = all.find(function(n){ return n.id===id; });
     if (note && note.voice) { var a=new Audio(note.voice); a.play(); }
 }
-
 function _playVoiceById() {
     if (window.__currentNoteVoice) { var a=new Audio(window.__currentNoteVoice); a.play(); }
 }
-
 function _deleteVoice() {
     window.__currentNoteVoice = null;
     showToast('🗑️ ভয়েস মুছে গেছে');
 }
 
-/* ── DRAWING PAD ── */
+/* ════════════════════════════════
+   DRAWING PAD
+════════════════════════════════ */
 function openDrawingPad(isEdit) {
     var ex = document.getElementById('__drawPad'); if(ex) ex.remove();
     drawingHistory = []; drawingStep = -1;
 
     var pad = document.createElement('div');
     pad.id = '__drawPad';
-    pad.style.cssText = 'position:fixed;inset:0;z-index:9999999;background:white;display:flex;flex-direction:column';
+    pad.style.cssText = 'position:fixed;inset:0;z-index:9999999;background:#010b01;display:flex;flex-direction:column;font-family:'+_H.mono;
 
-    var colors = ['#1f2937','#ef4444','#3b82f6','#10b981','#f59e0b','#8b5cf6','#ec4899','#000000'];
+    var colors = ['#00ff41','#00fff9','#ffb300','#ff003c','#ff7700','#ffffff','#7700ff','#000000'];
     var colorBtns = colors.map(function(c){
-        return '<button onclick="_setDrawColor(\''+c+'\')" style="width:28px;height:28px;border-radius:50%;background:'+c+';border:2px solid '+(currentColor===c?'white':'transparent')+';cursor:pointer;flex-shrink:0" id="__dc_'+c.replace('#','')+'" ></button>';
+        return '<button onclick="_setDrawColor(\''+c+'\')" style="width:26px;height:26px;border-radius:2px;background:'+c+';border:1.5px solid '+(currentColor===c?'white':'rgba(0,255,65,.2)')+';cursor:pointer;flex-shrink:0" id="__dc_'+c.replace(/#/g,'')+'" ></button>';
     }).join('');
 
     pad.innerHTML =
-        '<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid #e5e7eb;background:white;position:sticky;top:0;z-index:10">'
-        +'<button onclick="_undoDraw()" style="padding:8px 12px;background:#f3f4f6;border:none;border-radius:9px;font-size:.82rem;font-weight:800;cursor:pointer">↩ Undo</button>'
-        +'<button onclick="_redoDraw()" style="padding:8px 12px;background:#f3f4f6;border:none;border-radius:9px;font-size:.82rem;font-weight:800;cursor:pointer">↪ Redo</button>'
-        +'<button onclick="_clearDraw()" style="padding:8px 12px;background:#fef2f2;color:#ef4444;border:1px solid #fecaca;border-radius:9px;font-size:.82rem;font-weight:800;cursor:pointer">🗑️ মুছুন</button>'
+        // toolbar
+        '<div style="display:flex;align-items:center;gap:7px;padding:10px 14px;background:#000c00;border-bottom:1px solid rgba(0,255,65,.2)">'
+        +'<button onclick="_undoDraw()" style="padding:8px 12px;background:rgba(0,255,65,.07);border:1px solid rgba(0,255,65,.22);border-radius:2px;font-size:.74rem;color:#00ff41;cursor:pointer;font-family:'+_H.mono+';letter-spacing:.5px">↩UNDO</button>'
+        +'<button onclick="_redoDraw()" style="padding:8px 12px;background:rgba(0,255,65,.07);border:1px solid rgba(0,255,65,.22);border-radius:2px;font-size:.74rem;color:#00ff41;cursor:pointer;font-family:'+_H.mono+';letter-spacing:.5px">REDO↪</button>'
+        +'<button onclick="_clearDraw()" style="padding:8px 12px;background:rgba(255,0,60,.08);border:1px solid rgba(255,0,60,.25);border-radius:2px;font-size:.74rem;color:#ff003c;cursor:pointer;font-family:'+_H.mono+';letter-spacing:.5px">CLR</button>'
         +'<div style="flex:1"></div>'
-        +'<button onclick="_saveDrawingAndClose()" style="padding:8px 16px;background:#374151;color:white;border:none;border-radius:10px;font-size:.85rem;font-weight:900;cursor:pointer">✅ ঠিক আছে</button>'
-        +'<button onclick="document.getElementById(\'__drawPad\').remove()" style="padding:8px 12px;background:#f3f4f6;border:none;border-radius:9px;font-size:.82rem;cursor:pointer">✕</button>'
+        +'<button onclick="_saveDrawingAndClose()" style="padding:8px 16px;background:#00ff41;color:#000;border:none;border-radius:2px;font-size:.8rem;font-family:'+_H.mono+';font-weight:700;cursor:pointer;letter-spacing:1px">SAVE ▶</button>'
+        +'<button onclick="document.getElementById(\'__drawPad\').remove()" style="padding:8px 12px;background:rgba(0,255,65,.06);border:1px solid rgba(0,255,65,.15);border-radius:2px;font-size:.85rem;cursor:pointer;color:rgba(0,255,65,.5);font-family:'+_H.mono+'">✕</button>'
         +'</div>'
-        +'<div style="display:flex;align-items:center;gap:6px;padding:8px 14px;border-bottom:1px solid #f1f5f9;background:white;overflow-x:auto">'
+        // color/size bar
+        +'<div style="display:flex;align-items:center;gap:7px;padding:8px 14px;background:#000a00;border-bottom:1px solid rgba(0,255,65,.1);overflow-x:auto">'
         +colorBtns
-        +'<div style="width:1px;height:24px;background:#e5e7eb;flex-shrink:0;margin:0 4px"></div>'
-        +'<input type="range" min="1" max="20" value="3" oninput="_setDrawSize(this.value)" style="width:80px;accent-color:#374151">'
-        +'<span id="__sizeLabel" style="font-size:.75rem;font-weight:700;color:#6b7280;width:24px">3px</span>'
+        +'<div style="width:1px;height:22px;background:rgba(0,255,65,.15);flex-shrink:0;margin:0 4px"></div>'
+        +'<input type="range" min="1" max="20" value="3" oninput="_setDrawSize(this.value)" style="width:80px;accent-color:#00ff41">'
+        +'<span id="__sizeLabel" style="font-size:.7rem;color:#1a6b1a;width:28px;font-family:'+_H.mono+'">3px</span>'
         +'<div style="flex:1"></div>'
-        +'<button onclick="_toggleEraser()" id="__eraserBtn" style="padding:6px 12px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:8px;font-size:.78rem;font-weight:800;cursor:pointer">⬜ ইরেজার</button>'
+        +'<button onclick="_toggleEraser()" id="__eraserBtn" style="padding:6px 11px;background:rgba(0,255,65,.07);border:1px solid rgba(0,255,65,.2);border-radius:2px;font-size:.7rem;cursor:pointer;color:#00ff41;font-family:'+_H.mono+';letter-spacing:.5px">ERASER</button>'
         +'</div>'
-        +'<canvas id="__drawCanvas" style="flex:1;touch-action:none;cursor:crosshair;background:white"></canvas>';
+        // canvas — white bg for drawing
+        +'<canvas id="__drawCanvas" style="flex:1;touch-action:none;cursor:crosshair;background:#f0fff0"></canvas>';
 
     document.body.appendChild(pad);
 
     var canvas = document.getElementById('__drawCanvas');
     var dpr = window.devicePixelRatio || 1;
     var cw = window.innerWidth;
-    var ch = window.innerHeight - 112;
+    var ch = window.innerHeight - 110;
     canvas.width  = cw * dpr;
     canvas.height = ch * dpr;
     canvas.style.width  = cw + 'px';
@@ -463,7 +523,6 @@ function openDrawingPad(isEdit) {
     var ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
 
-    var ctx = canvas.getContext('2d');
     if (isEdit && currentDrawing) {
         var img = new Image();
         img.onload = function(){ ctx.drawImage(img,0,0); _saveHistory(); };
@@ -485,15 +544,12 @@ function openDrawingPad(isEdit) {
     }
 
     function startDraw(e) {
-        e.preventDefault();
-        drawing = true;
+        e.preventDefault(); drawing = true;
         var pos = getPos(e); lastX=pos[0]; lastY=pos[1];
         ctx.beginPath(); ctx.moveTo(lastX,lastY);
     }
-
     function draw(e) {
-        e.preventDefault();
-        if (!drawing) return;
+        e.preventDefault(); if (!drawing) return;
         var pos = getPos(e);
         ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
         ctx.strokeStyle = isEraser ? 'rgba(0,0,0,1)' : currentColor;
@@ -502,12 +558,7 @@ function openDrawingPad(isEdit) {
         ctx.beginPath(); ctx.moveTo(lastX,lastY); ctx.lineTo(pos[0],pos[1]); ctx.stroke();
         lastX=pos[0]; lastY=pos[1];
     }
-
-    function endDraw(e) {
-        if (!drawing) return;
-        drawing = false;
-        _saveHistory();
-    }
+    function endDraw(e) { if (!drawing) return; drawing=false; _saveHistory(); }
 
     canvas.addEventListener('mousedown', startDraw);
     canvas.addEventListener('mousemove', draw);
@@ -520,82 +571,66 @@ function openDrawingPad(isEdit) {
         isEraser = !isEraser;
         var btn = document.getElementById('__eraserBtn');
         if (btn) {
-            btn.style.background = isEraser ? '#374151' : '#f3f4f6';
-            btn.style.color = isEraser ? 'white' : '';
-            btn.textContent = isEraser ? '✏️ কলম' : '⬜ ইরেজার';
+            btn.style.background = isEraser ? 'rgba(255,0,60,.12)' : 'rgba(0,255,65,.07)';
+            btn.style.color = isEraser ? '#ff003c' : '#00ff41';
+            btn.textContent = isEraser ? 'PEN' : 'ERASER';
         }
     };
 }
 
 function _saveHistory() {
-    var canvas = document.getElementById('__drawCanvas');
-    if (!canvas) return;
+    var canvas = document.getElementById('__drawCanvas'); if (!canvas) return;
     drawingStep++;
     drawingHistory = drawingHistory.slice(0, drawingStep);
     drawingHistory.push(canvas.toDataURL());
 }
-
 function _undoDraw() {
-    if (drawingStep <= 0) return;
-    drawingStep--;
-    var canvas = document.getElementById('__drawCanvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var img = new Image();
+    if (drawingStep <= 0) return; drawingStep--;
+    var canvas = document.getElementById('__drawCanvas'); if (!canvas) return;
+    var ctx = canvas.getContext('2d'); var img = new Image();
     img.onload = function(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0); };
     img.src = drawingHistory[drawingStep];
 }
-
 function _redoDraw() {
-    if (drawingStep >= drawingHistory.length-1) return;
-    drawingStep++;
-    var canvas = document.getElementById('__drawCanvas');
-    if (!canvas) return;
-    var ctx = canvas.getContext('2d');
-    var img = new Image();
+    if (drawingStep >= drawingHistory.length-1) return; drawingStep++;
+    var canvas = document.getElementById('__drawCanvas'); if (!canvas) return;
+    var ctx = canvas.getContext('2d'); var img = new Image();
     img.onload = function(){ ctx.clearRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0); };
     img.src = drawingHistory[drawingStep];
 }
-
 function _clearDraw() {
-    var canvas = document.getElementById('__drawCanvas');
-    if (!canvas) return;
-    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
-    _saveHistory();
+    var canvas = document.getElementById('__drawCanvas'); if (!canvas) return;
+    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height); _saveHistory();
 }
-
 function _setDrawColor(c) {
     currentColor = c;
-    document.querySelectorAll('[id^="__dc_"]').forEach(function(b){ b.style.border='2px solid transparent'; });
-    var btn = document.getElementById('__dc_'+c.replace('#',''));
-    if (btn) btn.style.border = '2px solid white';
+    document.querySelectorAll('[id^="__dc_"]').forEach(function(b){ b.style.border='1.5px solid rgba(0,255,65,.2)'; });
+    var btn = document.getElementById('__dc_'+c.replace(/#/g,''));
+    if (btn) btn.style.border = '1.5px solid white';
 }
-
 function _setDrawSize(v) {
     currentSize = parseInt(v);
     var lbl = document.getElementById('__sizeLabel');
     if (lbl) lbl.textContent = v+'px';
 }
-
 function _saveDrawingAndClose() {
-    var canvas = document.getElementById('__drawCanvas');
-    if (!canvas) return;
+    var canvas = document.getElementById('__drawCanvas'); if (!canvas) return;
     currentDrawing = canvas.toDataURL('image/png');
     var pad = document.getElementById('__drawPad'); if(pad) pad.remove();
     showToast('✅ হাতের লেখা সংরক্ষিত');
-    // Refresh note modal
     var id = currentNoteId;
     var noteModal = document.getElementById('__noteModal');
     if (noteModal) {
         noteModal.remove();
         var note = id ? (DB.get('notes')||[]).find(function(n){return n.id===id;}) : {};
-        note = note || {};
-        note.drawing = currentDrawing;
+        note = note || {}; note.drawing = currentDrawing;
         _buildNoteModal(note);
     }
 }
 
-/* ── RELATION ── */
+/* ════════════════════════════════
+   RELATION
+════════════════════════════════ */
 function _addRelationToNote() {
     if (typeof _openRelationSelector === 'function') {
         _openRelationSelector('notes', -1, {}, 'notes');
@@ -603,63 +638,67 @@ function _addRelationToNote() {
         showToast('💡 সম্পর্ক যোগ করতে লেনদেন পেজ ব্যবহার করুন');
     }
 }
-
 function _removeRelation() {
     window.__currentNoteRelation = null;
     showToast('🔗 সম্পর্ক সরানো হয়েছে');
 }
 
-/* ══ NOTE VIEW MODAL ══ */
+/* ════════════════════════════════
+   NOTE VIEW MODAL
+════════════════════════════════ */
 function openViewNote(id) {
     var note = allNotes.find(function(n){ return n.id===id; });
     if (!note) return;
 
     var ex = document.getElementById('__noteView'); if(ex) ex.remove();
 
-    var tagColors = {income:'#10b981',expense:'#ef4444',dena:'#f59e0b',pabona:'#3b82f6',general:'#8b5cf6'};
-    var tagLabels = {income:'💰 আয়',expense:'💸 ব্যয়',dena:'📕 দেনা',pabona:'📗 পাওনা',general:'🗒️ সাধারণ'};
-    var tc  = tagColors[note.tag||'general'] || '#8b5cf6';
-    var tl  = tagLabels[note.tag||'general'] || '🗒️';
-    var bg  = note.color || '#ffffff';
+    var tagCodes = {income:'INCOME',expense:'EXPENSE',dena:'DENA',pabona:'PABONA',general:'GENERAL'};
+    var tc_code = tagCodes[note.tag||'general'] || 'GENERAL';
 
     var modal = document.createElement('div');
     modal.id = '__noteView';
     modal.style.cssText = 'position:fixed;inset:0;z-index:99999;background:transparent;display:block';
 
     var mediaHtml = '';
-    if (note.photo)   mediaHtml += '<img src="'+note.photo+'" onclick="event.stopPropagation();_viewPhoto(\''+note.photo+'\')" style="width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-bottom:10px;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.15);display:block"/>';
-    if (note.drawing) mediaHtml += '<img src="'+note.drawing+'" onclick="event.stopPropagation();_viewPhoto(\''+note.drawing+'\')" style="width:100%;max-height:200px;object-fit:contain;border-radius:14px;margin-bottom:10px;cursor:pointer;background:#f8fafc;border:1px solid #e5e7eb;display:block"/>';
-    if (note.voice)   mediaHtml += '<button onclick="event.stopPropagation();_playVoice(\''+note.id+'\')" style="width:100%;padding:13px;background:linear-gradient(135deg,#faf5ff,#ede9fe);color:#7c3aed;border:1.5px solid rgba(139,92,246,.3);border-radius:13px;font-size:.9rem;font-weight:800;cursor:pointer;font-family:inherit;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px">🎙️ ভয়েস শুনুন ▶</button>';
+    if (note.photo)   mediaHtml += '<img src="'+note.photo+'" onclick="event.stopPropagation();_viewPhoto(\''+note.photo+'\')" style="width:100%;max-height:230px;object-fit:cover;border-radius:2px;border:1px solid rgba(0,255,65,.25);margin-bottom:14px;cursor:pointer;filter:brightness(.8) saturate(.5) hue-rotate(85deg);display:block"/>';
+    if (note.drawing) mediaHtml += '<img src="'+note.drawing+'" onclick="event.stopPropagation();_viewPhoto(\''+note.drawing+'\')" style="width:100%;max-height:200px;object-fit:contain;border-radius:2px;border:1px solid rgba(0,255,65,.2);margin-bottom:14px;cursor:pointer;background:#000f00;filter:brightness(.8) hue-rotate(85deg) saturate(.6);display:block"/>';
+    if (note.voice)   mediaHtml += '<button onclick="event.stopPropagation();_playVoice(\''+note.id+'\')" style="width:100%;padding:13px;background:rgba(0,255,65,.07);color:#00ff41;border:1px solid rgba(0,255,65,.25);border-radius:2px;font-size:.8rem;cursor:pointer;font-family:'+_H.mono+';margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:10px;letter-spacing:1px">▶ PLAY AUDIO_NOTE.webm</button>';
 
     var relHtml = '';
     if (note.relation) {
-        var ricons = {income:'💰',expense:'💸',ledger:'📒',savings:'🏦'};
-        relHtml = '<div style="background:#eff6ff;border-radius:10px;padding:9px 13px;margin-bottom:10px;font-size:.82rem;font-weight:700;color:#1d4ed8">'+(ricons[note.relation.store]||'🔗')+' '+(note.relation.label||'সম্পর্ক')+'</div>';
+        var ricons = {income:'$',expense:'$',ledger:'#',savings:'#'};
+        relHtml = '<div style="background:rgba(0,255,249,.06);border:1px solid rgba(0,255,249,.2);border-radius:2px;padding:10px 14px;margin-bottom:14px;font-size:.78rem;color:#00fff9;font-family:'+_H.mono+';letter-spacing:1px">[LINK] '+(ricons[note.relation.store]||'~')+(note.relation.label||'RELATION')+'</div>';
     }
 
     var sheet = document.createElement('div');
-    sheet.style.cssText = 'background:'+bg+';border-radius:0;padding:0 0 40px;width:100%;height:100vh;overflow-y:auto;border-top:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999';
+    sheet.style.cssText = 'background:#010b01;border-radius:0;padding:0;width:100%;height:100vh;overflow-y:auto;position:fixed;top:0;left:0;right:0;bottom:0;z-index:99999';
 
     sheet.innerHTML =
-        '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px 10px;position:sticky;top:0;background:'+bg+';z-index:1;border-bottom:1px solid rgba(0,0,0,.06)">'
-        +'<span class="note-tag-chip" style="background:'+tc+'22;color:'+tc+';border:1px solid '+tc+'44;font-size:.75rem;font-weight:800;padding:4px 10px;border-radius:20px">'+tl+'</span>'
-        +'<div style="display:flex;gap:8px">'
-        +'<button onclick="event.stopPropagation();openEditNote(\''+note.id+'\')" style="padding:8px 14px;background:rgba(0,0,0,.06);border:none;border-radius:10px;font-size:.82rem;font-weight:800;cursor:pointer;font-family:inherit">✏️ সম্পাদনা</button>'
-        +'<button onclick="event.stopPropagation();document.getElementById(\'__noteView\').remove()" style="padding:8px 12px;background:rgba(0,0,0,.06);border:none;border-radius:10px;font-size:.88rem;cursor:pointer">✕</button>'
-        +'</div></div>'
-        +'<div style="padding:14px 18px">'
-        +(note.title ? '<h2 style="font-size:1.5rem;font-weight:900;color:#111827;margin-bottom:12px;line-height:1.3;padding:0 2px">'+escHtml(note.title)+'</h2>' : '')
-        +(note.text  ? '<div style="font-size:1.1rem;color:#374151;line-height:1.9;white-space:pre-wrap;margin-bottom:14px">'+escHtml(note.text)+'</div>' : '')
-        +mediaHtml + relHtml
-        +'<div style="color:#9ca3af;font-size:.75rem;margin-top:8px">'+formatDateDisplay(note.createdAt ? note.createdAt.slice(0,10) : '')+'</div>'
-        +'</div>';
+        // sticky header
+        '<div style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;position:sticky;top:0;background:#000c00;z-index:1;border-bottom:1px solid rgba(0,255,65,.2);box-shadow:0 0 20px rgba(0,255,65,.12)">'
+        + '<div style="display:flex;align-items:center;gap:10px">'
+        + '<button onclick="event.stopPropagation();document.getElementById(\'__noteView\').remove()" style="padding:8px 12px;background:rgba(0,255,65,.07);border:1px solid rgba(0,255,65,.2);border-radius:2px;font-size:.8rem;color:#00ff41;cursor:pointer;font-family:'+_H.mono+';letter-spacing:1px">← BACK</button>'
+        + '<span style="font-family:'+_H.mono+';font-size:.66rem;color:#1a6b1a;letter-spacing:2px;border:1px solid rgba(0,255,65,.2);padding:3px 9px;border-radius:2px">'+tc_code+'</span>'
+        + '</div>'
+        + '<button onclick="event.stopPropagation();document.getElementById(\'__noteView\').remove();openEditNote(\''+note.id+'\')" style="padding:9px 18px;background:#00ff41;color:#000;border:none;border-radius:2px;font-size:.8rem;font-family:'+_H.mono+';font-weight:700;cursor:pointer;letter-spacing:1px;box-shadow:0 0 14px rgba(0,255,65,.35)">EDIT ▶</button>'
+        + '</div>'
+
+        // content
+        + '<div style="padding:20px 18px 40px">'
+        + (note.title ? '<h2 style="font-size:1.3rem;font-family:'+_H.mono+';color:#00fff9;margin-bottom:14px;line-height:1.35;letter-spacing:1px;text-shadow:0 0 10px rgba(0,255,249,.25)">'+escHtml(note.title)+'</h2>' : '')
+        + (note.text  ? '<div style="font-size:1rem;font-family:'+_H.bengali+';color:#00c032;line-height:1.85;white-space:pre-wrap;margin-bottom:18px">'+escHtml(note.text)+'</div>' : '')
+        + mediaHtml + relHtml
+        + '<div style="display:flex;align-items:center;gap:10px;margin-top:16px;padding-top:12px;border-top:1px solid rgba(0,255,65,.08)">'
+        + '<span style="font-size:.68rem;color:#1a6b1a;font-family:'+_H.mono+';letter-spacing:1px">// CREATED: '+_hackDate(note.createdAt ? note.createdAt.slice(0,10) : '--')+'</span>'
+        + (note.updatedAt ? '<span style="font-size:.65rem;color:#1a6b1a;font-family:'+_H.mono+';letter-spacing:.8px">| UPDATED: '+_hackDate(note.updatedAt.slice(0,10))+'</span>' : '')
+        + '</div>'
+        + '</div>';
 
     modal.appendChild(sheet);
     modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
     document.body.appendChild(modal);
 
-    // animate
     sheet.style.transform = 'translateY(100%)';
-    sheet.style.transition = 'transform .3s cubic-bezier(.34,1.1,.64,1)';
+    sheet.style.transition = 'transform .32s cubic-bezier(.34,1.1,.64,1)';
     requestAnimationFrame(function(){ requestAnimationFrame(function(){ sheet.style.transform='translateY(0)'; }); });
 }

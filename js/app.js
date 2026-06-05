@@ -127,10 +127,7 @@ function getDaysAgo(dateStr) {
         var days = Math.floor((new Date() - d) / 86400000);
         if (days === 0) return 'আজ';
         if (days === 1) return 'গতকাল';
-        if (days < 7)   return days + ' দিন আগে';
-        if (days < 30)  return Math.floor(days/7) + ' সপ্তাহ আগে';
-        if (days < 365) return Math.floor(days/30) + ' মাস আগে';
-        return Math.floor(days/365) + ' বছর আগে';
+        return days + ' দিন আগে';
     } catch(e) { return ''; }
 }
 
@@ -641,16 +638,7 @@ function _showLockScreen(correctPin) {
 /* ══════════════════════════════════
    SCROLL ANIMATION
    ══════════════════════════════════ */
-function initScrollAnim() {
-    var cards = document.querySelectorAll('.list-card');
-    if (!cards.length) return;
-    cards.forEach(function(c, i) {
-        c.style.opacity = '0';
-        c.style.transform = 'translateY(16px)';
-        c.style.transition = 'opacity .3s ease, transform .3s ease';
-        setTimeout(function(){ c.style.opacity='1'; c.style.transform='none'; }, i*40+30);
-    });
-}
+function initScrollAnim() { /* disabled */ }
 
 /* ══════════════════════════════════
    MORE MENU — নতুন options সহ
@@ -930,7 +918,11 @@ function _payDenaFromBalance(storeKey, index, item) {
         if (ri===-1) ri = all.findIndex(function(x){ return JSON.stringify(x)===JSON.stringify(item); });
         if (ri!==-1) {
             if (isFull) { all[ri].paid=true; all[ri].paidDate=nowDate(); all[ri].paidAmt=amt; }
-            else { all[ri].paidPartial=(parseFloat(all[ri].paidPartial)||0)+payAmt; if(all[ri].paidPartial>=amt){all[ri].paid=true;all[ri].paidDate=nowDate();} }
+            else {
+                all[ri].paidPartial=(parseFloat(all[ri].paidPartial)||0)+payAmt;
+                all[ri].amount=Math.max(0, amt - all[ri].paidPartial);
+                if(all[ri].paidPartial>=amt){all[ri].paid=true;all[ri].paidDate=nowDate();all[ri].amount=0;}
+            }
             DB.set(storeKey, all);
         }
         DB.add('expense', { category:'দেনা পরিশোধ', source:person+'-কে পরিশোধ', amount:payAmt, date:nowDate(), time:nowTime(), note:'দেনা পরিশোধ - '+(isFull?'পুরো':'আংশিক'), fromDena:true });
@@ -984,7 +976,11 @@ function _collectPabonaToBalance(storeKey, index, item) {
         if (ri===-1) ri = all.findIndex(function(x){ return JSON.stringify(x)===JSON.stringify(item); });
         if (ri!==-1) {
             if (isFull) { all[ri].paid=true; all[ri].paidDate=nowDate(); all[ri].collectedAmt=amt; }
-            else { all[ri].collectedPartial=(parseFloat(all[ri].collectedPartial)||0)+colAmt; if(all[ri].collectedPartial>=amt){all[ri].paid=true;all[ri].paidDate=nowDate();} }
+            else {
+                all[ri].collectedPartial=(parseFloat(all[ri].collectedPartial)||0)+colAmt;
+                all[ri].amount=Math.max(0, amt - all[ri].collectedPartial);
+                if(all[ri].collectedPartial>=amt){all[ri].paid=true;all[ri].paidDate=nowDate();all[ri].amount=0;}
+            }
             DB.set(storeKey, all);
         }
         DB.add('income', { source:person+'-এর কাছ থেকে আদায়', amount:colAmt, date:nowDate(), time:nowTime(), note:'পাওনা আদায় - '+(isFull?'পুরো':'আংশিক'), fromPabona:true });
@@ -2530,5 +2526,45 @@ document.addEventListener('DOMContentLoaded', function () {
     initAppLock();
     try { _loadCustomCategories(); } catch(e) {}
     setTimeout(_initColorPickers, 300);
+    _initScrollRestore();
     console.log('✨ '+APP.name+' v'+APP.version+' by '+APP.developer);
 });
+
+/* ══════════════════════════════════════════════════════
+   SCROLL RESTORE — পেজ থেকে বের হলে scroll position
+   সেভ হয়, ফিরে এলে ঠিক ওই জায়গায় চলে যায়
+   ══════════════════════════════════════════════════════ */
+function _initScrollRestore() {
+    var key = 'scroll_' + location.pathname;
+    var saved = sessionStorage.getItem(key);
+
+    /* restore: পেজ লোডের পরে সেভ করা position-এ যাও */
+    if (saved) {
+        var pos = parseInt(saved, 10);
+        /* JS + images সব load হওয়ার পরে scroll করো */
+        requestAnimationFrame(function() {
+            window.scrollTo({ top: pos, behavior: 'instant' });
+        });
+    }
+
+    /* save: scroll করলে position মনে রাখো (debounced) */
+    var _t = null;
+    window.addEventListener('scroll', function() {
+        if (_t) clearTimeout(_t);
+        _t = setTimeout(function() {
+            sessionStorage.setItem(key, String(Math.round(window.scrollY)));
+        }, 150);
+    }, { passive: true });
+
+    /* clear: নতুন page navigate করলে ওই পেজের পুরনো scroll মুছো না
+       (back/forward এ কাজে লাগবে) */
+    document.addEventListener('click', function(e) {
+        var a = e.target.closest('a[href]');
+        if (!a) return;
+        var href = a.getAttribute('href');
+        /* anchor (#) বা external link হলে skip */
+        if (!href || href.startsWith('#') || href.startsWith('http')) return;
+        /* নতুন পেজে যাওয়ার আগে current scroll সেভ নিশ্চিত করো */
+        sessionStorage.setItem(key, String(Math.round(window.scrollY)));
+    });
+}
