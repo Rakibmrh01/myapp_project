@@ -2,6 +2,7 @@
 <html lang="bn">
 <head>
 <meta charset="UTF-8">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Full Page Setup — Daily Account</title>
 <style>
@@ -157,6 +158,8 @@ html,body{height:100%;background:#f0f4f8;font-family:var(--font-bangla,'Hind Sil
   box-shadow:0 8px 24px rgba(0,0,0,.35);opacity:0;transition:all .3s}
 .fps-toast.show{transform:translateX(-50%) scale(1);opacity:1}
 </style>
+<style>html,body{overscroll-behavior:none!important;}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 </head>
 <body>
 
@@ -651,9 +654,9 @@ window.__fpsShowSelector=function(){
 </div><!-- /fps-body -->
 </div><!-- /fpsEditorWrap -->
 
-<script src="../js/db.js"></script>
-<script src="../js/app.js"></script>
-<script src="../js/full-page-setup.js"></script>
+<script src="../js/db.js" defer></script>
+<script src="../js/app.js" defer></script>
+<script src="../js/full-page-setup.js" defer></script>
 <!-- ══ FLOAT BALL v4 ══ -->
 <div id="__fb" style="position:fixed;z-index:99998;bottom:86px;right:14px;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#7c3aed);box-shadow:0 6px 22px #8b5cf688,0 2px 8px rgba(0,0,0,.25);display:flex;align-items:center;justify-content:center;font-size:1.45rem;cursor:grab;user-select:none;touch-action:none;border:2px solid rgba(255,255,255,.3)">🖌️</div>
 <div id="__fbo" style="display:none;position:fixed;inset:0;z-index:99996;background:rgba(0,0,0,.52);backdrop-filter:blur(6px)"></div>
@@ -750,10 +753,14 @@ window.__fpsShowSelector=function(){
 </script>
 <!-- ══ END FLOAT BALL ══ -->
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

@@ -2,8 +2,9 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>আমাদের সম্পর্কে — MRH Account</title>
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>আমাদের সম্পর্কে — Daily Account</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -108,6 +109,7 @@
     .ab-footer p { font-size: .85rem; color: #6b7280; line-height: 1.7; }
     .ab-footer .version { font-size: 1.1rem; font-weight: 700; color: #0f766e; margin-bottom: 4px; }
   </style>
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body>
 
@@ -120,19 +122,19 @@
     <h2>👤 ডেভেলপার পরিচিতি</h2>
     <div class="info-row">
       <div class="info-icon" style="background:#f3e8ff;">🧑‍💻</div>
-      <div><div class="info-lbl">পুরো নাম</div><div class="info-val">Md Rakib Hossain </div></div>
+      <div><div class="info-lbl">পুরো নাম</div><div class="info-val">Jakir Al Jihad</div></div>
     </div>
     <div class="info-row">
       <div class="info-icon" style="background:#f0fdf4;">📞</div>
-      <div><div class="info-lbl">ফোন / WhatsApp</div><div class="info-val"><a href="tel:+8801300168630">01300168630</a></div></div>
+      <div><div class="info-lbl">ফোন / WhatsApp</div><div class="info-val"><a href="tel:+8801737930168">01737930168</a></div></div>
     </div>
     <div class="info-row">
       <div class="info-icon" style="background:#eff6ff;">🆔</div>
-      <div><div class="info-lbl">Developer Handle</div><div class="info-val">@rakib8630</div></div>
+      <div><div class="info-lbl">Developer Handle</div><div class="info-val">@jakiraljihad</div></div>
     </div>
     <div class="info-row">
       <div class="info-icon" style="background:#fef3c7;">📦</div>
-      <div><div class="info-lbl">অ্যাপ</div><div class="info-val">MRH Account v5.1 Max Edition</div></div>
+      <div><div class="info-lbl">অ্যাপ</div><div class="info-val">Daily Account v5.0.0 Max Edition</div></div>
     </div>
     <div class="info-row">
       <div class="info-icon" style="background:#f0fdfa;">🔒</div>
@@ -144,22 +146,22 @@
   <div class="ab-section">
     <h2>📬 যোগাযোগ করুন</h2>
     <div class="contact-grid">
-      <a href="tel:+8801300168630" class="contact-btn btn-call">
+      <a href="tel:+8801737930168" class="contact-btn btn-call">
         <span class="ic">📞</span>
-        <span class="lb">01300168630</span>
+        <span class="lb">01737930168</span>
         <span class="sl">সরাসরি কল করুন</span>
       </a>
-      <a href="https://wa.me/8801300168630" target="_blank" class="contact-btn btn-wa">
+      <a href="https://wa.me/8801737930168" target="_blank" class="contact-btn btn-wa">
         <span class="ic">💬</span>
         <span class="lb">WhatsApp</span>
         <span class="sl">দ্রুত মেসেজ করুন</span>
       </a>
-      <a href="https://t.me/rakib8630@" target="_blank" class="contact-btn btn-tg">
+      <a href="https://t.me/jakiraljihad" target="_blank" class="contact-btn btn-tg">
         <span class="ic">✈️</span>
         <span class="lb">Telegram</span>
-        <span class="sl">@rakib8630</span>
+        <span class="sl">@jakiraljihad</span>
       </a>
-      <a href="mailto:mdrakibhossain8630@gmail.com" class="contact-btn btn-mail">
+      <a href="mailto:jakiraljihad@gmail.com" class="contact-btn btn-mail">
         <span class="ic">📧</span>
         <span class="lb">Email</span>
         <span class="sl">ইমেইল করুন</span>
@@ -193,16 +195,20 @@
 </div>
 
 <div class="ab-footer">
-  <div class="version">MRH Account v5.1</div>
-  <p>MRH ACCOUNT  — Max Edition</p>
-  <p style="margin-top:4px;">© 2026 Md Rakib Hossain  · সর্বস্বত্ব সংরক্ষিত</p>
+  <div class="version">Daily Account v5.0.0</div>
+  <p>প্রত্যহিত লেনদেন — Max Edition</p>
+  <p style="margin-top:4px;">© 2026 Jakir Al Jihad · সর্বস্বত্ব সংরক্ষিত</p>
 </div>
 
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
-  </html>
+</html>

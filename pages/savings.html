@@ -2,10 +2,12 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>সঞ্চয় করুন - Daily Account</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/forms.css">
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body>
     <div class="page-wrapper">
@@ -47,14 +49,12 @@
                         required
                     >
                     <div class="quick-amounts-colorful">
-                        <button type="button" class="quick-btn" data-value="10">১০</button>
-                        <button type="button" class="quick-btn" data-value="20">২০</button>
-                        <button type="button" class="quick-btn" data-value="30">৩০</button>
-                        <button type="button" class="quick-btn" data-value="40">৪০</button>
-                        <button type="button" class="quick-btn" data-value="50">৫০</button>
                         <button type="button" class="quick-btn" data-value="100">১০০</button>
-                        <button type="button" class="quick-btn" data-value="200">২০০</button>
-                        <button type="button" class="quick-btn" data-value="500">৫০০</button>                       
+                        <button type="button" class="quick-btn" data-value="500">৫০০</button>
+                        <button type="button" class="quick-btn" data-value="1000">১০০০</button>
+                        <button type="button" class="quick-btn" data-value="2000">২০০০</button>
+                        <button type="button" class="quick-btn" data-value="5000">৫০০০</button>
+                        <button type="button" class="quick-btn" data-value="10000">১০,০০০</button>
                     </div>
                 </div>
 
@@ -148,9 +148,9 @@
         </div>
     </div>
 
-    <script src="../js/db.js"></script>
-    <script src="../js/app.js"></script>
-    <script src="../js/savings.js"></script>
+    <script src="../js/db.js" defer></script>
+    <script src="../js/app.js" defer></script>
+    <script src="../js/savings.js" defer></script>
 
 
 
@@ -251,10 +251,14 @@
 </script>
 <!-- ══ END FLOAT BALL ══ -->
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

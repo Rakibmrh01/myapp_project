@@ -2,8 +2,9 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>শর্তাবলী — MRH Account</title>
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>শর্তাবলী — Daily Account</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -96,13 +97,14 @@
     .doc-footer a { color: #7c3aed; text-decoration: none; font-weight: 700; }
     .doc-updated { font-size: .8rem; color: #9ca3af; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
   </style>
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body>
 
 <div class="topbar">
   <a href="settings.html" class="topbar-back">←</a>
   <h1>শর্তাবলী</h1>
-  <span class="topbar-badge">@Md Rakib Hossain </span>
+  <span class="topbar-badge">@jakir_al_jihad</span>
 </div>
 
 <div class="highlight-strip">
@@ -170,7 +172,7 @@
   <div class="doc-section">
     <span class="section-num">ধারা ৫</span>
     <h2>মেধাস্বত্ব ও কপিরাইট</h2>
-    <p>Daily Account অ্যাপের সমস্ত উপাদান — কোড, ডিজাইন, গ্রাফিক্স, লোগো, টেক্সট এবং ফিচার — <strong>Md Rakib Hossain </strong>-এর একচেটিয়া মেধাস্বত্বে সংরক্ষিত।</p>
+    <p>Daily Account অ্যাপের সমস্ত উপাদান — কোড, ডিজাইন, গ্রাফিক্স, লোগো, টেক্সট এবং ফিচার — <strong>Jakir Al Jihad</strong>-এর একচেটিয়া মেধাস্বত্বে সংরক্ষিত।</p>
     <p>এই সম্পদসমূহ বাংলাদেশের কপিরাইট আইন ২০০০ এবং আন্তর্জাতিক মেধাস্বত্ব চুক্তির অধীনে আইনগতভাবে সুরক্ষিত। লিখিত অনুমতি ছাড়া কোনো অংশ পুনরুৎপাদন বা বিতরণ করা নিষিদ্ধ।</p>
   </div>
 
@@ -192,15 +194,19 @@
 <div class="doc-footer">
   <h3>📞 যোগাযোগ করুন</h3>
   <p>শর্তাবলী সম্পর্কে কোনো প্রশ্ন বা আপত্তি থাকলে অ্যাপ ব্যবহারের আগেই সরাসরি যোগাযোগ করুন।</p>
-  <p style="margin-top:8px;">👤 <strong>Md Rakib Hossain </strong> &nbsp;·&nbsp; <a href="tel:+8801300168630">📞 01300168630</a> &nbsp;·&nbsp; <a href="https://wa.me/8801300168630">💬 WhatsApp</a></p>
-  <p class="doc-updated">সর্বশেষ আপডেট: এপ্রিল ২০২৫ &nbsp;·&nbsp; MRH Account v5.1</p>
+  <p style="margin-top:8px;">👤 <strong>Jakir Al Jihad</strong> &nbsp;·&nbsp; <a href="tel:+8801737930168">📞 01737930168</a> &nbsp;·&nbsp; <a href="https://wa.me/8801737930168">💬 WhatsApp</a></p>
+  <p class="doc-updated">সর্বশেষ আপডেট: এপ্রিল ২০২৫ &nbsp;·&nbsp; Daily Account v5.0.0</p>
 </div>
 
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

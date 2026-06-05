@@ -1,9 +1,10 @@
-)<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>গোপনীয়তা নীতি —Mrh Daily Account</title>
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>গোপনীয়তা নীতি — Daily Account</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -126,6 +127,7 @@
     .doc-footer a { color: #2563eb; text-decoration: none; font-weight: 700; }
     .doc-updated { font-size: .8rem; color: #9ca3af; margin-top: 16px; padding-top: 14px; border-top: 1px solid #e5e7eb; }
   </style>
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body>
 
@@ -221,10 +223,14 @@
 </div>
 
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

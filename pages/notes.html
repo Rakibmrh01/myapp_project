@@ -2,45 +2,65 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
-  <title>নোটস — Daily Account</title>
+  <title>[SYS] নোটস — Daily Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/notes.css">
+<style>html,body{overscroll-behavior:none!important;}</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 </head>
 <body data-page="notes">
 <div class="notes-page">
 
-  <!-- Header -->
+  <!-- ═══ HEADER ═══ -->
   <div class="notes-header">
     <div class="notes-header-top">
-      <h1 class="notes-title">📝 নোটস</h1>
+      <h1 class="notes-title"><span>📝</span> নোটস</h1>
+      <div id="noteCountBadge" style="
+        font-family:'Share Tech Mono',monospace;
+        font-size:.7rem;
+        letter-spacing:2px;
+        color:#00ff41;
+        border:1px solid rgba(0,255,65,.35);
+        padding:4px 10px;
+        border-radius:2px;
+        display:none;
+        text-shadow:0 0 8px rgba(0,255,65,.4);
+        background:rgba(0,255,65,.05);
+      "></div>
     </div>
+
     <!-- Search -->
     <div class="notes-search-wrap">
-      <input type="text" id="noteSearch" placeholder="🔍 নোট খুঁজুন..." class="notes-search-input">
+      <input type="text" id="noteSearch" placeholder="keyword..." class="notes-search-input" autocomplete="off" spellcheck="false">
     </div>
-    <!-- Tag filters -->
+
+    <!-- Tag Filters -->
     <div class="notes-tag-filters">
-      <button class="tag-filter-btn active" data-tag="all">সব</button>
-      <button class="tag-filter-btn" data-tag="income">💰 আয়</button>
-      <button class="tag-filter-btn" data-tag="expense">💸 ব্যয়</button>
-      <button class="tag-filter-btn" data-tag="dena">📕 দেনা</button>
-      <button class="tag-filter-btn" data-tag="pabona">📗 পাওনা</button>
-      <button class="tag-filter-btn" data-tag="general">🗒️ সাধারণ</button>
+      <button class="tag-filter-btn active" data-tag="all">ALL</button>
+      <button class="tag-filter-btn" data-tag="income">INCOME</button>
+      <button class="tag-filter-btn" data-tag="expense">EXPENSE</button>
+      <button class="tag-filter-btn" data-tag="dena">DENA</button>
+      <button class="tag-filter-btn" data-tag="pabona">PABONA</button>
+      <button class="tag-filter-btn" data-tag="general">GENERAL</button>
     </div>
   </div>
 
-  <!-- Notes Grid -->
+  <!-- ═══ NOTES GRID ═══ -->
   <div id="notesList" class="notes-grid"></div>
 
-  <!-- FAB -->
-  <button class="notes-fab" onclick="openNewNote()">✏️</button>
+  <!-- ═══ FAB ═══ -->
+  <button class="notes-fab" onclick="openNewNote()" title="নতুন নোট">+</button>
 
 </div>
 
-<script src="../js/db.js"></script>
-<script src="../js/app.js"></script>
-<script src="../js/notes.js"></script>
+<script defer src="../js/db.js"></script>
+<script defer src="../js/app.js"></script>
+<script defer src="../js/notes.js"></script>
 
 
 
@@ -137,10 +157,14 @@
 </script>
 <!-- ══ END FLOAT BALL ══ -->
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

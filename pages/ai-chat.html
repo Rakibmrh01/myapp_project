@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="dark-navy">
+<head>
+    <meta charset="UTF-8">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Daily Account AI Chat</title>
+    <style>
+        :root{
+          --hdr-h:60px;--stats-h:42px;--inp-h:74px;
+          --msg-fw:500;--radius:20px;--tr:.22s cubic-bezier(.4,0,.2,1);
+        }
+        /* Themes */
+        [data-theme="dark-navy"]{
+          --bg:#050812;--s1:#0a0f20;--s2:#111828;--s3:#182038;--s4:#1e2c48;
+          --bd:rgba(255,255,255,.05);--bd2:rgba(255,255,255,.09);--bd3:rgba(255,255,255,.16);
+          --t1:#eef2ff;--t2:#7a8db5;--t3:#3a4d6e;--t4:#253350;
+          --ac:#6c5ce7;--ac2:#a29bfe;--ac3:#74b9ff;
+          --gr:#00cec9;--rd:#fd79a8;--yw:#fdcb6e;--pk:#e84393;
+          --user-g:linear-gradient(135deg,#6c5ce7,#a855f7);
+          --ai-bg:#0a0f20;--ai-bd:rgba(108,92,231,.18);
+          --hdr-bg:#2156F0;--glow:rgba(108,92,231,.26);--glow2:rgba(108,92,231,.09);
+          --inp-bg:#111828;--msg-user-txt:#fff;--hi-g:#00cec9;
+        }
+        [data-theme="deep-purple"]{
+          --bg:#0f0a1e;--s1:#160f2d;--s2:#1e143b;--s3:#261a4a;--s4:#2e1f58;
+          --bd:rgba(255,255,255,.06);--bd2:rgba(255,255,255,.1);--bd3:rgba(255,255,255,.18);
+          --t1:#f3e8ff;--t2:#a78bfa;--t3:#7c3aed;--t4:#5b21b6;
+          --ac:#8b5cf6;--ac2:#c084fc;--ac3:#e879f9;
+          --gr:#34d399;--rd:#f472b6;--yw:#fbbf24;--pk:#ec4899;
+          --user-g:linear-gradient(135deg,#8b5cf6,#d946ef);
+          --ai-bg:#160f2d;--ai-bd:rgba(139,92,246,.2);
+          --hdr-bg:#6d28d9;--glow:rgba(139,92,246,.3);--glow2:rgba(139,92,246,.1);
+          --inp-bg:#1e143b;--msg-user-txt:#fff;--hi-g:#34d399;
+        }
+        [data-theme="midnight"]{
+          --bg:#000000;--s1:#0a0a0a;--s2:#141414;--s3:#1f1f1f;--s4:#292929;
+          --bd:rgba(255,255,255,.08);--bd2:rgba(255,255,255,.12);--bd3:rgba(255,255,255,.2);
+          --t1:#ffffff;--t2:#a3a3a3;--t3:#525252;--t4:#262626;
+          --ac:#3b82f6;--ac2:#60a5fa;--ac3:#93c5fd;
+          --gr:#10b981;--rd:#ef4444;--yw:#f59e0b;--pk:#d946ef;
+          --user-g:linear-gradient(135deg,#1e293b,#334155);
+          --ai-bg:#0a0a0a;--ai-bd:rgba(255,255,255,.1);
+          --hdr-bg:#000000;--glow:rgba(255,255,255,.05);--glow2:rgba(255,255,255,.02);
+          --inp-bg:#0f0f0f;--msg-user-txt:#fff;--hi-g:#10b981;
+        }
+
+        [data-theme="light-clean"]{
+          --bg:#f0f4ff;--s1:#ffffff;--s2:#e8edf8;--s3:#d8e1f4;--s4:#c8d4ee;
+          --bd:rgba(0,0,0,.06);--bd2:rgba(0,0,0,.10);--bd3:rgba(0,0,0,.16);
+          --t1:#080e24;--t2:#4a5a82;--t3:#9aabcc;--t4:#c8d4e8;
+          --ac:#4361ee;--ac2:#7289da;--ac3:#5c9eff;
+          --gr:#0d9e6e;--rd:#e53935;--yw:#e67e00;--pk:#d81b60;
+          --user-g:linear-gradient(135deg,#4361ee,#7289da);
+          --ai-bg:#ffffff;--ai-bd:rgba(67,97,238,.14);
+          --hdr-bg:#2156F0;--glow:rgba(67,97,238,.18);--glow2:rgba(67,97,238,.06);
+          --inp-bg:#ffffff;--msg-user-txt:#fff;--hi-g:#0d9e6e;
+        }
+        .hi-g{color:var(--hi-g);font-weight:700}
+        .sec-h{display:block;font-size:1.15rem;font-weight:800;color:var(--ac);margin:14px 0 8px;border-left:4px solid var(--ac);padding-left:10px}
+        
+        *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+        body{background:var(--bg);color:var(--t1);font-family:'Hind Siliguri',sans-serif;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+        
+        .hdr{position:fixed;top:0;left:0;right:0;z-index:500;background:var(--hdr-bg);height:var(--hdr-h);display:flex;align-items:center;padding:0 14px 0 16px;gap:11px;box-shadow:0 2px 24px rgba(0,0,0,.4);}
+        .ai-avatar{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.28);display:flex;align-items:center;justify-content:center;font-size:1.25rem;animation:aGlow 3.5s ease-in-out infinite;}
+        @keyframes aGlow{0%,100%{box-shadow:0 0 0 0 rgba(255,255,255,.15)}50%{box-shadow:0 0 0 5px rgba(255,255,255,.07)}}
+        .hdr-info{flex:1;min-width:0;overflow:hidden}
+        .hdr-title{font-family:'Sora',sans-serif;font-size:1.05rem;font-weight:800;color:#fff;letter-spacing:-.1px;line-height:1.2;white-space:nowrap}
+        .hdr-status{display:flex;align-items:center;gap:5px;font-family:'Sora',sans-serif;font-size:.65rem;font-weight:600;color:rgba(255,255,255,.72);margin-top:3px}
+        .sdot{width:6px;height:6px;border-radius:50%;background:#4ade80;box-shadow:0 0 7px #4ade80;animation:sdBlink 2.5s ease-in-out infinite}
+        .sdot.offline{background:#f87171;box-shadow:0 0 7px #f87171;animation:none}
+        .sdot.nokey{background:#fdcb6e;box-shadow:0 0 7px #fdcb6e;animation:none}
+        @keyframes sdBlink{0%,100%{opacity:1}50%{opacity:.2}}
+        .hdr-acts{display:flex;gap:7px;align-items:center}
+        .hdr-btn{width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:.9rem;transition:var(--tr);}
+        .settings-btn{width:42px;height:42px;border-radius:13px;background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:1.3rem;transition:var(--tr);box-shadow:0 4px 16px rgba(0,0,0,.22);}
+        
+        .stats-bar{position:fixed;top:var(--hdr-h);left:0;right:0;z-index:400;background:var(--s1);border-bottom:1px solid var(--bd2);padding:6px 14px;display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;height:var(--stats-h);}
+        .s-chip{flex-shrink:0;border-radius:30px;padding:5px 12px;font-family:'Sora',sans-serif;font-size:.72rem;font-weight:700;white-space:nowrap;display:flex;align-items:center;gap:4px;border:1.5px solid transparent;}
+        .sc-g{background:rgba(0,206,201,.07);color:var(--gr);border-color:rgba(0,206,201,.2)}
+        .sc-r{background:rgba(253,121,168,.07);color:var(--rd);border-color:rgba(253,121,168,.2)}
+        .sc-a{background:rgba(108,92,231,.07);color:var(--ac);border-color:rgba(108,92,231,.2)}
+        .sc-y{background:rgba(253,203,110,.07);color:var(--yw);border-color:rgba(253,203,110,.2)}
+        .sc-p{background:rgba(232,67,147,.07);color:var(--pk);border-color:rgba(232,67,147,.2)}
+        
+        #chatPanel{flex:1;margin-top:calc(var(--hdr-h) + var(--stats-h));margin-bottom:var(--inp-h);overflow-y:auto;padding:18px 14px 10px;-webkit-overflow-scrolling:touch;}
+        .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:20px;text-align:center;opacity:.7;}
+        .empty-icon{font-size:3.5rem;margin-bottom:16px;opacity:.4;}
+        
+        .msg{display:flex;gap:10px;margin-bottom:18px;animation:msgPop .26s cubic-bezier(.22,1,.36,1) forwards;align-items:flex-end;}
+        .msg.user{flex-direction:row-reverse}
+        .m-av{width:34px;height:34px;border-radius:11px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.88rem;}
+        .msg.ai .m-av{background:linear-gradient(135deg,#4338ca,#7c3aed);box-shadow:0 3px 12px rgba(108,92,231,.32)}
+        .msg.user .m-av{background:var(--user-g);box-shadow:0 3px 12px rgba(168,85,247,.32)}
+        .m-wrap{max-width:84%;display:flex;flex-direction:column}
+        .msg.user .m-wrap{align-items:flex-end}
+        .m-bubble{padding:13px 17px;font-size:1.05rem;line-height:1.88;word-break:break-word;font-weight:var(--msg-fw);}
+        .msg.ai .m-bubble{background:var(--ai-bg);border:1.5px solid var(--ai-bd);border-radius:18px 18px 18px 4px;color:var(--t1);box-shadow:0 4px 20px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.04);}
+        .msg.user .m-bubble{background:var(--user-g);color:var(--msg-user-txt);border-radius:18px 18px 4px 18px;font-weight:620;box-shadow:0 6px 22px var(--glow);border:1.5px solid rgba(255,255,255,.08);}
+        .m-meta{display:flex;align-items:center;gap:8px;margin-top:5px;flex-wrap:wrap}
+        .m-time{font-size:.67rem;color:var(--t3);font-weight:600;}
+        .m-provider{font-size:.61rem;font-weight:800;padding:2px 8px;border-radius:20px;display:inline-flex;align-items:center;gap:3px;border:1px solid;}
+        .mp-groq{background:rgba(0,206,201,.07);color:var(--gr);border-color:rgba(0,206,201,.2)}
+        .mp-gemini{background:rgba(162,155,254,.08);color:var(--ac2);border-color:rgba(162,155,254,.22)}
+        .mp-pollinations{background:rgba(253,203,110,.07);color:var(--yw);border-color:rgba(253,203,110,.2)}
+        .mp-offline{background:rgba(255,255,255,.03);color:var(--t3);border-color:var(--bd2)}
+        
+        .typing-row{display:flex;gap:5px;align-items:center;padding:4px 0}
+        .td{width:7px;height:7px;border-radius:50%;background:var(--t3);display:inline-block;animation:tdA .9s ease-in-out infinite}
+        @keyframes tdA{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-7px);opacity:1}}
+        @keyframes msgPop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:translateY(0) scale(1)}}
+        
+        .inp-bar{position:fixed;bottom:0;left:0;right:0;z-index:500;height:var(--inp-h);background:var(--s1);border-top:1.5px solid var(--bd2);display:flex;align-items:center;padding:9px 12px;gap:10px;backdrop-filter:blur(20px);}
+        .inp-wrap{flex:1;background:var(--inp-bg);border:2px solid var(--bd2);border-radius:20px;display:flex;align-items:flex-end;gap:8px;padding:11px 18px;}
+        #userInput{flex:1;background:transparent;border:none;outline:none;color:var(--t1);font-family:'Hind Siliguri',sans-serif;font-size:1.22rem;font-weight:650;resize:none;max-height:118px;}
+        .send-btn{width:50px;height:50px;border-radius:16px;background:var(--user-g);border:none;cursor:pointer;color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px var(--glow);}
+        
+        /* Drawer & Overlays */
+        .sov{position:fixed;inset:0;z-index:999;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;opacity:0;transition:opacity .3s;}
+        .sov.open{display:block;opacity:1}
+        .sdrw{position:fixed;top:0;right:0;bottom:0;z-index:1000;width:min(100vw,380px);background:var(--s1);transform:translateX(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);overflow-y:auto;box-shadow:-10px 0 30px rgba(0,0,0,.5);}
+        .sdrw.open{transform:translateX(0)}
+        .drw-hdr{position:sticky;top:0;z-index:10;background:var(--hdr-bg);padding:14px 16px;display:flex;align-items:center;gap:12px;}
+        .drw-close{width:38px;height:38px;border-radius:11px;background:rgba(255,255,255,.14);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;}
+        .drw-ttl{font-family:'Sora',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;flex:1}
+        .drw-body{padding:18px 16px 52px}
+        .ss{margin-bottom:22px}
+        .ss-title{font-family:'Sora',sans-serif;font-size:.68rem;font-weight:800;color:var(--ac);text-transform:uppercase;margin-bottom:9px;}
+        .sc{background:var(--s2);border:1.5px solid var(--bd2);border-radius:18px;overflow:hidden}
+        .sr{display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--bd);}
+        .s-inf{flex:1;min-width:0}
+        .s-lbl{font-size:.94rem;font-weight:800;color:var(--t1)}
+        .s-sub{font-size:.76rem;color:var(--t3);margin-top:2px;}
+        .tgl{position:relative;width:50px;height:28px;cursor:pointer;flex-shrink:0;}
+        .tgl input{opacity:0;width:0;height:0;}
+        .t-tr{position:absolute;inset:0;border-radius:14px;background:var(--s4);transition:.24s}
+        .tgl input:checked+.t-tr{background:var(--ac)}
+        .t-th{position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:.24s;}
+        .tgl input:checked~.t-th{transform:translateX(22px)}
+        
+        .toast{position:fixed;bottom:86px;left:50%;transform:translateX(-50%);background:var(--s3);border:1.5px solid var(--bd2);color:var(--t1);padding:10px 22px;border-radius:40px;font-size:.82rem;font-weight:700;z-index:9999;animation:fadeUp .25s ease forwards;}
+        @keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(8px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+        
+        .movi{display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.85);backdrop-filter:blur(18px);align-items:flex-end;justify-content:center;}
+        .movi.open{display:flex}
+        .mbox{background:var(--s1);border:1.5px solid var(--bd2);border-radius:28px 28px 0 0;padding:24px 20px 48px;width:100%;max-width:520px;animation:slideUp .32s cubic-bezier(.22,1,.36,1);}
+        @keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+        .m-title{font-family:'Sora',sans-serif;font-size:1.38rem;font-weight:800;margin-bottom:10px}
+        .m-desc{font-size:.92rem;color:var(--t2);line-height:1.8;margin-bottom:18px}
+        .m-inp-wrap{background:var(--s2);border:1.5px solid var(--bd2);border-radius:14px;display:flex;align-items:center;gap:9px;padding:13px 16px;margin-bottom:10px;}
+        #quickKeyInput, #newKeyInput{flex:1;background:transparent;border:none;outline:none;color:var(--t1);font-family:monospace;}
+        .m-save{width:100%;padding:15px;border-radius:16px;border:none;background:var(--user-g);color:#fff;font-weight:800;cursor:pointer;}
+        .m-skip{width:100%;padding:12px;border-radius:14px;margin-top:9px;background:transparent;border:1px solid var(--bd2);color:var(--t3);cursor:pointer;border:none;}
+        
+        .banner{border-radius:14px;padding:11px 15px;margin-bottom:12px;font-size:.88rem;font-weight:700;display:flex;align-items:center;gap:10px;border:1.5px solid;}
+        .bn-warn{background:rgba(253,203,110,.07);border-color:rgba(253,203,110,.22);color:var(--yw)}
+        .bn-info{background:var(--s2);border-color:var(--bd2);color:var(--t2)}
+        .bn-info button{background:var(--ac);color:#fff;border:none;padding:5px 10px;border-radius:8px;font-size:.75rem;font-weight:800;cursor:pointer;}
+    </style>
+<style>html,body{overscroll-behavior:none!important;}</style>
+</head>
+<body>
+
+    <header class="hdr">
+        <div class="ai-avatar">🤖</div>
+        <div class="hdr-info">
+            <div class="hdr-title">Daily Account AI</div>
+            <div class="hdr-status">
+                <span class="sdot" id="statusDot"></span>
+                <span id="aiStatus">সংযোগ হচ্ছে...</span>
+            </div>
+        </div>
+        <div class="hdr-acts">
+            <button class="hdr-btn" onclick="clearChat()">🗑️</button>
+            <button class="settings-btn" onclick="openSettings()">⚙️</button>
+        </div>
+    </header>
+
+    <div class="stats-bar">
+        <div class="s-chip sc-g">↑ <span id="stInc">৳০</span></div>
+        <div class="s-chip sc-r">↓ <span id="stExp">৳০</span></div>
+        <div class="s-chip sc-a">◈ <span id="stBal">৳০</span></div>
+        <div class="s-chip sc-y">⚠ <span id="stDen">৳০</span></div>
+        <div class="s-chip sc-p">♦ <span id="stSav">৳০</span></div>
+    </div>
+
+    <div id="chatPanel">
+        <div id="offlineBanner" class="banner bn-warn" style="display: none;">⚠️ ইন্টারনেট সংযোগ নেই — Offline উত্তর দিচ্ছে</div>
+        <div id="noKeyBanner" class="banner bn-info" style="display: none;">
+            <div style="flex: 1; font-size: .84rem;">🌐 <strong style="color: var(--ac);">কোনো API Key নেই</strong><br><span style="font-size: .72rem; color: var(--t2);">Pollinations দিয়ে চলছে • Groq/Gemini Key দিলে আরো দ্রুত</span></div>
+            <button onclick="document.getElementById('keyManagerModal').classList.add('open')">Key দিন →</button>
+        </div>
+        <div id="emptyState" class="empty-state">
+            <div class="empty-icon">💬</div>
+            <div class="empty-title">কোনো বার্তা নেই</div>
+            <div class="empty-sub">যেকোনো প্রশ্ন করুন<br>আর্থিক বিশ্লেষণ, পরামর্শ বা যেকোনো বিষয়ে</div>
+        </div>
+        <div id="msgList"></div>
+    </div>
+
+    <div class="inp-bar">
+        <div class="inp-wrap">
+            <textarea id="userInput" rows="1" placeholder="যেকোনো প্রশ্ন করুন..." onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        </div>
+        <button class="send-btn" id="sendBtn" onclick="sendMsg()">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+        </button>
+    </div>
+
+    <!-- Settings Drawer -->
+    <div class="sov" id="sov" onclick="closeSettings()"></div>
+    <div class="sdrw" id="sdrw">
+        <div class="drw-hdr">
+            <button class="drw-close" onclick="closeSettings()">←</button>
+            <div class="drw-ttl">⚙️ সেটিংস ও কনফিগারেশন</div>
+        </div>
+        <div class="drw-body">
+            <div class="ss">
+                <div class="ss-title">🎨 থিম ও অ্যাপিয়ারেন্স</div>
+                <div class="sc">
+                    <div class="sr">
+                        <div class="s-inf">
+                            <div class="s-lbl">অ্যাপ থিম</div>
+                            <div class="s-sub">আপনার পছন্দের লুক বেছে নিন</div>
+                        </div>
+                        <div class="s-ctrl">
+                            <select id="themeSelect" onchange="changeTheme(this.value)" style="background:var(--s3); color:var(--t1); border:1.5px solid var(--bd2); padding:6px 10px; border-radius:10px; font-family:'Sora',sans-serif; font-size:.8rem; outline:none;">
+                                <option value="dark-navy">Dark Navy</option>
+                                <option value="deep-purple">Deep Purple</option>
+                                <option value="midnight">Midnight Black</option>
+                                <option value="light-clean">☀️ Light Clean</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ss">
+                <div class="ss-title">🔌 AI মডেল সিলেকশন</div>
+                <div class="sc">
+                    <div class="sr">
+                        <div class="s-inf">
+                            <div class="s-lbl">পছন্দের মডেল (Manual)</div>
+                            <div class="s-sub">সরাসরি কোন মডেলটি ব্যবহার করবেন</div>
+                        </div>
+                        <div class="s-ctrl">
+                            <select id="prefModel" onchange="savePrefModel(this.value)" style="background:var(--s3); color:var(--t1); border:1.5px solid var(--bd2); padding:6px 10px; border-radius:10px; font-family:'Sora',sans-serif; font-size:.8rem; outline:none;">
+                                <option value="auto">Auto (স্মার্ট সিলেকশন)</option>
+                                <option value="groq">Groq (Llama 3.3)</option>
+                                <option value="gemini">Gemini 2.0 Flash</option>
+                                <option value="pollinations">Pollinations (Free)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ss">
+                <div class="ss-title">⚙️ প্রোভাইডার স্ট্যাটাস (On/Off)</div>
+                <div class="sc">
+                    <div class="sr">
+                        <div class="s-inf"><div class="s-lbl">⚡ Groq Cloud</div><div class="s-sub">Llama 3.3 70B</div></div>
+                        <div class="s-ctrl"><label class="tgl"><input type="checkbox" id="togGroq" onchange="saveProviderToggle('groq', this.checked)"><div class="t-tr"></div><div class="t-th"></div></label></div>
+                    </div>
+                    <div class="sr">
+                        <div class="s-inf"><div class="s-lbl">✨ Google Gemini</div><div class="s-sub">Gemini 2.0 Flash</div></div>
+                        <div class="s-ctrl"><label class="tgl"><input type="checkbox" id="togGemini" onchange="saveProviderToggle('gemini', this.checked)"><div class="t-tr"></div><div class="t-th"></div></label></div>
+                    </div>
+                    <div class="sr">
+                        <div class="s-inf"><div class="s-lbl">🌐 Pollinations AI</div><div class="s-sub">ফ্রি ও আনলিমিটেড</div></div>
+                        <div class="s-ctrl"><label class="tgl"><input type="checkbox" id="togPollinations" onchange="saveProviderToggle('pollinations', this.checked)"><div class="t-tr"></div><div class="t-th"></div></label></div>
+                    </div>
+                    <div class="sr">
+                        <div class="s-inf"><div class="s-lbl">📴 Offline Mode (Force)</div><div class="s-sub">শুধুমাত্র লোকাল ডেটা</div></div>
+                        <div class="s-ctrl"><label class="tgl"><input type="checkbox" id="togOffline" onchange="saveProviderToggle('offline', this.checked)"><div class="t-tr"></div><div class="t-th"></div></label></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ss">
+                <div class="ss-title">🛠️ অন্যান্য সেটিংস</div>
+                <div class="sc">
+                    <div class="sr" onclick="openKeyManager()" style="cursor:pointer">
+                        <div class="s-inf"><div class="s-lbl">🔑 API Keys ম্যানেজ করুন</div><div class="s-sub">মাল্টি-কি যোগ, কপি ও ডিলিট</div></div>
+                        <div style="color:var(--ac); font-weight:800; font-family:'Sora',sans-serif;">→</div>
+                    </div>
+                    <div class="sr" onclick="clearChat(); closeSettings();" style="cursor:pointer">
+                        <div class="s-inf"><div class="s-lbl" style="color:var(--rd)">🗑️ চ্যাট হিস্ট্রি মুছুন</div><div class="s-sub">সব মেসেজ ডিলিট হয়ে যাবে</div></div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top:30px; opacity:.4; font-size:.7rem; font-family:'Sora',sans-serif;">Daily Account AI v3.5<br>Developed by Zakir Al Jihad</div>
+        </div>
+    </div>
+
+    <!-- Key Manager Modal -->
+    <div class="movi" id="keyManagerModal">
+        <div class="mbox" style="max-height: 85vh; display: flex; flex-direction: column;">
+            <div class="m-title">🔑 API Key ম্যানেজার</div>
+            <div class="m-desc">একাধিক কি যোগ করুন। একটির লিমিট শেষ হলে অন্যটি কাজ করবে।</div>
+            <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+                <div class="m-inp-wrap" style="flex: 1; margin-bottom: 0;"><input type="password" id="newKeyInput" placeholder="gsk_... বা AIza... কি দিন"></div>
+                <button class="m-save" onclick="addNewKey()" style="width: auto; padding: 0 20px;">+</button>
+            </div>
+            <div id="keyListArea" style="flex: 1; overflow-y: auto; margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;"></div>
+            <button class="m-skip" onclick="document.getElementById('keyManagerModal').classList.remove('open')">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <script>
+        const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
+        const GROQ_MODEL = 'llama-3.3-70b-versatile';
+        const CHAT_SAVE_KEY = 'aiChatHistory_v3';
+        const MAX_HISTORY = 24;
+
+        let history = [];
+        let busy = false;
+        let currentProvider = 'groq';
+
+        // Key Management
+        const getGroqKeys = () => { try { return JSON.parse(localStorage.getItem('groqApiKeys') || '[]').filter(k => k && k.length > 10); } catch (e) { return []; } };
+        const saveGroqKeys = (a) => localStorage.setItem('groqApiKeys', JSON.stringify(a));
+        const getGroqIdx = () => parseInt(localStorage.getItem('groqKeyIdx') || '0') || 0;
+        const setGroqIdx = (i) => localStorage.setItem('groqKeyIdx', String(i));
+        const rotateGroqKey = () => { const k = getGroqKeys(); if (k.length <= 1) return false; setGroqIdx((getGroqIdx() + 1) % k.length); return true; };
+
+        const getGeminiKeys = () => { try { return JSON.parse(localStorage.getItem('geminiApiKeys2') || '[]').filter(k => k && k.length > 10); } catch (e) { return []; } };
+        const saveGeminiKeys = (a) => localStorage.setItem('geminiApiKeys2', JSON.stringify(a));
+        const getGeminiIdx = () => parseInt(localStorage.getItem('geminiKeyIdx2') || '0') || 0;
+        const setGeminiIdx = (i) => localStorage.setItem('geminiKeyIdx2', String(i));
+        const rotateGeminiKey = () => { const k = getGeminiKeys(); if (k.length <= 1) return false; setGeminiIdx((getGeminiIdx() + 1) % k.length); return true; };
+
+        const isProvEnabled = (name) => localStorage.getItem('prov_' + name) !== 'false';
+
+        // UI Helpers
+        const showToast = (msg) => {
+            const t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => { if (t.parentNode) t.parentNode.removeChild(t); }, 2500);
+        };
+        const nowTime = () => { const n = new Date(); return ('0' + n.getHours()).slice(-2) + ':' + ('0' + n.getMinutes()).slice(-2); };
+        const escHtml = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const formatAI = (text) => {
+            text = text.replace(/\[([^\]]+)\]\((https?:\/\/[^\)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--ac);font-weight:700;text-decoration:none">$1 🔗</a>');
+            text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*([^*\n]+?)\*/g, '<em>$1</em>');
+            text = text.replace(/^#{1,3}\s+(.+)$/gm, '<span class="sec-h">$1</span>');
+            text = text.replace(/^[-•]\s+(.+)$/gm, '• $1<br>');
+            text = text.replace(/\n\n/g, '<br><br>');
+            text = text.replace(/(৳[\d,]+(?:\.\d+)?(?:[KL])?)/g, '<span class="hi-g">$1</span>');
+            return text;
+        };
+
+        const appendMsgDOM = (role, html, time, provider) => {
+            document.getElementById('emptyState').style.display = 'none';
+            const list = document.getElementById('msgList');
+            const d = document.createElement('div');
+            d.className = 'msg ' + role;
+            let metaRow = '<div class="m-meta">';
+            if (time) metaRow += `<span class="m-time">${time}</span>`;
+            if (role === 'ai' && provider) metaRow += `<span class="m-provider mp-${provider}">${provider}</span>`;
+            metaRow += '</div>';
+            d.innerHTML = `<div class="m-av">${role === 'ai' ? '🤖' : '👤'}</div><div class="m-wrap"><div class="m-bubble">${html}</div>${metaRow}</div>`;
+            list.appendChild(d);
+            return d;
+        };
+
+        const addMsg = (role, html, provider) => {
+            const d = appendMsgDOM(role, html, nowTime(), provider || '');
+            if (d) d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            return d;
+        };
+
+        const addTyping = () => {
+            const list = document.getElementById('msgList');
+            const d = document.createElement('div');
+            d.className = 'msg ai'; d.id = 'typingIndicator';
+            d.innerHTML = '<div class="m-av">🤖</div><div class="m-wrap"><div class="m-bubble"><div class="typing-row"><span class="td"></span><span class="td"></span><span class="td"></span></div></div></div>';
+            list.appendChild(d);
+            d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            return d;
+        };
+        const removeTyping = () => { const el = document.getElementById('typingIndicator'); if (el) el.remove(); };
+
+        // AI Logic
+        const updateStats = () => {
+            const ls = (k) => { try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : []; } catch (e) { return []; } };
+            const inc = ls('income'), exp = ls('expense'), led = ls('ledger'), sav = ls('savings');
+            let tI = 0, tE = 0, tS = 0;
+            inc.forEach(i => tI += Number(i.amount) || 0); exp.forEach(i => tE += Number(i.amount) || 0); sav.forEach(i => tS += Number(i.amount) || 0);
+            let den = 0, pab = 0; led.forEach(i => { if (!i.paid) { if (i.type === 'dena') den += Number(i.amount) || 0; else pab += Number(i.amount) || 0; } });
+            document.getElementById('stInc').textContent = '৳' + Math.round(tI).toLocaleString();
+            document.getElementById('stExp').textContent = '৳' + Math.round(tE).toLocaleString();
+            document.getElementById('stSav').textContent = '৳' + Math.round(tS).toLocaleString();
+            document.getElementById('stDen').textContent = '৳' + Math.round(den).toLocaleString();
+            document.getElementById('stBal').textContent = '৳' + Math.round(tI - tE - tS - den + pab).toLocaleString();
+        };
+
+        const buildContext = () => {
+            const ls = (k) => { try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : []; } catch (e) { return []; } };
+            const inc = ls('income'), exp = ls('expense'), led = ls('ledger'), sav = ls('savings'), notes = ls('notes');
+            let tI = 0, tE = 0, tS = 0;
+            inc.forEach(i => tI += Number(i.amount) || 0);
+            exp.forEach(i => tE += Number(i.amount) || 0);
+            sav.forEach(i => tS += Number(i.amount) || 0);
+            let den = 0, pab = 0;
+            led.forEach(i => { if (!i.paid) { if (i.type === 'dena') den += Number(i.amount) || 0; else pab += Number(i.amount) || 0; } });
+            const bal = tI - tE - tS - den + pab;
+
+            // Category breakdown
+            const cats = {}; exp.forEach(i => { const c = i.category || 'অন্যান্য'; cats[c] = (cats[c] || 0) + (Number(i.amount) || 0); });
+            const catStr = Object.keys(cats).sort((a,b) => cats[b]-cats[a]).map(c => c + ' ৳' + Math.round(cats[c])).join(' | ') || 'নেই';
+
+            // All transactions with notes (newest first)
+            const allTx = [];
+            inc.forEach(i => allTx.push({ t:'[আয়]', a: i.amount||0, lbl: i.source||'', note: i.note||'', dt: i.date||'', ts: i.createdAt||'' }));
+            exp.forEach(i => allTx.push({ t:'[ব্যয়]', a: i.amount||0, lbl: i.category||'', note: i.note||'', dt: i.date||'', ts: i.createdAt||'' }));
+            allTx.sort((a,b) => new Date(b.ts||b.dt||0) - new Date(a.ts||a.dt||0));
+            const txStr = allTx.map(x => {
+                let s = x.t + ' ' + x.lbl + ' | ৳' + Math.round(x.a);
+                if (x.note) s += ' | নোট: "' + x.note + '"';
+                if (x.dt) s += ' | ' + x.dt;
+                return s;
+            }).join('\n') || 'নেই';
+
+            // Ledger with notes
+            const ledStr = led.map(i => {
+                let s = (i.type==='dena'?'[দেনা]':'[পাওনা]') + ' ' + (i.person||'অজানা') + ' | ৳' + Math.round(i.amount||0);
+                s += ' | ' + (i.paid ? '✅ পরিশোধিত' : '⏳ বকেয়া');
+                if (i.note) s += ' | নোট: "' + i.note + '"';
+                if (i.dueDate) s += ' | মেয়াদ: ' + i.dueDate;
+                return s;
+            }).join('\n') || 'নেই';
+
+            // Savings with notes
+            const savStr = sav.map(i => (i.title||i.category||'সঞ্চয়') + ' | ৳' + Math.round(i.amount||0) + (i.note?' | নোট: "'+i.note+'"':'')).join('\n') || 'নেই';
+
+            return [
+                '═══ সারসংক্ষেপ ═══',
+                'মোট আয়: ৳' + Math.round(tI) + ' (' + inc.length + 'টি)',
+                'মোট ব্যয়: ৳' + Math.round(tE) + ' (' + exp.length + 'টি)',
+                'সঞ্চয়: ৳' + Math.round(tS),
+                'নেট ব্যালেন্স: ৳' + Math.round(bal),
+                'বকেয়া দেনা: ৳' + Math.round(den),
+                'বকেয়া পাওনা: ৳' + Math.round(pab),
+                '',
+                '═══ ব্যয় ক্যাটাগরি ═══',
+                catStr,
+                '',
+                '═══ সকল লেনদেন (note সহ) ═══',
+                txStr,
+                '',
+                '═══ দেনা-পাওনা ═══',
+                ledStr,
+                '',
+                '═══ সঞ্চয় ═══',
+                savStr,
+            ].join('\n');
+        };
+
+        const buildSystemPrompt = () => [
+            'তুমি "Daily Account" অ্যাপের একজন বিশেষজ্ঞ বাংলা আর্থিক সহকারী AI।',
+            'তোমাকে তৈরি করেছে জাকির আল জিহাদ। এই অ্যাপটিও তার তৈরি।',
+            '',
+            '## মূল নিয়ম',
+            '- সবসময় বাংলায় উত্তর দাও',
+            '- ডেটা বিশ্লেষণ করে বিস্তারিত উত্তর দাও',
+            '- যেকোনো বিষয়ে প্রশ্ন করতে পারবেন — finance, সাধারণ, ইসলামিক',
+            '- টাকা ৳ চিহ্নে লেখো, **bold** দিয়ে গুরুত্বপূর্ণ তথ্য হাইলাইট করো',
+            '- note, ক্যাটাগরি, নাম খোঁজার সময় partial match করো',
+            '',
+            '## ব্যবহারকারীর সম্পূর্ণ আর্থিক ডেটা',
+            buildContext(),
+        ].join('\n');
+
+        const finishMsg = (text, provider) => {
+            currentProvider = provider;
+            history.push({ role: 'assistant', content: text, time: nowTime(), provider: provider });
+            localStorage.setItem(CHAT_SAVE_KEY, JSON.stringify(history.slice(-MAX_HISTORY)));
+            addMsg('ai', formatAI(text), provider);
+            updateStatus(); busy = false; document.getElementById('sendBtn').disabled = false;
+        };
+
+        const callOffline = (origQ) => {
+            removeTyping();
+            const ls = (k) => { try { const d = localStorage.getItem(k); return d ? JSON.parse(d) : []; } catch (e) { return []; } };
+            const inc = ls('income'), exp = ls('expense'), led = ls('ledger'), sav = ls('savings');
+            let tI = 0, tE = 0, tS = 0;
+            inc.forEach(i => tI += Number(i.amount)||0); exp.forEach(i => tE += Number(i.amount)||0); sav.forEach(i => tS += Number(i.amount)||0);
+            let den = 0, pab = 0; led.forEach(i => { if (!i.paid) { if (i.type==='dena') den += Number(i.amount)||0; else pab += Number(i.amount)||0; } });
+            const bal = tI - tE - tS - den + pab;
+            const q = (origQ||'').toLowerCase();
+            let ans = '';
+            if (q.includes('ব্যালেন্স') || q.includes('balance') || q.includes('হিসাব') || q.includes('কত')) {
+                ans = '📴 **অফলাইন উত্তর:**\n\n**বর্তমান হিসাব:**\n• মোট আয়: ৳' + Math.round(tI) + '\n• মোট ব্যয়: ৳' + Math.round(tE) + '\n• সঞ্চয়: ৳' + Math.round(tS) + '\n• বকেয়া দেনা: ৳' + Math.round(den) + '\n\n**নেট ব্যালেন্স: ৳' + Math.round(bal) + '**';
+            } else if (q.includes('দেনা') || q.includes('পাওনা') || q.includes('বকেয়া')) {
+                const unpaid = led.filter(i => !i.paid);
+                if (!unpaid.length) ans = '📴 **অফলাইন উত্তর:**\n\n✅ কোনো বকেয়া দেনা-পাওনা নেই।';
+                else { const list = unpaid.map(i => '• ' + (i.type==='dena'?'দেনা':'পাওনা') + ' — ' + (i.person||'অজানা') + ' ৳' + Math.round(i.amount||0) + (i.note?' | নোট: "'+i.note+'"':'')).join('\n'); ans = '📴 **অফলাইন উত্তর:**\n\n**বকেয়া তালিকা:**\n' + list; }
+            } else {
+                ans = '📴 **অফলাইন উত্তর:**\n\nইন্টারনেট নেই। আপনার ডেটা:\n• আয়: ৳' + Math.round(tI) + '\n• ব্যয়: ৳' + Math.round(tE) + '\n• ব্যালেন্স: ৳' + Math.round(bal) + '\n\nসংযোগ এলে বিস্তারিত প্রশ্ন করুন।';
+            }
+            finishMsg(ans, 'offline');
+        };
+
+        const POLL_MODELS = ['openai', 'mistral', 'llama']; // legacy api anonymous models
+        const callPollinations = (messages, origQ, modelIdx = 0) => {
+            if (modelIdx >= POLL_MODELS.length) { removeTyping(); callOffline(origQ); return; }
+            const model = POLL_MODELS[modelIdx];
+            // system + last 4 conversation (too long payload fails)
+            const compactMsgs = [messages[0]].concat(messages.slice(1).slice(-4));
+            fetch('https://text.pollinations.ai/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: model, messages: compactMsgs, seed: Math.floor(Math.random() * 9999) })
+            })
+            .then(r => {
+                if (r.status === 404 || r.status === 400) {
+                    // এই model কাজ করে না, পরেরটা চেষ্টা করো
+                    return callPollinations(messages, origQ, modelIdx + 1);
+                }
+                if (!r.ok) throw new Error('poll_err');
+                return r.text();
+            })
+            .then(text => {
+                if (!text || typeof text !== 'string') return; // already handled above
+                const t = text.trim();
+                if (t.length < 5 || t.startsWith('{"error"')) {
+                    return callPollinations(messages, origQ, modelIdx + 1);
+                }
+                removeTyping(); finishMsg(t, 'pollinations');
+            })
+            .catch(() => callPollinations(messages, origQ, modelIdx + 1));
+        };
+
+        const GEMINI_MODELS = [
+            'gemini-2.0-flash',
+            'gemini-1.5-flash',
+            'gemini-1.5-flash-8b',
+        ];
+        const callGemini = (messages, attempt, origQ, modelIdx = 0) => {
+            const keys = getGeminiKeys();
+            if (!keys.length) { callPollinations(messages, origQ); return; }
+            // সব key + সব model চেষ্টার পরে Pollinations
+            if (modelIdx >= GEMINI_MODELS.length) {
+                if (attempt + 1 < keys.length) { rotateGeminiKey(); callGemini(messages, attempt + 1, origQ, 0); }
+                else { callPollinations(messages, origQ); }
+                return;
+            }
+            const key = keys[getGeminiIdx() % keys.length];
+            const gemUrl = 'https://generativelanguage.googleapis.com/v1beta/models/' + GEMINI_MODELS[modelIdx] + ':generateContent';
+            // Conversation: user/model alternating, শুরু user দিয়ে
+            const convMsgs = messages.slice(1).filter(m => m.role === 'user' || m.role === 'assistant').slice(-8);
+            let gemContents = convMsgs.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }));
+            // consecutive same-role মেসেজ merge করো (Gemini এটা reject করে)
+            const merged = [];
+            gemContents.forEach(msg => {
+                if (merged.length && merged[merged.length-1].role === msg.role) {
+                    merged[merged.length-1].parts[0].text += '\n' + msg.parts[0].text;
+                } else { merged.push(msg); }
+            });
+            if (!merged.length || merged[0].role === 'model') merged.unshift({ role: 'user', parts: [{ text: origQ }] });
+            fetch(gemUrl + '?key=' + key, {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    system_instruction: { parts: [{ text: messages[0].content }] },
+                    contents: merged,
+                    generationConfig: { maxOutputTokens: 1200, temperature: 0.7 }
+                })
+            })
+            .then(r => {
+                if (r.status === 429) { rotateGeminiKey(); callGemini(messages, attempt + 1, origQ, 0); return null; }
+                if (r.status === 401 || r.status === 403) { callPollinations(messages, origQ); return null; }
+                return r.json();
+            })
+            .then(data => {
+                if (!data) return;
+                if (data.error) {
+                    // model কাজ না করলে পরের model চেষ্টা
+                    console.warn('Gemini error:', data.error.message);
+                    callGemini(messages, attempt, origQ, modelIdx + 1);
+                    return;
+                }
+                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                if (!text) { callGemini(messages, attempt, origQ, modelIdx + 1); return; }
+                removeTyping(); finishMsg(text, 'gemini');
+            })
+            .catch(() => callGemini(messages, attempt, origQ, modelIdx + 1));
+        };
+
+        const callGroq = (messages, attempt, origQ) => {
+            const keys = getGroqKeys();
+            if (!keys.length || attempt >= keys.length) { callGemini(messages, 0, origQ, 0); return; }
+            const key = keys[getGroqIdx() % keys.length];
+            fetch(GROQ_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+                body: JSON.stringify({ model: GROQ_MODEL, messages: messages, max_tokens: 1200, temperature: 0.7 })
+            })
+            .then(r => {
+                if (r.status === 429) { rotateGroqKey(); return callGroq(messages, attempt + 1, origQ); }
+                if (r.status === 401) { rotateGroqKey(); return callGroq(messages, attempt + 1, origQ); }
+                return r.json();
+            })
+            .then(data => {
+                if (!data) return;
+                const text = data.choices?.[0]?.message?.content;
+                if (!text) { callGemini(messages, 0, origQ, 0); return; }
+                removeTyping(); finishMsg(text, 'groq');
+            })
+            .catch(() => callGemini(messages, 0, origQ, 0));
+        };
+
+        const callAI = (question) => {
+            busy = true; document.getElementById('sendBtn').disabled = true; addTyping();
+            history.push({ role: 'user', content: question, time: nowTime() });
+            if (history.length > 24) history = history.slice(-24);
+            localStorage.setItem(CHAT_SAVE_KEY, JSON.stringify(history));
+            const messages = [{ role: 'system', content: buildSystemPrompt() }].concat(
+                history.map(m => ({ role: m.role === 'ai' ? 'assistant' : m.role, content: m.content }))
+            );
+            const pref = localStorage.getItem('prefModel') || 'auto';
+            if (localStorage.getItem('prov_offline') === 'true') { removeTyping(); callOffline(question); return; }
+            const hasGroq = getGroqKeys().length > 0;
+            const hasGemini = getGeminiKeys().length > 0;
+            if (pref === 'groq') {
+                if (hasGroq) callGroq(messages, 0, question);
+                else { showToast('⚠️ Groq key নেই → Gemini/Pollinations'); callGemini(messages, 0, question, 0); }
+            } else if (pref === 'gemini') {
+                if (hasGemini) callGemini(messages, 0, question, 0);
+                else { showToast('⚠️ Gemini key নেই → Pollinations'); callPollinations(messages, question); }
+            } else if (pref === 'pollinations') {
+                callPollinations(messages, question);
+            } else {
+                // auto: Groq → Gemini → Pollinations → Offline
+                callGroq(messages, 0, question);
+            }
+        };
+
+        const sendMsg = () => {
+            const inp = document.getElementById('userInput'); const text = inp.value.trim();
+            if (!text || busy) return; addMsg('user', escHtml(text)); inp.value = '';
+            if (!navigator.onLine) callOffline(text); else callAI(text);
+        };
+
+        const clearChat = () => {
+            if (!confirm('সব চ্যাট মুছে দেবেন?')) return;
+            history = []; localStorage.removeItem(CHAT_SAVE_KEY);
+            document.getElementById('msgList').innerHTML = '';
+            document.getElementById('emptyState').style.display = 'flex';
+            showToast('🗑️ চ্যাট মুছে গেছে');
+        };
+
+        const updateStatus = () => {
+            const gK = getGroqKeys(), gmK = getGeminiKeys();
+            const el = document.getElementById('aiStatus'), dot = document.getElementById('statusDot');
+            if (currentProvider === 'groq' && gK.length) el.textContent = `⚡ Groq • ${gK.length} keys`;
+            else if (currentProvider === 'gemini' && gmK.length) el.textContent = '✨ Gemini';
+            else el.textContent = '🌐 Pollinations';
+            document.getElementById('noKeyBanner').style.display = (gK.length || gmK.length) ? 'none' : 'flex';
+        };
+
+        const changeTheme = (t) => { document.documentElement.setAttribute('data-theme', t); localStorage.setItem('appTheme', t); };
+        const savePrefModel = (v) => { localStorage.setItem('prefModel', v); showToast('✅ মডেল সেট: ' + v); updateStatus(); };
+        const openSettings = () => {
+            document.getElementById('sov').classList.add('open'); document.getElementById('sdrw').classList.add('open');
+            document.getElementById('togGroq').checked = isProvEnabled('groq');
+            document.getElementById('togGemini').checked = isProvEnabled('gemini');
+            document.getElementById('togPollinations').checked = isProvEnabled('pollinations');
+            document.getElementById('togOffline').checked = isProvEnabled('offline');
+            document.getElementById('themeSelect').value = localStorage.getItem('appTheme') || 'dark-navy';
+            document.getElementById('prefModel').value = localStorage.getItem('prefModel') || 'auto';
+        };
+        const closeSettings = () => { document.getElementById('sov').classList.remove('open'); document.getElementById('sdrw').classList.remove('open'); };
+        const saveProviderToggle = (n, v) => localStorage.setItem('prov_' + n, v ? 'true' : 'false');
+
+        const openKeyManager = () => { closeSettings(); document.getElementById('keyManagerModal').classList.add('open'); renderKeyList(); };
+        const renderKeyList = () => {
+            const area = document.getElementById('keyListArea'); area.innerHTML = '';
+            const gK = getGroqKeys(), gmK = getGeminiKeys();
+            const create = (k, t, i) => {
+                const d = document.createElement('div'); d.className = 'sc'; d.style.padding = '10px'; d.style.display = 'flex'; d.style.alignItems = 'center';
+                d.innerHTML = `<div style="flex:1;font-size:.8rem">${t}: ${k.substring(0,10)}...</div><button onclick="deleteKey('${t}','${k}')">🗑️</button>`;
+                return d;
+            };
+            gK.forEach((k, i) => area.appendChild(create(k, 'groq', i)));
+            gmK.forEach((k, i) => area.appendChild(create(k, 'gemini', i)));
+        };
+        const addNewKey = () => {
+            const v = document.getElementById('newKeyInput').value.trim();
+            if (v.startsWith('gsk_')) { const k = getGroqKeys(); k.push(v); saveGroqKeys(k); }
+            else if (v.startsWith('AIza')) { const k = getGeminiKeys(); k.push(v); saveGeminiKeys(k); }
+            document.getElementById('newKeyInput').value = ''; renderKeyList(); updateStatus();
+        };
+        const deleteKey = (t, k) => {
+            if (t === 'groq') { const keys = getGroqKeys().filter(x => x !== k); saveGroqKeys(keys); }
+            else { const keys = getGeminiKeys().filter(x => x !== k); saveGeminiKeys(keys); }
+            renderKeyList(); updateStatus();
+        };
+
+        const handleKey = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); } };
+        const autoResize = (el) => { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; };
+
+        window.onload = () => {
+            const t = localStorage.getItem('appTheme') || 'dark-navy'; document.documentElement.setAttribute('data-theme', t);
+            try { const s = localStorage.getItem(CHAT_SAVE_KEY); if (s) history = JSON.parse(s); } catch (e) { }
+            if (history.length) {
+                document.getElementById('emptyState').style.display = 'none';
+                history.forEach(m => appendMsgDOM(m.role === 'user' ? 'user' : 'ai', formatAI(m.content), m.time, m.provider));
+                setTimeout(() => { const l = document.getElementById('msgList'); if(l.lastChild) l.lastChild.scrollIntoView({block:'end'}); }, 100);
+            }
+            if (!navigator.onLine) document.getElementById('offlineBanner').style.display = 'flex';
+            window.addEventListener('online', () => { document.getElementById('offlineBanner').style.display = 'none'; updateStatus(); });
+            window.addEventListener('offline', () => { document.getElementById('offlineBanner').style.display = 'flex'; });
+            updateStatus(); updateStats();
+        };
+    </script>
+<script>
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
+</script>
+</body>
+</html>

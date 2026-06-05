@@ -2,7 +2,8 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>try{var _c=JSON.parse(localStorage.getItem("cssConfig")||"{}");document.documentElement.style.background=_c.bgColor||"#f0f4f8";}catch(e){}</script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>সঞ্চয়ের তালিকা - Daily Account</title>
     <link rel="stylesheet" href="../css/base.css">
     <link rel="stylesheet" href="../css/list.css">
@@ -10,6 +11,7 @@
 
 
 
+<style>html,body{overscroll-behavior:none!important;}</style>
 </head>
 <body class="savings-page" data-page="savings">
     <div class="page-wrapper">
@@ -95,68 +97,40 @@
         </div>
 
         <!-- ══ Analysis View ══ -->
-        <div id="analysisView" class="analysis-container" style="display: none;">
-            <div class="analysis-header">
-                <button class="period-btn active" data-period="monthly" onclick="changePeriod('monthly')">
-                    📅 মাসিক
-                </button>
-                <button class="period-btn" data-period="yearly" onclick="changePeriod('yearly')">
-                    📆 বার্ষিক
-                </button>
+        <div id="analysisView" class="analysis-container" style="display: none; padding-bottom:12px;">
+
+            <!-- KPI Cards -->
+            <div class="la-kpi-row">
+                <div class="la-kpi-card">
+                    <span class="la-kpi-label">এই মাস</span>
+                    <span class="la-kpi-val" style="color:#E2136E" id="currentMonthSavings">৳ 0</span>
+                </div>
+                <div class="la-kpi-card">
+                    <span class="la-kpi-label">মোট সঞ্চয়</span>
+                    <span class="la-kpi-val" style="color:#E2136E" id="totalSavingsKpi">৳ 0</span>
+                </div>
+                <div class="la-kpi-card">
+                    <span class="la-kpi-label">সর্বোচ্চ</span>
+                    <span class="la-kpi-val" style="color:#E2136E" id="maxSaving">৳ 0</span>
+                </div>
             </div>
 
-            <div class="analysis-grid">
-
-                <div class="analysis-card" style="border-top-color: #E2136E;">
-                    <h3>🗓️ এই মাসের সারসংক্ষেপ</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">মোট সঞ্চয়</span>
-                        <span class="stat-value savings-stat" id="currentMonthSavings">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">গড় দৈনিক</span>
-                        <span class="stat-value savings-stat" id="avgDailySavings">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">সর্বোচ্চ সঞ্চয়</span>
-                        <span class="stat-value savings-stat" id="maxSaving">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">মোট এন্ট্রি</span>
-                        <span class="stat-value" id="currentMonthEntries">0</span>
-                    </div>
-                </div>
-
-                <div class="analysis-card" style="border-top-color: #E2136E;">
-                    <h3>🏦 মাধ্যম অনুযায়ী</h3>
-                    <div id="methodBreakdown"></div>
-                </div>
-
-                <div class="analysis-card" style="border-top-color: #f59e0b;">
-                    <h3>📊 তুলনা</h3>
-                    <div class="stat-row">
-                        <span class="stat-label">গত মাস</span>
-                        <span class="stat-value savings-stat" id="lastMonthSavings">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">পরিবর্তন</span>
-                        <span class="stat-value" id="monthChange">0%</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">বার্ষিক মোট</span>
-                        <span class="stat-value savings-stat" id="yearlyTotal">৳ 0</span>
-                    </div>
-                    <div class="stat-row">
-                        <span class="stat-label">আয়ের বিপরীতে</span>
-                        <span class="stat-value savings-stat" id="incomeRatio">0%</span>
-                    </div>
-                </div>
-
+            <!-- Change Banner -->
+            <div class="la-change-row">
+                <span class="la-change-pill" id="laChangePill" style="background:#fdf2f8;color:#E2136E">0%</span>
+                <span class="la-change-sub">গত মাসের তুলনায় · বার্ষিক: <strong id="yearlyTotal">৳ 0</strong> · এন্ট্রি: <strong id="currentMonthEntries">0</strong></span>
             </div>
 
-            <div class="analysis-card" style="border-top-color: #E2136E; margin-top: 12px;">
-                <h3>📅 মাস অনুযায়ী সঞ্চয়</h3>
-                <div class="month-grid" id="monthGrid"></div>
+            <!-- Line Chart: cumulative savings growth -->
+            <div class="la-chart-card">
+                <div class="la-chart-title">📈 সঞ্চয় বৃদ্ধির ধারা (ক্রমযোজিত)</div>
+                <div class="la-chart-wrap"><canvas id="laLineChart"></canvas></div>
+            </div>
+
+            <!-- Bar Chart: monthly -->
+            <div class="la-chart-card">
+                <div class="la-chart-title">📊 মাসিক সঞ্চয় তুলনা (শেষ ৬ মাস)</div>
+                <div class="la-chart-wrap-sm"><canvas id="laBarChart"></canvas></div>
             </div>
 
         </div>
@@ -252,9 +226,10 @@
         </div>
     </div>
 
-    <script src="../js/db.js"></script>
-    <script src="../js/app.js"></script>
-    <script src="../js/savings-list.js"></script>
+    <script src="../js/db.js" defer></script>
+    <script src="../js/app.js" defer></script>
+    <script src="../js/chart.min.js" defer></script>
+    <script src="../js/savings-list.js" defer></script>
 
 
 
@@ -355,10 +330,14 @@
 </script>
 <!-- ══ END FLOAT BALL ══ -->
 <script>
-if("serviceWorker" in navigator){
-  navigator.serviceWorker.register("../sw.js")
-    .catch(e => console.log("SW:", e));
-}
+var _ly=0;
+document.addEventListener("touchmove",function(e){
+  var st=document.documentElement.scrollTop||document.body.scrollTop;
+  if(st===0&&e.touches[0].clientY>_ly)e.preventDefault();
+  _ly=e.touches[0].clientY;
+},{passive:false});
+document.addEventListener("contextmenu",function(e){e.preventDefault();});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("/myapp_project/sw.js").catch(function(){});}
 </script>
 </body>
 </html>
