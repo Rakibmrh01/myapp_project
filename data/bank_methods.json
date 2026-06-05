@@ -1,0 +1,54 @@
+{
+  "methods": [
+    {
+      "id": "bank",
+      "name": "ব্যাংক",
+      "icon": "🏦",
+      "requires_bank_name": true,
+      "popular_banks": [
+        "ডাচ বাংলা ব্যাংক",
+        "ব্র্যাক ব্যাংক",
+        "এক্সিম ব্যাংক",
+        "সিটি ব্যাংক",
+        "ইসলামী ব্যাংক",
+        "সোনালী ব্যাংক",
+        "জনতা ব্যাংক",
+        "অগ্রণী ব্যাংক",
+        "রূপালী ব্যাংক",
+        "প্রাইম ব্যাংক",
+        "স্ট্যান্ডার্ড ব্যাংক",
+        "ইস্টার্ন ব্যাংক"
+      ]
+    },
+    {
+      "id": "bkash",
+      "name": "বিকাশ",
+      "icon": "💳",
+      "requires_bank_name": false
+    },
+    {
+      "id": "nagad",
+      "name": "নগদ",
+      "icon": "💳",
+      "requires_bank_name": false
+    },
+    {
+      "id": "rocket",
+      "name": "রকেট",
+      "icon": "💳",
+      "requires_bank_name": false
+    },
+    {
+      "id": "cash",
+      "name": "নগদ টাকা",
+      "icon": "💵",
+      "requires_bank_name": false
+    },
+    {
+      "id": "other",
+      "name": "অন্যান্য",
+      "icon": "🔷",
+      "requires_bank_name": false
+    }
+  ]
+}

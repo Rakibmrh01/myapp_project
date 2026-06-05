@@ -1,0 +1,24 @@
+{
+  "types": {
+    "dena": {
+      "label": "দেনা",
+      "sign": "-",
+      "color": "red"
+    },
+    "pabona": {
+      "label": "পাওনা",
+      "sign": "+",
+      "color": "green"
+    }
+  },
+  "payment": {
+    "paid": {
+      "label": "Paid",
+      "color": "gray"
+    },
+    "unpaid": {
+      "label": "Unpaid",
+      "color": "orange"
+    }
+  }
+}

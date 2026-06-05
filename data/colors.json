@@ -1,0 +1,12 @@
+{
+  "background": "#f2f4fb",
+  "card": "#ffffff",
+  "text": "#111111",
+
+  "income": "#2ecc71",
+  "expense": "#e74c3c",
+  "ledger": "#8e44ad",
+
+  "paid": "#9ca3af",
+  "unpaid": "#f59e0b"
+}

@@ -1,0 +1,63 @@
+{
+  "app": {
+    "name": "Daily Account",
+    "name_bn": "প্রত্যহিত লেনদেন",
+    "version": "1.0.0",
+    "edition": "Max Edition",
+    "developer": "@jakiraljihad",
+    "type": "Offline PWA"
+  },
+  "features": {
+    "income_tracking": true,
+    "expense_tracking": true,
+    "ledger_system": true,
+    "savings_system": true,
+    "smart_ai_advice": true,
+    "analysis_charts": true,
+    "calculator": true,
+    "notes": true,
+    "css_customizer": true,
+    "dark_mode": true,
+    "backup_restore": true,
+    "csv_export": true,
+    "multi_language": true
+  },
+  "storage": {
+    "type": "localStorage",
+    "max_size": "10MB",
+    "auto_backup": true,
+    "backup_interval_days": 7
+  },
+  "ui": {
+    "theme": "colorful_3d",
+    "compact_layout": true,
+    "large_text": true,
+    "animations_enabled": true,
+    "mobile_first": true
+  },
+  "defaults": {
+    "currency": "৳",
+    "language": "bn",
+    "date_format": "YYYY-MM-DD",
+    "time_format": "24h"
+  },
+  "limits": {
+    "max_income_entries": 10000,
+    "max_expense_entries": 10000,
+    "max_ledger_entries": 5000,
+    "max_savings_entries": 5000,
+    "max_notes": 1000
+  },
+  "social_links": {
+    "youtube": "https://youtube.com/@jakiraljihad",
+    "facebook": "https://facebook.com/jakiraljihad",
+    "instagram": "https://instagram.com/jakiraljihad",
+    "tiktok": "https://tiktok.com/@jakiraljihad",
+    "telegram": "https://t.me/jakiraljihad01"
+  },
+  "quick_amounts": {
+    "income": [50, 100, 200, 500, 1000, 2000, 5000, 10000],
+    "expense": [20, 50, 100, 200, 500, 1000, 2000, 5000],
+    "ledger": [100, 500, 1000, 2000, 5000, 10000]
+  }
+}

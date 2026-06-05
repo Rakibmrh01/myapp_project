@@ -1,0 +1,155 @@
+{
+  "chart_types": {
+    "pie": {
+      "enabled": true,
+      "title": "আয় বনাম ব্যয়",
+      "colors": {
+        "income": "#16a34a",
+        "expense": "#dc2626"
+      },
+      "show_percentage": true,
+      "show_values": true
+    },
+    "bar": {
+      "enabled": true,
+      "title": "সময় অনুযায়ী আয়–ব্যয়",
+      "bar_width": 60,
+      "gap": 10,
+      "gradient": true,
+      "show_grid": true
+    },
+    "category_breakdown": {
+      "enabled": true,
+      "title": "ব্যয়ের ক্যাটাগরি",
+      "show_top_n": 10,
+      "sort_by": "amount",
+      "sort_order": "desc"
+    },
+    "ledger_impact": {
+      "enabled": true,
+      "title": "দেনা / পাওনার প্রভাব",
+      "colors": {
+        "dena": "#ea580c",
+        "pabona": "#0891b2"
+      }
+    }
+  },
+  "colors": {
+    "primary": "#2563eb",
+    "success": "#16a34a",
+    "danger": "#dc2626",
+    "warning": "#ea580c",
+    "info": "#0891b2",
+    "gradient_start": "#2563eb",
+    "gradient_end": "#60a5fa"
+  },
+  "animation": {
+    "enabled": true,
+    "duration_ms": 800,
+    "easing": "ease-out",
+    "stagger_delay_ms": 100
+  },
+  "responsive": {
+    "breakpoints": {
+      "mobile": 480,
+      "tablet": 768,
+      "desktop": 1024
+    },
+    "chart_sizes": {
+      "mobile": {
+        "pie_diameter": 200,
+        "bar_width": 40,
+        "font_size": 12
+      },
+      "tablet": {
+        "pie_diameter": 250,
+        "bar_width": 60,
+        "font_size": 14
+      },
+      "desktop": {
+        "pie_diameter": 300,
+        "bar_width": 80,
+        "font_size": 16
+      }
+    }
+  },
+  "legend": {
+    "position": "bottom",
+    "show_percentage": true,
+    "show_values": true,
+    "box_size": 20,
+    "font_size": 14
+  },
+  "tooltips": {
+    "enabled": true,
+    "show_on_hover": true,
+    "background_color": "rgba(0, 0, 0, 0.8)",
+    "text_color": "#ffffff",
+    "border_radius": 8,
+    "padding": 10
+  },
+  "advice_rules": [
+    {
+      "condition": "expense > income",
+      "message": "⚠️ এই মাসে আপনার ব্যয় আয়ের তুলনায় বেশি হয়েছে। খরচ কমানোর চেষ্টা করুন।",
+      "priority": "high"
+    },
+    {
+      "condition": "balance > income * 0.3",
+      "message": "✅ চমৎকার! আপনি ভালো পরিমাণ সঞ্চয় করতে পেরেছেন।",
+      "priority": "medium"
+    },
+    {
+      "condition": "balance > 0 && balance <= income * 0.1",
+      "message": "💡 কিছু টাকা সেভিংসে রাখার ভালো সুযোগ আছে।",
+      "priority": "medium"
+    },
+    {
+      "condition": "unpaidDena > 0",
+      "message": "📕 আপনার দেনা আছে। যত তাড়াতাড়ি সম্ভব পরিশোধ করুন।",
+      "priority": "high"
+    },
+    {
+      "condition": "unpaidPabona > 0",
+      "message": "📗 আপনার পাওনা আছে। সংগ্রহ করার চেষ্টা করুন।",
+      "priority": "medium"
+    },
+    {
+      "condition": "income === 0",
+      "message": "💰 এখনও কোনো আয় যোগ করা হয়নি। আয় যোগ করে শুরু করুন।",
+      "priority": "low"
+    },
+    {
+      "condition": "expense === 0",
+      "message": "💸 এখনও কোনো ব্যয় যোগ করা হয়নি।",
+      "priority": "low"
+    }
+  ],
+  "time_periods": [
+    {
+      "id": "today",
+      "label": "আজ",
+      "days": 1
+    },
+    {
+      "id": "week",
+      "label": "এই সপ্তাহ",
+      "days": 7
+    },
+    {
+      "id": "month",
+      "label": "এই মাস",
+      "days": 30
+    },
+    {
+      "id": "year",
+      "label": "এই বছর",
+      "days": 365
+    },
+    {
+      "id": "all",
+      "label": "সব সময়",
+      "days": null
+    }
+  ]
+}
