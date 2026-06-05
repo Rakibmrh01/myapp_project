@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>আমাদের সম্পর্কে — MRH Account</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #fff; font-family: 'Hind Siliguri', Georgia, serif; color: #111827; font-size: 17px; line-height: 1.8; }
+    .topbar {
+      background: #0f766e; padding: 12px 20px;
+      display: flex; align-items: center; gap: 12px;
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-back {
+      background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.25);
+      color: white; padding: 6px 14px; border-radius: 8px;
+      font-size: .82rem; font-weight: 700; cursor: pointer; font-family: inherit; text-decoration: none;
+    }
+    .topbar h1 { color: white; font-size: .95rem; font-weight: 700; flex: 1; }
+
+    /* COVER */
+    .ab-cover {
+      background: linear-gradient(135deg, #134e4a, #0f766e, #0d9488);
+      padding: 40px 24px 36px; color: white; text-align: center;
+    }
+    .ab-avatar {
+      width: 90px; height: 90px; border-radius: 50%;
+      background: rgba(255,255,255,.15); border: 3px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.6rem; margin: 0 auto 16px;
+    }
+    .ab-cover h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 4px; }
+    .ab-cover .role { font-size: 1rem; opacity: .75; margin-bottom: 18px; }
+    .ab-tags { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .ab-tag {
+      background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+      border-radius: 8px; padding: 5px 13px; font-size: .78rem; font-weight: 600;
+    }
+
+    /* BODY */
+    .ab-body { padding: 0 20px 80px; max-width: 700px; }
+
+    .ab-section { padding: 28px 0 0; border-bottom: 1px solid #e5e7eb; }
+    .ab-section:last-child { border: none; }
+    .ab-section h2 { font-size: 1.15rem; font-weight: 700; color: #111827; margin-bottom: 16px; }
+
+    /* INFO ROWS */
+    .info-row {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0; border-bottom: 1px solid #f3f4f6;
+    }
+    .info-row:last-child { border: none; }
+    .info-icon {
+      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+    }
+    .info-lbl { font-size: .8rem; color: #9ca3af; font-weight: 600; margin-bottom: 2px; }
+    .info-val { font-size: 1rem; font-weight: 700; color: #111827; }
+    .info-val a { color: #0f766e; text-decoration: none; }
+
+    /* CONTACT */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 16px 0 24px; }
+    .contact-btn {
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      padding: 18px 10px; border-radius: 12px; text-decoration: none;
+      transition: opacity .15s; border: 1.5px solid;
+    }
+    .contact-btn:active { opacity: .8; }
+    .contact-btn .ic { font-size: 1.6rem; }
+    .contact-btn .lb { font-size: .9rem; font-weight: 800; }
+    .contact-btn .sl { font-size: .75rem; font-weight: 600; opacity: .7; }
+    .btn-call { background: #f0fdf4; border-color: #86efac; color: #166534; }
+    .btn-wa   { background: #f0fdf4; border-color: #4ade80; color: #15803d; }
+    .btn-tg   { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+    .btn-mail { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+
+    /* NOTE */
+    .ab-note {
+      background: #f0fdfa; border: 1.5px solid #5eead4;
+      border-radius: 10px; padding: 16px 18px; margin: 14px 0 24px;
+    }
+    .ab-note p { font-size: 1rem; color: #134e4a; line-height: 1.75; margin: 0; }
+
+    /* LINKS */
+    .ab-link {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid #f3f4f6;
+      text-decoration: none; color: #111827;
+    }
+    .ab-link:last-child { border: none; }
+    .ab-link:active { background: #f9fafb; }
+    .al-icon {
+      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 1rem;
+    }
+    .al-title { font-size: 1rem; font-weight: 700; color: #111827; margin-bottom: 2px; }
+    .al-sub { font-size: .8rem; color: #9ca3af; }
+    .al-arrow { margin-left: auto; color: #d1d5db; font-size: 1.2rem; }
+
+    /* FOOTER */
+    .ab-footer {
+      background: #f9fafb; border-top: 2px solid #e5e7eb;
+      padding: 24px 20px; margin-top: 20px; text-align: center;
+    }
+    .ab-footer p { font-size: .85rem; color: #6b7280; line-height: 1.7; }
+    .ab-footer .version { font-size: 1.1rem; font-weight: 700; color: #0f766e; margin-bottom: 4px; }
+  </style>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="settings.html" class="topbar-back">←</a>
+  <h1>আমাদের সম্পর্কে</h1>
+</div>
+  <!-- Developer Info -->
+  <div class="ab-section">
+    <h2>👤 ডেভেলপার পরিচিতি</h2>
+    <div class="info-row">
+      <div class="info-icon" style="background:#f3e8ff;">🧑‍💻</div>
+      <div><div class="info-lbl">পুরো নাম</div><div class="info-val">Md Rakib Hossain </div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon" style="background:#f0fdf4;">📞</div>
+      <div><div class="info-lbl">ফোন / WhatsApp</div><div class="info-val"><a href="tel:+8801300168630">01300168630</a></div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon" style="background:#eff6ff;">🆔</div>
+      <div><div class="info-lbl">Developer Handle</div><div class="info-val">@rakib8630</div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon" style="background:#fef3c7;">📦</div>
+      <div><div class="info-lbl">অ্যাপ</div><div class="info-val">MRH Account v5.1 Max Edition</div></div>
+    </div>
+    <div class="info-row">
+      <div class="info-icon" style="background:#f0fdfa;">🔒</div>
+      <div><div class="info-lbl">ধরন</div><div class="info-val">Offline PWA — ইন্টারনেট ছাড়াও সম্পূর্ণ কার্যকর</div></div>
+    </div>
+  </div>
+
+  <!-- Contact -->
+  <div class="ab-section">
+    <h2>📬 যোগাযোগ করুন</h2>
+    <div class="contact-grid">
+      <a href="tel:+8801300168630" class="contact-btn btn-call">
+        <span class="ic">📞</span>
+        <span class="lb">01300168630</span>
+        <span class="sl">সরাসরি কল করুন</span>
+      </a>
+      <a href="https://wa.me/8801300168630" target="_blank" class="contact-btn btn-wa">
+        <span class="ic">💬</span>
+        <span class="lb">WhatsApp</span>
+        <span class="sl">দ্রুত মেসেজ করুন</span>
+      </a>
+      <a href="https://t.me/rakib8630@" target="_blank" class="contact-btn btn-tg">
+        <span class="ic">✈️</span>
+        <span class="lb">Telegram</span>
+        <span class="sl">@rakib8630</span>
+      </a>
+      <a href="mailto:mdrakibhossain8630@gmail.com" class="contact-btn btn-mail">
+        <span class="ic">📧</span>
+        <span class="lb">Email</span>
+        <span class="sl">ইমেইল করুন</span>
+      </a>
+    </div>
+    <div class="ab-note">
+      <p>🙏 যেকোনো <strong>সমস্যা, পরামর্শ বা নতুন ফিচার রিকোয়েস্টের</strong> জন্য WhatsApp বা কল করুন। সবচেয়ে দ্রুত সাড়া পাবেন WhatsApp-এ।</p>
+    </div>
+  </div>
+
+  <!-- Links -->
+  <div class="ab-section">
+    <h2>🔗 সংশ্লিষ্ট পেজসমূহ</h2>
+    <a href="how-to-use.html" class="ab-link">
+      <div class="al-icon" style="background:#f0fdf4;">📖</div>
+      <div><div class="al-title">কীভাবে ব্যবহার করবেন</div><div class="al-sub">সম্পূর্ণ ফিচার গাইড ও প্রো টিপস</div></div>
+      <span class="al-arrow">›</span>
+    </a>
+    <a href="privacy-policy.html" class="ab-link">
+      <div class="al-icon" style="background:#eff6ff;">🔒</div>
+      <div><div class="al-title">গোপনীয়তা নীতি</div><div class="al-sub">Privacy Policy — ডাটা সুরক্ষা বিবরণ</div></div>
+      <span class="al-arrow">›</span>
+    </a>
+    <a href="terms.html" class="ab-link">
+      <div class="al-icon" style="background:#f5f3ff;">📋</div>
+      <div><div class="al-title">শর্তাবলী</div><div class="al-sub">Terms &amp; Conditions</div></div>
+      <span class="al-arrow">›</span>
+    </a>
+  </div>
+
+</div>
+
+<div class="ab-footer">
+  <div class="version">MRH Account v5.1</div>
+  <p>MRH ACCOUNT  — Max Edition</p>
+  <p style="margin-top:4px;">© 2026 Md Rakib Hossain  · সর্বস্বত্ব সংরক্ষিত</p>
+</div>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("../sw.js")
+    .catch(e => console.log("SW:", e));
+}
+</script>
+</body>
+  </html>
