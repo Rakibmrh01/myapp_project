@@ -1,0 +1,221 @@
+{
+  "rules": [
+    {
+      "id": "high_expense_warning",
+      "condition": "expense > income",
+      "priority": "high",
+      "icon": "⚠️",
+      "message": "এই মাসে আপনার ব্যয় আয়ের চেয়ে বেশি! অবিলম্বে খরচ কমান।"
+    },
+    {
+      "id": "excellent_savings",
+      "condition": "balance > income * 0.5",
+      "priority": "high",
+      "icon": "🎉",
+      "message": "চমৎকার! আপনি আয়ের ৫০% এর বেশি সঞ্চয় করেছেন!"
+    },
+    {
+      "id": "good_savings",
+      "condition": "balance > income * 0.3 && balance <= income * 0.5",
+      "priority": "medium",
+      "icon": "✅",
+      "message": "ভালো! আপনার সঞ্চয়ের হার স্বাস্থ্যকর।"
+    },
+    {
+      "id": "moderate_savings",
+      "condition": "balance > 0 && balance <= income * 0.3",
+      "priority": "low",
+      "icon": "💡",
+      "message": "আরো কিছু টাকা সঞ্চয় করার চেষ্টা করুন।"
+    },
+    {
+      "id": "critical_expense_ratio",
+      "condition": "expense > income * 0.9",
+      "priority": "high",
+      "icon": "🚨",
+      "message": "সংকটজনক! ব্যয় আয়ের ৯০% ছাড়িয়েছে।"
+    },
+    {
+      "id": "high_expense_ratio",
+      "condition": "expense > income * 0.7 && expense <= income * 0.9",
+      "priority": "medium",
+      "icon": "⚠️",
+      "message": "সতর্ক থাকুন! ব্যয়ের পরিমাণ বেশি হচ্ছে।"
+    },
+    {
+      "id": "no_savings",
+      "condition": "savings == 0",
+      "priority": "high",
+      "icon": "💰",
+      "message": "সঞ্চয় শুরু করুন! ভবিষ্যতের জন্য অত্যন্ত গুরুত্বপূর্ণ।"
+    },
+    {
+      "id": "excellent_savings_rate",
+      "condition": "savings > income * 0.2",
+      "priority": "high",
+      "icon": "🏆",
+      "message": "দারুণ! আপনি আয়ের ২০% এর বেশি সঞ্চয় করেছেন!"
+    },
+    {
+      "id": "good_savings_start",
+      "condition": "savings > income * 0.1 && savings <= income * 0.2",
+      "priority": "medium",
+      "icon": "👍",
+      "message": "ভালো শুরু! সঞ্চয় আরো বাড়ান।"
+    },
+    {
+      "id": "high_dena",
+      "condition": "unpaidDena > income * 0.3",
+      "priority": "high",
+      "icon": "📕",
+      "message": "আপনার দেনার পরিমাণ বেশি! যত দ্রুত সম্ভব পরিশোধ করুন।"
+    },
+    {
+      "id": "moderate_dena",
+      "condition": "unpaidDena > 0 && unpaidDena <= income * 0.3",
+      "priority": "medium",
+      "icon": "📕",
+      "message": "দেনা বাকি আছে। পরিশোধের পরিকল্পনা করুন।"
+    },
+    {
+      "id": "high_pabona",
+      "condition": "unpaidPabona > income * 0.2",
+      "priority": "high",
+      "icon": "📗",
+      "message": "আপনার পাওনার পরিমাণ বেশি! সংগ্রহ করার চেষ্টা করুন।"
+    },
+    {
+      "id": "moderate_pabona",
+      "condition": "unpaidPabona > 0 && unpaidPabona <= income * 0.2",
+      "priority": "low",
+      "icon": "📗",
+      "message": "পাওনা সংগ্রহ করার চেষ্টা করুন।"
+    },
+    {
+      "id": "no_income",
+      "condition": "income == 0",
+      "priority": "high",
+      "icon": "💰",
+      "message": "আয় যোগ করে শুরু করুন!"
+    },
+    {
+      "id": "income_less_than_expense",
+      "condition": "income < expense && income > 0",
+      "priority": "high",
+      "icon": "💼",
+      "message": "আয় বাড়ানোর চেষ্টা করুন বা অতিরিক্ত আয়ের উৎস খুঁজুন।"
+    },
+    {
+      "id": "consistent_tracking",
+      "condition": "income > 0 && expense > 0",
+      "priority": "low",
+      "icon": "📊",
+      "message": "দারুণ! আপনি নিয়মিত হিসাব রাখছেন।"
+    },
+    {
+      "id": "zero_expense",
+      "condition": "expense == 0 && income > 0",
+      "priority": "low",
+      "icon": "💸",
+      "message": "ব্যয়ের হিসাব যোগ করতে ভুলবেন না।"
+    },
+    {
+      "id": "balanced_financial_health",
+      "condition": "expense < income * 0.7 && savings > 0",
+      "priority": "low",
+      "icon": "✅",
+      "message": "আপনার আর্থিক অবস্থা ভালো! এভাবেই চালিয়ে যান।"
+    },
+    {
+      "id": "emergency_fund_suggestion",
+      "condition": "savings > income * 3",
+      "priority": "medium",
+      "icon": "🏦",
+      "message": "চমৎকার! এখন জরুরি তহবিল তৈরি করুন (৬ মাসের খরচ)।"
+    },
+    {
+      "id": "investment_suggestion",
+      "condition": "savings > income * 5",
+      "priority": "medium",
+      "icon": "📈",
+      "message": "বিনিয়োগের কথা ভাবুন। সঞ্চয় থেকে আয় করুন!"
+    },
+    {
+      "id": "daily_tracking_praise",
+      "condition": "entries > 30",
+      "priority": "low",
+      "icon": "🌟",
+      "message": "অসাধারণ! আপনি প্রতিদিন হিসাব রাখছেন।"
+    },
+    {
+      "id": "category_warning",
+      "condition": "topCategory > expense * 0.4",
+      "priority": "medium",
+      "icon": "📊",
+      "message": "একটি ক্যাটাগরিতে অতিরিক্ত খরচ হচ্ছে। বাজেট করুন।"
+    },
+    {
+      "id": "weekend_expense_warning",
+      "condition": "weekendExpense > weekdayExpense",
+      "priority": "low",
+      "icon": "🎉",
+      "message": "সপ্তাহান্তে বেশি খরচ হচ্ছে। সাবধান!"
+    },
+    {
+      "id": "monthly_goal_achieved",
+      "condition": "savings >= monthlyGoal",
+      "priority": "high",
+      "icon": "🎯",
+      "message": "অভিনন্দন! এই মাসের সঞ্চয়ের লক্ষ্য অর্জিত!"
+    },
+    {
+      "id": "first_week_warning",
+      "condition": "expense > income * 0.3 && dayOfMonth <= 7",
+      "priority": "medium",
+      "icon": "⏰",
+      "message": "মাসের প্রথম সপ্তাহেই অনেক খরচ! সাবধান থাকুন।"
+    },
+    {
+      "id": "positive_trend",
+      "condition": "thisMonthSavings > lastMonthSavings",
+      "priority": "medium",
+      "icon": "📈",
+      "message": "চমৎকার! এই মাসে আগের মাসের চেয়ে বেশি সঞ্চয়!"
+    },
+    {
+      "id": "negative_trend",
+      "condition": "thisMonthExpense > lastMonthExpense * 1.2",
+      "priority": "high",
+      "icon": "📉",
+      "message": "সতর্কতা! এই মাসে খরচ ২০% বেড়েছে।"
+    },
+    {
+      "id": "food_expense_high",
+      "condition": "foodExpense > expense * 0.5",
+      "priority": "medium",
+      "icon": "🍔",
+      "message": "খাবারে অর্ধেকের বেশি খরচ হচ্ছে। বাজেট করুন।"
+    },
+    {
+      "id": "transport_expense_high",
+      "condition": "transportExpense > expense * 0.3",
+      "priority": "medium",
+      "icon": "🚗",
+      "message": "যাতায়াতে খরচ বেশি। বিকল্প ভাবুন।"
+    },
+    {
+      "id": "debt_free",
+      "condition": "unpaidDena == 0",
+      "priority": "high",
+      "icon": "🎊",
+      "message": "অভিনন্দন! আপনি দেনা মুক্ত!"
+    }
+  ],
+  "tips": [
+    "৫০-৩০-২০ নিয়ম মানুন: ৫০% প্রয়োজন, ৩০% ইচ্ছা, ২০% সঞ্চয়",
+    "প্রতিদিন ছোট খরচ লিখুন, বড় সঞ্চয় হবে",
+    "জরুরি তহবিল = ৬ মাসের খরচ",
+    "প্রতি মাসে একটি আর্থিক লক্ষ্য নিন",
+    "অপ্রয়োজনীয় সাবস্ক্রিপশন বাতিল করুন"
+  ]
+    }
